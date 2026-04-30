@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>CPF Verde · Cáceres-MT</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 /* ── RESET & VARS ── */
@@ -16,12 +16,15 @@
   --t1:#111c13; --t2:#344e41; --t3:#74a57e; --t4:#a8c5b0;
   --amber:#e9a833; --red:#e05252; --red-lt:#fdeaea;
   --amber-lt:#fef7e0; --blue:#3b82f6; --blue-lt:#eff6ff;
-  --r8:8px; --r12:12px; --r16:16px; --r24:24px; --r99:99px;
-  --sh:0 1px 8px rgba(0,0,0,.08); --sh2:0 4px 24px rgba(0,0,0,.13);
+  --r8:10px; --r12:14px; --r16:18px; --r24:24px; --r99:99px;
+  --sh:0 2px 10px rgba(0,0,0,.09); --sh2:0 4px 24px rgba(0,0,0,.13);
   --sh3:0 8px 40px rgba(0,0,0,.18);
+  /* Cores lúdicas */
+  --kid-yellow:#FFD93D; --kid-orange:#FF6B35; --kid-pink:#FF6B9D;
+  --kid-purple:#845EC2; --kid-blue:#0081CF; --kid-teal:#00C9A7;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--f5);color:var(--t1);}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--f5);color:var(--t1);}
 body{display:flex;flex-direction:column;overflow:hidden;}
 
 /* ── HEADER ── */
@@ -40,7 +43,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
   display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
 }
 .title-wrap{flex:1;}
-.app-name{font-family:'Lora',serif;font-size:18px;font-weight:700;color:var(--w);line-height:1.1;}
+.app-name{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--w);line-height:1.1;}
 .app-sub{font-size:10px;color:var(--g6);letter-spacing:.8px;text-transform:uppercase;margin-top:1px;}
 .hdr-btn{
   width:38px;height:38px;border-radius:10px;border:none;cursor:pointer;
@@ -118,18 +121,19 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .chips-row{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 0;scrollbar-width:none;background:var(--w);}
 .chips-row::-webkit-scrollbar{display:none;}
 .chip{
-  white-space:nowrap;padding:5px 12px;border-radius:var(--r99);
-  font-size:11.5px;font-weight:500;cursor:pointer;
-  border:1.5px solid #dde8df;background:var(--w);color:var(--t2);
-  transition:all .14s;flex-shrink:0;
+  white-space:nowrap;padding:7px 14px;border-radius:var(--r99);
+  font-size:12px;font-weight:700;cursor:pointer;
+  border:2px solid #dde8df;background:var(--w);color:var(--t2);
+  transition:all .14s;flex-shrink:0;font-family:'Nunito',sans-serif;
 }
 .chip.on{background:var(--g2);border-color:var(--g2);color:var(--w);}
+.chip:active{transform:scale(.95);}
 .item-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
 
 /* TREE CARD */
 .tcard{
-  background:var(--w);border-radius:var(--r12);
-  box-shadow:var(--sh);border:1.5px solid transparent;
+  background:var(--w);border-radius:var(--r16);
+  box-shadow:var(--sh);border:2px solid transparent;
   display:flex;gap:0;overflow:hidden;cursor:pointer;
   transition:all .16s;
   animation:fadeUp .25s ease both;
@@ -145,7 +149,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 }
 .tcard-thumb img{width:100%;height:100%;object-fit:cover;}
 .tcard-body{flex:1;padding:10px 12px;}
-.tcard-name{font-weight:600;font-size:14px;color:var(--t1);margin-bottom:1px;}
+.tcard-name{font-weight:800;font-size:14.5px;color:var(--t1);margin-bottom:1px;font-family:"Nunito",sans-serif;}
 .tcard-sci{font-style:italic;font-size:11.5px;color:var(--t3);margin-bottom:6px;}
 .tcard-badges{display:flex;gap:4px;flex-wrap:wrap;}
 .bdg{padding:2px 7px;border-radius:var(--r99);font-size:10px;font-weight:600;}
@@ -273,14 +277,15 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .form-sec-hdr{
   padding:14px 16px 10px;
   border-bottom:1px solid var(--f0);
-  display:flex;align-items:center;gap:10px;
+  display:flex;align-items:center;gap:12px;
 }
 .form-sec-ico{
-  width:32px;height:32px;border-radius:9px;
-  background:var(--g7);display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0;
+  width:36px;height:36px;border-radius:12px;
+  background:linear-gradient(135deg,var(--g7),#b7e4c7);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;box-shadow:0 2px 6px rgba(45,106,79,.15);
 }
-.form-sec-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--g2);}
+.form-sec-title{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--g2);}
 .form-sec-body{padding:12px 16px;display:flex;flex-direction:column;gap:12px;}
 /* Field */
 .fld{display:flex;flex-direction:column;gap:5px;}
@@ -302,13 +307,14 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 /* GPS */
 .gps-btn{
-  height:44px;padding:0 16px;border-radius:var(--r8);
-  background:var(--g7);border:1.5px solid var(--g5);color:var(--g2);
-  font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;
+  height:50px;padding:0 16px;border-radius:var(--r12);
+  background:linear-gradient(135deg,#d8f3dc,#b7e4c7);
+  border:2px solid var(--g5);color:var(--g2);
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
   display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
-  transition:all .15s;
+  transition:all .15s;box-shadow:0 2px 8px rgba(82,183,136,.2);
 }
-.gps-btn:active{background:#c5e8d1;}
+.gps-btn:active{transform:scale(.97);}
 .gps-info{font-size:11.5px;color:var(--t3);text-align:center;margin-top:4px;}
 /* Saúde rubricada */
 .crit-row{border-bottom:1px solid var(--f0);padding-bottom:12px;margin-bottom:12px;}
@@ -317,12 +323,13 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .crit-desc{font-size:10.5px;color:var(--t3);margin-bottom:8px;line-height:1.45;}
 .score-btns{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
 .score-btn{
-  padding:6px 2px;border:1.5px solid #e2ece3;border-radius:var(--r8);
-  background:var(--f5);font-size:10px;font-weight:500;color:var(--t2);
+  padding:10px 2px;border:2px solid #e2ece3;border-radius:var(--r8);
+  background:var(--f5);font-size:11px;font-weight:700;color:var(--t2);
   cursor:pointer;text-align:center;transition:all .12s;
+  font-family:'Nunito',sans-serif;
 }
-.score-btn:active{transform:scale(.95);}
-.score-btn.on{background:var(--g2);border-color:var(--g2);color:var(--w);}
+.score-btn:active{transform:scale(.93);}
+.score-btn.on{background:var(--g2);border-color:var(--g2);color:var(--w);box-shadow:0 2px 8px rgba(27,67,50,.3);}
 /* Nota total */
 .nota-box{
   background:linear-gradient(135deg,var(--g1),var(--g3));
@@ -357,12 +364,15 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 /* Submit */
 .submit-wrap{padding:16px;background:var(--w);position:sticky;bottom:0;border-top:1px solid var(--f0);}
 .submit-btn{
-  width:100%;height:50px;background:var(--g3);color:var(--w);
-  border:none;border-radius:var(--r12);font-family:'Inter',sans-serif;
-  font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;
-  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;height:56px;
+  background:linear-gradient(135deg,#2d6a4f,#40916c);
+  color:var(--w);border:none;border-radius:var(--r12);
+  font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;
+  cursor:pointer;letter-spacing:.3px;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 18px rgba(45,106,79,.4);
 }
-.submit-btn:active{transform:scale(.98);background:var(--g2);}
+.submit-btn:active{transform:scale(.97);box-shadow:none;}
 
 /* ── CONFIG SCREEN ── */
 .cfg-screen{flex:1;overflow-y:auto;padding:16px;}
@@ -402,21 +412,51 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .nav-btn{
   flex:1;padding:8px 4px 6px;border:none;background:none;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:2px;
-  color:var(--t4);font-size:9.5px;letter-spacing:.4px;text-transform:uppercase;
-  font-family:'Inter',sans-serif;transition:color .15s;
+  color:var(--t4);font-size:10px;letter-spacing:.2px;text-transform:uppercase;
+  font-family:'Nunito',sans-serif;font-weight:700;transition:all .15s;
+  border-radius:var(--r8);
 }
 .nav-btn.on{color:var(--g3);}
-.nav-ico{font-size:22px;}
+.nav-btn.on .nav-ico{transform:scale(1.15);}
+.nav-ico{font-size:24px;transition:transform .15s;}
 .nav-add{
-  width:54px;height:54px;background:var(--g3);border-radius:50%;
-  border:none;cursor:pointer;
+  width:58px;height:58px;
+  background:linear-gradient(135deg,#40916c,#52b788);
+  border-radius:50%;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;color:var(--w);
-  box-shadow:0 4px 16px rgba(45,106,79,.4);
-  margin-top:-16px;transition:all .15s;flex-shrink:0;
+  font-size:30px;color:var(--w);font-weight:900;
+  box-shadow:0 4px 20px rgba(45,106,79,.5);
+  margin-top:-20px;transition:all .15s;flex-shrink:0;
 }
-.nav-add:active{transform:scale(.92);}
+.nav-add:active{transform:scale(.90);}
 
+/* ── BOTÃO AJUDA ── */
+.help-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;
+  background:#dbeafe;color:#1e40af;border:none;cursor:pointer;
+  font-size:12px;font-weight:900;font-family:'Nunito',sans-serif;
+  flex-shrink:0;transition:all .15s;margin-left:5px;vertical-align:middle;
+}
+.help-btn:active{transform:scale(.9);}
+/* ── MODAL DICA ── */
+.tip-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:5000;align-items:flex-end;justify-content:center;padding:0;
+}
+.tip-overlay.open{display:flex;}
+.tip-box{
+  background:#fff;border-radius:20px 20px 0 0;width:100%;
+  padding:20px 20px 32px;max-height:75vh;overflow-y:auto;
+  animation:slideUp .25s ease;
+}
+.tip-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px;}
+.tip-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:#1b4332;margin-bottom:4px;}
+.tip-emoji{font-size:40px;text-align:center;margin-bottom:10px;}
+.tip-body{font-size:14px;line-height:1.75;color:#344e41;}
+.tip-body b{color:#1b4332;}
+.tip-img{width:100%;border-radius:10px;margin:10px 0;}
+.tip-close{width:100%;height:46px;background:#1b4332;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:14px;}
 /* Pulse animation */
 @keyframes pulse{0%{transform:scale(1);opacity:.6;}70%{transform:scale(2.2);opacity:0;}100%{transform:scale(2.2);opacity:0;}}
 /* Utility */
@@ -440,10 +480,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-inner">
-    <div class="logo">🌳</div>
+    <div class="logo" style="font-size:24px;background:linear-gradient(135deg,#40916c,#95d5b2);">🌳</div>
     <div class="title-wrap">
-      <div class="app-name">CPF Verde</div>
-      <div class="app-sub">Patrimônio Florestal Urbano · Cáceres-MT</div>
+      <div class="app-name" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;letter-spacing:-.3px;">CPF Verde 🌿</div>
+      <div class="app-sub" style="font-family:'Nunito',sans-serif;">Detetives da Floresta · Cáceres-MT</div>
     </div>
     <button class="hdr-btn" onclick="goScreen('cfg')" title="Configurações">⚙️</button>
   </div>
@@ -531,10 +571,10 @@ document.addEventListener('DOMContentLoaded',()=>{
           <div class="fld"><label>Gênero</label><input id="f_gen" placeholder="Handroanthus"/></div>
         </div>
         <div class="row2">
-          <div class="fld"><label>Origem</label>
+          <div class="fld"><label>Origem <button class="help-btn" onclick="showTip('origem')">?</button></label>
             <select id="f_orig"><option value="">Selecione...</option><option value="nativa_pantanal">🌿 Nativa Pantanal</option><option value="nativa_brasil">🌿 Nativa Brasil</option><option value="exotica">🌸 Exótica</option><option value="invasora">⚠️ Invasora</option></select>
           </div>
-          <div class="fld"><label>Fenologia</label>
+          <div class="fld"><label>Fenologia <button class="help-btn" onclick="showTip('fenologia')">?</button></label>
             <select id="f_fen"><option value="">—</option><option value="vegetativa">Vegetativa</option><option value="floracao">Floração</option><option value="frutificacao">Frutificação</option><option value="senescencia">Senescência</option><option value="dormencia">Dormência</option></select>
           </div>
         </div>
@@ -574,30 +614,63 @@ document.addEventListener('DOMContentLoaded',()=>{
       <div class="form-sec-hdr"><div class="form-sec-ico">📏</div><div class="form-sec-title">3. Métricas Dendrométricas</div></div>
       <div class="form-sec-body">
         <div class="row3">
-          <div class="fld"><label>Altura (m)</label><input type="number" id="f_ht" step="0.1" placeholder="0.0" oninput="autoCalc()"/><small>Total</small></div>
-          <div class="fld"><label>H. Fuste (m)</label><input type="number" id="f_hf" step="0.1" placeholder="0.0"/></div>
-          <div class="fld"><label>H. Bif. (m)</label><input type="number" id="f_hb" step="0.1" placeholder="0.0"/></div>
+          <div class="fld">
+            <label>Altura Total (m) <button class="help-btn" onclick="showTip('altura')">?</button></label>
+            <input type="number" id="f_ht" step="0.1" placeholder="0.0" oninput="autoCalc()"/>
+          </div>
+          <div class="fld">
+            <label>H. Fuste (m) <button class="help-btn" onclick="showTip('fuste')">?</button></label>
+            <input type="number" id="f_hf" step="0.1" placeholder="0.0"/>
+          </div>
+          <div class="fld">
+            <label>H. Bif. (m) <button class="help-btn" onclick="showTip('bifurcacao')">?</button></label>
+            <input type="number" id="f_hb" step="0.1" placeholder="0.0"/>
+          </div>
         </div>
         <div class="row3">
-          <div class="fld"><label>DAP (cm)</label><input type="number" id="f_dap" step="0.1" placeholder="0.0" oninput="autoCalc()"/><small>1,30 m solo</small></div>
-          <div class="fld"><label>CAP (cm)</label><input type="number" id="f_cap" step="0.1" placeholder="auto"/></div>
-          <div class="fld"><label>Nº Fustes</label><input type="number" id="f_nf" step="1" placeholder="1" min="1"/></div>
+          <div class="fld">
+            <label>DAP (cm) <button class="help-btn" onclick="showTip('dap')">?</button></label>
+            <input type="number" id="f_dap" step="0.1" placeholder="0.0" oninput="autoCalc()"/>
+          </div>
+          <div class="fld">
+            <label>CAP (cm) <button class="help-btn" onclick="showTip('cap')">?</button></label>
+            <input type="number" id="f_cap" step="0.1" placeholder="auto"/>
+          </div>
+          <div class="fld">
+            <label>Nº Fustes <button class="help-btn" onclick="showTip('fustes')">?</button></label>
+            <input type="number" id="f_nf" step="1" placeholder="1" min="1"/>
+          </div>
         </div>
         <div class="row3">
-          <div class="fld"><label>Copa N-S (m)</label><input type="number" id="f_cns" step="0.1" placeholder="0.0" oninput="autoCalc()"/></div>
-          <div class="fld"><label>Copa L-O (m)</label><input type="number" id="f_clo" step="0.1" placeholder="0.0" oninput="autoCalc()"/></div>
-          <div class="fld"><label>Sombra (m²)</label><input type="number" id="f_som" step="0.1" readonly placeholder="auto"/></div>
+          <div class="fld">
+            <label>Copa N-S (m) <button class="help-btn" onclick="showTip('copa')">?</button></label>
+            <input type="number" id="f_cns" step="0.1" placeholder="0.0" oninput="autoCalc()"/>
+          </div>
+          <div class="fld">
+            <label>Copa L-O (m) <button class="help-btn" onclick="showTip('copa')">?</button></label>
+            <input type="number" id="f_clo" step="0.1" placeholder="0.0" oninput="autoCalc()"/>
+          </div>
+          <div class="fld">
+            <label>Sombra (m²) <button class="help-btn" onclick="showTip('sombra')">?</button></label>
+            <input type="number" id="f_som" step="0.1" readonly placeholder="auto"/>
+          </div>
         </div>
         <div class="row2">
-          <div class="fld"><label>Dist. Imóvel (m)</label><input type="number" id="f_di" step="0.1" placeholder="—"/></div>
-          <div class="fld"><label>Inclinação (°)</label><input type="number" id="f_inc" step="1" placeholder="0" min="0" max="90"/></div>
+          <div class="fld">
+            <label>Dist. Imóvel (m) <button class="help-btn" onclick="showTip('distImovel')">?</button></label>
+            <input type="number" id="f_di" step="0.1" placeholder="—"/>
+          </div>
+          <div class="fld">
+            <label>Inclinação (°) <button class="help-btn" onclick="showTip('inclinacao')">?</button></label>
+            <input type="number" id="f_inc" step="1" placeholder="0" min="0" max="90"/>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 4 Saúde -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🩺</div><div class="form-sec-title">4. Diagnóstico de Saúde</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🩺</div><div class="form-sec-title">4. Diagnóstico de Saúde <button class="help-btn" style="background:#d8f3dc;color:#1b4332;" onclick="showTip('saude_geral')">?</button></div></div>
       <div class="form-sec-body">
         <div class="nota-box">
           <div class="nota-num" id="notaNum">—</div>
@@ -685,16 +758,49 @@ document.addEventListener('DOMContentLoaded',()=>{
       </div>
     </div>
 
-    <!-- 9 Foto -->
+    <!-- 9 Foto + IA -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">📷</div><div class="form-sec-title">9. Fotografia</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">📷</div><div class="form-sec-title">9. Foto e Identificação por IA <button class="help-btn" style="background:#ede9fe;color:#5b21b6;" onclick="showTip('ia')">?</button></div></div>
       <div class="form-sec-body">
-        <div class="photo-area">
-          <input type="file" id="f_foto" accept="image/*" capture="environment" onchange="prevPhoto(event)"/>
-          <div class="photo-area-ico">📷</div>
-          <p>Tirar foto ou carregar imagem</p>
+        <!-- Botões de foto -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="photo-area" style="border-color:#40916c;">
+            <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(event,'principal')"/>
+            <div style="font-size:28px;">📸</div>
+            <p style="font-size:12px;color:var(--t3);margin-top:4px;">Tirar foto agora</p>
+          </div>
+          <div class="photo-area" style="border-color:#845EC2;">
+            <input type="file" accept="image/*" onchange="handlePhoto(event,'principal')"/>
+            <div style="font-size:28px;">🖼️</div>
+            <p style="font-size:12px;color:var(--t3);margin-top:4px;">Da galeria</p>
+          </div>
         </div>
-        <img id="photo-preview" alt="preview"/>
+        <!-- Preview com compressão -->
+        <div id="photoPreviewWrap" style="display:none;margin-top:10px;position:relative;">
+          <img id="photo-preview" alt="preview" style="width:100%;border-radius:var(--r12);max-height:220px;object-fit:cover;display:block;"/>
+          <div id="photoInfo" style="font-size:11px;color:var(--t3);text-align:center;margin-top:4px;"></div>
+          <button onclick="clearPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;">✕</button>
+        </div>
+        <!-- Botão IA identificar espécie -->
+        <button id="btnIA" onclick="identificarEspecie()" style="display:none;width:100%;margin-top:10px;height:50px;background:linear-gradient(135deg,#845EC2,#0081CF);color:#fff;border:none;border-radius:var(--r12);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:none;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(132,94,194,.4);">
+          🔍 Identificar Espécie com IA
+        </button>
+        <!-- Resultado IA -->
+        <div id="iaResult" style="display:none;margin-top:10px;background:linear-gradient(135deg,#f0faf3,#e0f2fe);border-radius:var(--r12);padding:14px;border:2px solid #95d5b2;">
+          <div style="font-size:11px;color:#0081CF;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">🤖 Análise da IA</div>
+          <div id="iaResultBody"></div>
+          <button id="btnAplicar" onclick="aplicarIA()" style="margin-top:10px;width:100%;height:40px;background:#2d6a4f;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ Usar esses dados</button>
+        </div>
+        <!-- Fotos adicionais -->
+        <div style="margin-top:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);margin-bottom:8px;">Fotos adicionais (casca, copa, frutos...)</div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;" id="extraPhotos"></div>
+          <div class="photo-area" style="margin-top:8px;padding:14px;">
+            <input type="file" accept="image/*" multiple onchange="addExtraPhotos(event)"/>
+            <div style="font-size:20px;">➕</div>
+            <p style="font-size:11.5px;color:var(--t3);">Adicionar mais fotos</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -711,7 +817,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     </div>
 
     <div class="submit-wrap">
-      <button class="submit-btn" onclick="saveInd()">💾 Salvar Indivíduo</button>
+      <button class="submit-btn" onclick="saveInd()">💾 Registrar Indivíduo no Cadastro</button>
     </div>
   </div>
 </div>
@@ -743,6 +849,24 @@ document.addEventListener('DOMContentLoaded',()=>{
       </div>
     </div>
   </div>
+</div>
+
+<!-- CATÁLOGO -->
+<div class="screen" id="screen-cat">
+  <div style="background:linear-gradient(135deg,#0d2818,#2d6a4f);padding:16px;text-align:center;flex-shrink:0;">
+    <div style="font-size:36px;margin-bottom:6px;">📚</div>
+    <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:#fff;">Catálogo de Espécies</div>
+    <div style="font-size:12px;color:#95d5b2;margin-top:4px;">Pantanal · Cerrado · Amazônia MT</div>
+    <input id="catSearch" oninput="filterCat()" placeholder="🔍 Buscar espécie..." 
+      style="margin-top:12px;width:100%;height:40px;border-radius:99px;border:none;padding:0 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;"/>
+  </div>
+  <div style="display:flex;overflow-x:auto;gap:6px;padding:10px 14px;background:#fff;border-bottom:1px solid #eee;scrollbar-width:none;flex-shrink:0;" id="catBiomas">
+    <span class="chip on" onclick="filterCatBioma('todos',this)">Todos</span>
+    <span class="chip" onclick="filterCatBioma('Pantanal',this)">🌊 Pantanal</span>
+    <span class="chip" onclick="filterCatBioma('Cerrado',this)">🌾 Cerrado</span>
+    <span class="chip" onclick="filterCatBioma('Amazônia',this)">🌳 Amazônia</span>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="catGrid"></div>
 </div>
 
 <!-- SOBRE -->
@@ -814,9 +938,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 <div class="bottom-nav">
   <button class="nav-btn on" id="nb-map" onclick="goScreen('map')"><span class="nav-ico">🗺️</span>Mapa</button>
   <button class="nav-btn" id="nb-list" onclick="goScreen('list')"><span class="nav-ico">📋</span>Lista</button>
-  <button class="nav-add" onclick="goScreen('map');setTimeout(startPinMode,300)" id="nb-add" title="Cadastrar nova árvore">＋</button>
-  <button class="nav-btn" id="nb-cfg" onclick="goScreen('cfg')"><span class="nav-ico">⚙️</span>Config</button>
-  <button class="nav-btn" id="nb-about" onclick="goScreen('sobre')"><span class="nav-ico">ℹ️</span>Sobre</button>
+  <button class="nav-add" onclick="goScreen('map');setTimeout(startPinMode,300)" id="nb-add" title="Cadastrar nova árvore">🌳</button>
+  <button class="nav-btn" id="nb-cat" onclick="goScreen('cat')"><span class="nav-ico">🌲</span>Catálogo</button>
+  <button class="nav-btn" id="nb-sobre" onclick="goScreen('sobre')"><span class="nav-ico">ℹ️</span>Sobre</button>
 </div>
 
 <!-- DETAIL SHEET -->
@@ -828,6 +952,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="sheet-actions">
     <button class="action-btn action-del" id="shDelBtn">🗑️ Excluir</button>
     <button class="action-btn action-map" id="shMapBtn">🗺️ Ver no Mapa</button>
+  </div>
+</div>
+
+<!-- MODAL DICA -->
+<div class="tip-overlay" id="tipOverlay" onclick="closeTip()">
+  <div class="tip-box" onclick="event.stopPropagation()">
+    <div class="tip-handle"></div>
+    <div class="tip-emoji" id="tipEmoji">💡</div>
+    <div class="tip-title" id="tipTitle">Ajuda</div>
+    <div class="tip-body" id="tipBody"></div>
+    <button class="tip-close" onclick="closeTip()">✅ Entendi!</button>
   </div>
 </div>
 
@@ -894,6 +1029,7 @@ function goScreen(name) {
   if (name==='list') { renderList(); }
   if (name==='add') { initForm(); } // form
   if (name==='sobre') { buildOrientandos(); }
+  if (name==='cat') { renderCatalogo(); }
 }
 
 // ═══════ DATA ═══════
@@ -1187,6 +1323,8 @@ function openSheet(id){
   ${ind.obs?`<div class="sec"><div class="sec-title">Observações</div><div class="obs-box">${ind.obs}</div></div>`:''}
   `;
 
+  document.getElementById('shDelBtn').style.display='flex';
+  document.getElementById('shMapBtn').style.display='flex';
   document.getElementById('shDelBtn').onclick = async()=>{
     if(!confirm('Excluir este indivíduo?'))return;
     closeSheet(); await delInd(id); showToast('🗑️ Removido');
@@ -1225,16 +1363,96 @@ function initForm(){
   document.getElementById('f_data').value = new Date().toISOString().split('T')[0];
   buildCritForm();
 }
+// Descrições detalhadas por pontuação para cada critério
+const CRIT_DETALHES = {
+  vitalidade:[
+    {n:0,cor:'#e05252',txt:'Sem folhas ou completamente seca/morta'},
+    {n:1,cor:'#f97316',txt:'Folhagem muito esparsa — menos de 25% do esperado'},
+    {n:2,cor:'#e9a833',txt:'Folhagem rarefeita — 25 a 50% do esperado'},
+    {n:3,cor:'#65a30d',txt:'Folhagem normal para a espécie e época do ano'},
+    {n:4,cor:'#16a34a',txt:'Folhagem exuberante — densa, vigorosa, verde intensa'},
+  ],
+  tronco:[
+    {n:0,cor:'#e05252',txt:'Oco, podridão severa ou comprometimento estrutural grave'},
+    {n:1,cor:'#f97316',txt:'Rachado, ferimento profundo ou cavidade visível'},
+    {n:2,cor:'#e9a833',txt:'Cicatriz estável ou lesão superficial em cicatrização'},
+    {n:3,cor:'#65a30d',txt:'Pequenas marcas ou impactos físicos sem comprometer estrutura'},
+    {n:4,cor:'#16a34a',txt:'Tronco sadio, íntegro, sem lesões ou anomalias'},
+  ],
+  copa:[
+    {n:0,cor:'#e05252',txt:'Copa morta ou inexistente'},
+    {n:1,cor:'#f97316',txt:'Copa muito rarefeita, assimétrica por podas drásticas'},
+    {n:2,cor:'#e9a833',txt:'Copa irregular, assimetria moderada'},
+    {n:3,cor:'#65a30d',txt:'Copa boa, bem formada com pequenas irregularidades'},
+    {n:4,cor:'#16a34a',txt:'Copa simétrica, densa e bem distribuída'},
+  ],
+  raiz:[
+    {n:0,cor:'#e05252',txt:'Raízes expostas e danificadas ou sistema comprometido'},
+    {n:1,cor:'#f97316',txt:'Raízes parcialmente expostas, levantamento severo de calçada'},
+    {n:2,cor:'#e9a833',txt:'Raízes com sinais de estresse, levantamento leve'},
+    {n:3,cor:'#65a30d',txt:'Sistema radicular bom, poucos conflitos visíveis'},
+    {n:4,cor:'#16a34a',txt:'Raízes protegidas, solo permeável, sem conflitos'},
+  ],
+  pragas:[
+    {n:0,cor:'#e05252',txt:'Infestação severa — insetos, fungos ou doenças comprometendo a árvore'},
+    {n:1,cor:'#f97316',txt:'Infestação moderada visível em várias partes'},
+    {n:2,cor:'#e9a833',txt:'Infestação leve, localizada'},
+    {n:3,cor:'#65a30d',txt:'Apenas traços ou sinais antigos sem atividade recente'},
+    {n:4,cor:'#16a34a',txt:'Sem pragas ou doenças visíveis'},
+  ],
+  crescimento:[
+    {n:0,cor:'#e05252',txt:'Crescimento estagnado ou árvore moribunda'},
+    {n:1,cor:'#f97316',txt:'Crescimento muito lento, anormal para a espécie'},
+    {n:2,cor:'#e9a833',txt:'Crescimento lento, abaixo do esperado'},
+    {n:3,cor:'#65a30d',txt:'Crescimento normal para a espécie e condições locais'},
+    {n:4,cor:'#16a34a',txt:'Crescimento vigoroso, brotações ativas e abundantes'},
+  ],
+  fixacao:[
+    {n:0,cor:'#e05252',txt:'Inclinação acima de 30° — risco iminente de queda'},
+    {n:1,cor:'#f97316',txt:'Inclinação de 15° a 30°'},
+    {n:2,cor:'#e9a833',txt:'Leve inclinação (5° a 15°)'},
+    {n:3,cor:'#65a30d',txt:'Tronco reto, aparentemente estável'},
+    {n:4,cor:'#16a34a',txt:'Tronco reto e muito estável, raízes bem fixadas'},
+  ],
+  casca:[
+    {n:0,cor:'#e05252',txt:'Casca morta, descamando em extensão ou ausente'},
+    {n:1,cor:'#f97316',txt:'Lesões extensas na casca (mais de 30% da circunferência)'},
+    {n:2,cor:'#e9a833',txt:'Lesões localizadas ou marcas de poda/impacto'},
+    {n:3,cor:'#65a30d',txt:'Pequenas marcas superficiais, casca em bom estado geral'},
+    {n:4,cor:'#16a34a',txt:'Casca íntegra, sem lesões, característica da espécie'},
+  ],
+};
+
 function buildCritForm(){
   const c=document.getElementById('critForm'); c.innerHTML=''; sVals={};
   CRIT.forEach(cr=>{
-    const btns=['0','1','2','3','4'].map((v,i)=>`<div class="score-btn" data-k="${cr.k}" data-v="${i}" onclick="setSaude('${cr.k}',${i},this)">${v}</div>`).join('');
-    c.innerHTML+=`<div class="crit-row"><div class="crit-label">${cr.l} <span style="font-size:9.5px;color:var(--t3);font-weight:400;">(peso ${cr.p}×)</span></div><div class="crit-desc">${cr.d}</div><div class="score-btns">${btns}</div></div>`;
+    const dets = CRIT_DETALHES[cr.k]||[];
+    const btns = dets.map(d=>`
+      <div class="score-btn" data-k="${cr.k}" data-v="${d.n}" onclick="setSaude('${cr.k}',${d.n},this)">
+        <div style="font-size:16px;font-weight:900;">${d.n}</div>
+      </div>`).join('');
+    const detDesc = dets.map(d=>`
+      <div id="det_${cr.k}_${d.n}" style="display:none;background:${d.cor}18;border-left:3px solid ${d.cor};border-radius:0 8px 8px 0;padding:7px 10px;font-size:12.5px;color:#1b4332;margin-top:6px;">
+        <b style="color:${d.cor};">Nota ${d.n}:</b> ${d.txt}
+      </div>`).join('');
+    c.innerHTML+=`
+      <div class="crit-row">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div class="crit-label">${cr.l}</div>
+          <span style="font-size:9.5px;color:var(--t3);font-weight:600;">peso ${cr.p}×</span>
+        </div>
+        <div class="score-btns">${btns}</div>
+        <div id="detWrap_${cr.k}">${detDesc}</div>
+      </div>`;
   });
 }
 function setSaude(k,v,el){
   sVals[k]=v;
   document.querySelectorAll(`.score-btn[data-k="${k}"]`).forEach(b=>b.classList.remove('on')); el.classList.add('on');
+  // Mostrar descrição da nota selecionada
+  document.querySelectorAll(`[id^="det_${k}_"]`).forEach(d=>d.style.display='none');
+  const det=document.getElementById(`det_${k}_${v}`);
+  if(det) det.style.display='block';
   calcSaude();
 }
 function calcSaude(){
@@ -1278,10 +1496,182 @@ function captGPS(){
     showToast('⚠️ '+(m[err.code]||'Erro GPS'));
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
-function prevPhoto(e){
+// ── FOTOS COM COMPRESSÃO ──────────────────────────────
+let extraPhotosB64 = [];
+let _iaData = null;
+
+function compressImage(file, maxW=1200, quality=0.82){
+  return new Promise(resolve=>{
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      let w=img.width, h=img.height;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+      const canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src=url;
+  });
+}
+
+async function handlePhoto(e, tipo){
   const f=e.target.files[0]; if(!f) return;
-  if(f.size>2*1024*1024){showToast('⚠️ Foto maior que 2MB');return;}
-  const r=new FileReader(); r.onload=ev=>{photoB64=ev.target.result;const p=document.getElementById('photo-preview');p.src=photoB64;p.style.display='block';};r.readAsDataURL(f);
+  showToast('🔄 Comprimindo imagem...');
+  const b64 = await compressImage(f);
+  const kb = Math.round(b64.length * 0.75 / 1024);
+  photoB64 = b64;
+  const prev = document.getElementById('photo-preview');
+  prev.src = b64;
+  document.getElementById('photoPreviewWrap').style.display='block';
+  document.getElementById('photoInfo').textContent = `📁 Original: ${Math.round(f.size/1024)}KB → Comprimida: ${kb}KB`;
+  document.getElementById('btnIA').style.display='flex';
+  showToast(`✅ Foto pronta (${kb}KB)`);
+}
+
+function clearPhoto(){
+  photoB64=null;
+  document.getElementById('photoPreviewWrap').style.display='none';
+  document.getElementById('btnIA').style.display='none';
+  document.getElementById('iaResult').style.display='none';
+}
+
+async function addExtraPhotos(e){
+  const files=[...e.target.files];
+  showToast(`🔄 Comprimindo ${files.length} foto(s)...`);
+  for(const f of files){
+    const b64=await compressImage(f,800,0.75);
+    extraPhotosB64.push(b64);
+  }
+  renderExtraPhotos();
+  showToast(`✅ ${files.length} foto(s) adicionada(s)`);
+}
+
+function renderExtraPhotos(){
+  const wrap=document.getElementById('extraPhotos');
+  wrap.innerHTML=extraPhotosB64.map((b,i)=>`
+    <div style="position:relative;flex-shrink:0;">
+      <img src="${b}" style="width:72px;height:72px;object-fit:cover;border-radius:var(--r8);">
+      <button onclick="extraPhotosB64.splice(${i},1);renderExtraPhotos();" style="position:absolute;top:-4px;right:-4px;background:#e05252;color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;">✕</button>
+    </div>`).join('');
+}
+
+// ── IDENTIFICAÇÃO POR IA (Claude Vision) ─────────────────
+async function identificarEspecie(){
+  if(!photoB64){showToast('⚠️ Tire uma foto primeiro');return;}
+  const btn=document.getElementById('btnIA');
+  btn.innerHTML='⏳ Analisando imagem...'; btn.disabled=true;
+
+  const prompt = `Você é um botânico especialista em flora do Brasil Central — Pantanal, Cerrado e Amazônia Mato-Grossense, com profundo conhecimento de espécies urbanas de Cáceres-MT.
+
+Analise esta foto e identifique a espécie arbórea. Responda APENAS em JSON válido, sem nenhum texto antes ou depois:
+{
+  "nome_popular": "nome popular mais comum no Brasil",
+  "nome_cientifico": "Genus species",
+  "familia": "Família botânica",
+  "genero": "Gênero",
+  "origem": "nativa_pantanal ou nativa_brasil ou exotica ou invasora",
+  "bioma": "Pantanal ou Cerrado ou Amazônia ou Múltiplos",
+  "confianca": "alta ou media ou baixa",
+  "fenologia": "vegetativa ou floracao ou frutificacao ou senescencia ou dormencia",
+  "servicos": ["sombra","paisagismo","fruto_humano","fruto_animal","termico","moradia","carbono","polinizacao","hidrologia","medicinal"],
+  "densidade_madeira": 0.6,
+  "observacoes_tax": "características diagnósticas visíveis: forma da folha, textura da casca, flores ou frutos se visíveis",
+  "descricao_botanica": "descrição técnica resumida: porte, tronco, folhas, flores, frutos",
+  "importancia_ecologica": "serviços ambientais e interações com fauna",
+  "status_conservacao": "status IUCN, IBAMA ou lista estadual se ameaçada",
+  "usos": "usos tradicionais, medicinais ou econômicos conhecidos",
+  "nota_bairro": "observação sobre adequação para arborização urbana"
+}
+
+Nos servicos, inclua APENAS os que se aplicam à espécie identificada, da lista de valores possíveis: sombra, paisagismo, fruto_humano, fruto_animal, termico, moradia, carbono, polinizacao, hidrologia, medicinal.`;
+
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:photoB64.split(',')[1]}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    const data = await resp.json();
+    if(data.error){throw new Error(data.error.message||'Erro API');}
+    const txt = data.content.map(c=>c.text||'').join('');
+    const clean = txt.replace(/```json|```/g,'').trim();
+    _iaData = JSON.parse(clean);
+    // APLICA AUTOMATICAMENTE ao formulário
+    aplicarIA(_iaData);
+    renderIAResult(_iaData);
+  }catch(e){
+    console.error('IA erro:',e);
+    if(e.message.includes('API key')||e.message.includes('auth')){
+      showToast('⚠️ Requer HTTPS — hospede no GitHub Pages para usar IA');
+    } else {
+      showToast('⚠️ ' + e.message.substring(0,60));
+    }
+  }
+  btn.innerHTML='🔍 Analisar Outra Foto'; btn.disabled=false;
+}
+
+function renderIAResult(d){
+  if(!d) return;
+  const conf = {alta:'🟢 Alta',media:'🟡 Média',baixa:'🟠 Baixa'}[d.confianca]||d.confianca||'—';
+  const svcMap={sombra:'🌤️ Sombra',fruto_humano:'🍎 Fruto humano',fruto_animal:'🦜 Fauna',
+    paisagismo:'🌸 Paisagismo',termico:'🌡️ Reg. Térmica',moradia:'🐦 Moradia',
+    carbono:'🌍 Carbono',polinizacao:'🐝 Polinizadores',hidrologia:'💧 Hídrico',medicinal:'💊 Medicinal'};
+
+  document.getElementById('iaResultBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-size:18px;font-weight:900;color:var(--g2);">${d.nome_popular||'—'}</div>
+      <span style="background:#fef9c3;color:#713f12;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;">${conf}</span>
+    </div>
+    <div style="font-style:italic;font-size:13px;color:var(--t3);margin-bottom:4px;">${d.nome_cientifico||'—'} · ${d.familia||'—'}</div>
+    <div style="font-size:12px;color:#0ea5e9;font-weight:600;margin-bottom:10px;">${d.bioma||'—'}</div>
+    ${d.descricao_botanica?`<div style="font-size:12.5px;line-height:1.65;color:#344e41;margin-bottom:8px;">${d.descricao_botanica}</div>`:''}
+    ${(d.servicos||[]).length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">${d.servicos.map(s=>`<span style="background:#d8f3dc;color:#1b4332;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700;">${svcMap[s]||s}</span>`).join('')}</div>`:''}
+    <div style="background:#d1fae5;border-radius:8px;padding:9px 12px;font-size:12px;color:#065f46;font-weight:600;">✅ Dados preenchidos automaticamente no formulário</div>
+  `;
+  document.getElementById('iaResult').style.display='block';
+  document.getElementById('btnAplicar').style.display='none';
+}
+
+function aplicarIA(d){
+  if(!d) d=_iaData;
+  if(!d) return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!=='')el.value=v;};
+  set('f_nome', d.nome_popular);
+  set('f_sci',  d.nome_cientifico);
+  set('f_fam',  d.familia);
+  set('f_gen',  d.genero);
+  set('f_orig', d.origem);
+  set('f_fen',  d.fenologia);
+  if(d.densidade_madeira) set('f_dens', d.densidade_madeira);
+  // Observações taxonômicas = obs_tax + importancia
+  const taxTxt = [d.observacoes_tax, d.importancia_ecologica, d.usos].filter(Boolean).join(' | ');
+  if(taxTxt) set('f_tax', taxTxt);
+  // Observações gerais
+  const obsTxt = [d.nota_bairro, d.status_conservacao ? 'Status: '+d.status_conservacao : ''].filter(Boolean).join(' — ');
+  if(obsTxt){ const obs=document.getElementById('f_obs'); if(obs) obs.value=obsTxt; }
+  // Serviços ecossistêmicos
+  if(d.servicos && d.servicos.length){
+    document.querySelectorAll('#svcsEl input[type=checkbox]').forEach(cb=>{
+      cb.checked = d.servicos.includes(cb.value);
+    });
+  }
+  autoCalc();
+  // Rolar para métricas (que o usuário precisa preencher)
+  setTimeout(()=>{
+    const el=document.getElementById('f_ht');
+    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+  },600);
+  showToast('✅ IA preencheu o formulário — complete as métricas e saúde!');
 }
 function nxtId(){const ns=(window._inds||[]).map(i=>parseInt((i.id||'CPF-000').replace('CPF-',''))||0);return'CPF-'+String((ns.length?Math.max(...ns):0)+1).padStart(3,'0');}
 
@@ -1337,7 +1727,7 @@ async function saveInd(){
     col:document.getElementById('f_col').value.trim(),
     inst:document.getElementById('f_inst').value.trim(),
     obs:document.getElementById('f_obs').value.trim(),
-    foto:photoB64, ts:new Date().toISOString()
+    foto:photoB64, fotosExtra:extraPhotosB64.slice(0,5), ts:new Date().toISOString()
   };
   showToast('💾 Salvando...');
   await addInd(ind);
@@ -1351,6 +1741,10 @@ function resetForm(){
   document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('on'));
   sVals={};photoB64=null;
   document.getElementById('photo-preview').style.display='none';
+  document.getElementById('photoPreviewWrap').style.display='none';
+  document.getElementById('iaResult').style.display='none';
+  document.getElementById('btnIA').style.display='none';
+  extraPhotosB64=[]; renderExtraPhotos(); _iaData=null;
   document.getElementById('notaNum').textContent='—';
   document.getElementById('notaBar').style.width='0%';
   document.getElementById('notaStatus').textContent='Preencha os critérios abaixo';
@@ -1407,6 +1801,393 @@ function goToMyLocation(){
 }
 
 function showToast(msg,dur=3000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+
+// ═══════ SISTEMA DE DICAS ═══════
+const TIPS = {
+  altura:{
+    emoji:'📐',
+    title:'Altura Total da Árvore',
+    body:`<b>O que é?</b> É a distância do chão até o ponto mais alto da árvore.<br><br>
+<b>Como medir?</b> Use um hipsômetro digital, vara graduada, ou o método da sombra:<br>
+• Meça a sombra da árvore no chão<br>
+• Coloque um objeto de altura conhecida (ex: régua de 1m) ao lado<br>
+• Calcule pela proporção: Altura da árvore = (sombra da árvore × altura da régua) ÷ sombra da régua<br><br>
+<b>Exemplo:</b> Sombra da árvore = 8m, régua de 1m faz sombra de 0,5m → Altura = 8 × 1 ÷ 0,5 = <b>16 metros</b>`
+  },
+  fuste:{
+    emoji:'🪵',
+    title:'Altura do Fuste',
+    body:`<b>O que é?</b> É a parte "limpa" do tronco, sem galhos. Vai do chão até onde começam os primeiros galhos grandes.<br><br>
+<b>Imagine assim:</b> Se a árvore fosse uma pessoa, o fuste seria as pernas — a parte de baixo, sem braços.<br><br>
+<b>Como medir?</b> Meça do nível do solo até a inserção do primeiro galho vivo principal.<br><br>
+<b>Por que importa?</b> Fustes mais altos indicam árvores que cresceram competindo por luz, ou que foram manejadas.`
+  },
+  bifurcacao:{
+    emoji:'🌿',
+    title:'Altura de Bifurcação',
+    body:`<b>O que é?</b> É a altura onde o tronco principal se divide em dois ou mais troncos.<br><br>
+<b>Diferença:</b><br>
+• <b>Fuste</b> → onde começa qualquer galho<br>
+• <b>Bifurcação</b> → onde o tronco principal se <i>divide</i><br><br>
+<b>Por que importa?</b> Bifurcações muito baixas (menos de 1,5m) podem ser perigosas em ruas, pois podem rachar com ventos fortes.<br><br>
+<b>Como medir?</b> Do solo até o ponto exato da divisão do tronco.`
+  },
+  dap:{
+    emoji:'📏',
+    title:'DAP — Diâmetro à Altura do Peito',
+    body:`<b>O que é?</b> É o diâmetro (grossura) do tronco medido a exatamente <b>1,30 metros do solo</b>. É o padrão mundial em ciências florestais.<br><br>
+<b>Por que 1,30m?</b> Porque é a altura do peito de um adulto de estatura média — fácil de medir sem agachar ou se esticar.<br><br>
+<b>Como medir?</b><br>
+• Envolva o tronco com uma fita métrica a 1,30m do solo<br>
+• O valor da fita é a <b>CAP</b> (circunferência)<br>
+• Divida por π (3,1416) para obter o <b>DAP</b><br><br>
+<b>Exemplo:</b> CAP = 63 cm → DAP = 63 ÷ 3,14 = <b>20 cm</b>`
+  },
+  cap:{
+    emoji:'🔄',
+    title:'CAP — Circunferência à Altura do Peito',
+    body:`<b>O que é?</b> É o comprimento ao redor do tronco medido a 1,30m do solo. É mais fácil de medir que o DAP com uma fita simples.<br><br>
+<b>Relação com o DAP:</b><br>
+• CAP = DAP × π (3,1416)<br>
+• DAP = CAP ÷ π (3,1416)<br><br>
+<b>O app calcula automaticamente!</b> Se você preencher o DAP, o CAP é calculado sozinho, e vice-versa.<br><br>
+<b>Instrumento:</b> Qualquer fita métrica flexível. Pode ser a fita de costura da sua avó! 😄`
+  },
+  fustes:{
+    emoji:'🌲',
+    title:'Número de Fustes (Troncos)',
+    body:`<b>O que é?</b> Quantos troncos a árvore tem saindo do solo.<br><br>
+<b>Exemplos:</b><br>
+• Ipê amarelo bem formado → <b>1 fuste</b><br>
+• Moita de bambu → <b>muitos fustes</b><br>
+• Árvore que brotou depois de corte → pode ter <b>2 ou 3 fustes</b><br><br>
+<b>Por que importa?</b> Árvores com múltiplos fustes podem ter estrutura menos estável e risco maior de queda.`
+  },
+  copa:{
+    emoji:'🌳',
+    title:'Diâmetro de Copa',
+    body:`<b>O que é?</b> É a largura da copa (parte verde da árvore) medida em duas direções:<br>
+• <b>N-S:</b> de Norte para Sul<br>
+• <b>L-O:</b> de Leste para Oeste (Leste = onde o sol nasce, Oeste = onde o sol se põe)<br><br>
+<b>Como medir?</b><br>
+1. Fique embaixo da árvore e olhe para cima<br>
+2. Identifique onde termina a copa na direção Norte-Sul<br>
+3. Marque os dois pontos no chão e meça a distância<br>
+4. Repita na direção Leste-Oeste<br><br>
+<b>Dica:</b> Use a bússola do celular para encontrar as direções!`
+  },
+  sombra:{
+    emoji:'☀️',
+    title:'Área de Sombra Estimada',
+    body:`<b>O que é?</b> É a área projetada no chão pela copa da árvore quando o sol está no alto (meio-dia).<br><br>
+<b>O app calcula automaticamente</b> usando a fórmula da elipse:<br>
+<code style="background:#f0f4f1;padding:2px 6px;border-radius:4px;font-size:12px;">Área = π × (copa N-S ÷ 2) × (copa L-O ÷ 2)</code><br><br>
+<b>Por que importa?</b> Árvores maiores fazem mais sombra, reduzem a temperatura do asfalto e melhoram o conforto térmico das pessoas!<br><br>
+<b>Exemplo:</b> Copa de 6m × 5m → Sombra ≈ <b>23,6 m²</b> — quase uma sala de aula!`
+  },
+  distImovel:{
+    emoji:'🏠',
+    title:'Distância do Imóvel',
+    body:`<b>O que é?</b> É a distância entre o tronco da árvore e o muro, parede ou construção mais próxima.<br><br>
+<b>Por que medir?</b> Árvores muito perto de construções podem:<br>
+• Danificar fundações com as raízes<br>
+• Quebrar janelas com galhos em tempestades<br>
+• Levantar calçadas<br><br>
+<b>Referência:</b><br>
+• Menos de 1m → ⚠️ Atenção<br>
+• 1 a 3m → Monitorar<br>
+• Mais de 3m → Seguro<br><br>
+<b>Como medir?</b> Trena ou passos calibrados (1 passo ≈ 0,7m).`
+  },
+  inclinacao:{
+    emoji:'📐',
+    title:'Inclinação do Tronco',
+    body:`<b>O que é?</b> É o ângulo que o tronco forma com a vertical (linha reta para o céu).<br><br>
+<b>Referência de risco:</b><br>
+• 0° a 5° → Normal, sem problemas<br>
+• 6° a 15° → Leve inclinação, monitorar<br>
+• 16° a 30° → Atenção, possível risco<br>
+• Acima de 30° → 🚨 RISCO DE QUEDA — acionar manejo urgente<br><br>
+<b>Como medir?</b> Use o aplicativo "Medidor de Nível" do celular encostado no tronco. É rápido!`
+  },
+  saude_geral:{
+    emoji:'🩺',
+    title:'Como funciona a Nota de Saúde?',
+    body:`A saúde da árvore é avaliada por <b>8 critérios</b>. Cada um recebe uma nota de <b>0 a 4</b>.<br><br>
+<b>Escala de pontuação:</b><br>
+🔴 <b>0 = Péssimo</b> — situação grave, precisa de intervenção urgente<br>
+🟠 <b>1 = Ruim</b> — problema sério, monitoramento intenso<br>
+🟡 <b>2 = Regular</b> — sinais de estresse, atenção necessária<br>
+🟢 <b>3 = Bom</b> — dentro do esperado, sem problemas<br>
+💚 <b>4 = Ótimo</b> — árvore exuberante e saudável<br><br>
+<b>Nota Final (0 a 10):</b> É calculada como média dos 8 critérios com pesos diferentes. Critérios mais importantes (como tronco e vitalidade) têm peso maior.<br><br>
+<b>Interpretação:</b><br>
+🟢 <b>7 a 10</b> → Bom estado<br>
+🟡 <b>4 a 6,9</b> → Estado regular<br>
+🔴 <b>0 a 3,9</b> → Estado crítico`
+  },
+  origem:{
+    emoji:'🌍',
+    title:'Origem da Espécie',
+    body:`<b>Nativa Pantanal:</b> Espécie que evoluiu naturalmente no bioma Pantanal. É parte do ecossistema original.<br><br>
+<b>Nativa Brasil:</b> Espécie brasileira, mas não originária especificamente do Pantanal. Pode ser do Cerrado ou Amazônia.<br><br>
+<b>Exótica:</b> Espécie trazida de outro país ou continente. Pode ser benéfica (ex: mangueira) mas não é parte do ecossistema original.<br><br>
+<b>⚠️ Exótica Invasora:</b> Espécie de outro lugar que se espalha muito e prejudica as nativas. É o "vilão" da biodiversidade!<br><br>
+<b>Exemplos em Cáceres:</b><br>
+🌿 Ipê, manduvi, acuri → Nativos<br>
+🌸 Mangueira, ficus ornamental → Exóticos<br>
+⚠️ Leucena → Invasora`
+  },
+  fenologia:{
+    emoji:'🌸',
+    title:'Fenologia — O Calendário da Árvore',
+    body:`Fenologia é o estudo dos eventos cíclicos da vida da planta. É como o "calendário" da árvore!<br><br>
+<b>Vegetativa:</b> A árvore está só com folhas verdes, sem flores nem frutos. Foco no crescimento.<br><br>
+<b>Floração 🌸:</b> A árvore está com flores abertas. Importante para polinizadores como abelhas e borboletas!<br><br>
+<b>Frutificação 🍎:</b> A árvore está produzindo frutos. Momento importante para aves e mamíferos que se alimentam.<br><br>
+<b>Senescência 🍂:</b> As folhas estão ficando amarelas ou caindo. Normal em espécies decíduas (que perdem folhas no seco).<br><br>
+<b>Dormência:</b> A árvore está "descansando", sem folhas. Comum em algumas espécies durante a seca.`
+  },
+  ia:{
+    emoji:'🤖',
+    title:'O que é a Identificação por IA?',
+    body:`É como um <b>"Google Lens"</b> especializado em árvores do Pantanal, Cerrado e Amazônia!<br><br>
+<b>Como funciona:</b><br>
+1. 📸 Tire uma foto da árvore (pode ser do tronco, folhas, flores ou frutos)<br>
+2. 🔍 Toque em <b>"Identificar Espécie com IA"</b><br>
+3. 🤖 A inteligência artificial analisa a imagem<br>
+4. ✅ Aparece o nome popular, científico, família, bioma e uma curiosidade divertida!<br><br>
+<b>O que ela detecta:</b><br>
+• Nome da espécie (popular e científico)<br>
+• Família botânica<br>
+• Bioma de origem (Pantanal, Cerrado ou Amazônia)<br>
+• Serviços ecossistêmicos<br>
+• Curiosidade para as crianças!<br><br>
+<b>⚠️ Atenção:</b> A IA pode errar! Sempre confirme com um especialista em caso de dúvida. A confiança da análise é indicada (Alta/Média/Baixa).`
+  },
+};
+
+function showTip(key){
+  const t = TIPS[key]; if(!t) return;
+  document.getElementById('tipEmoji').textContent = t.emoji;
+  document.getElementById('tipTitle').textContent = t.title;
+  document.getElementById('tipBody').innerHTML = t.body;
+  document.getElementById('tipOverlay').classList.add('open');
+}
+function closeTip(){
+  document.getElementById('tipOverlay').classList.remove('open');
+}
+
+// ═══════ CATÁLOGO DE ESPÉCIES ═══════
+// Fotos: Wikimedia Commons, licença CC-BY-SA / domínio público
+const CATALOGO = [
+  {nome:'Ipê Amarelo',sci:'Handroanthus albus',familia:'Bignoniaceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjljMyIvPjxyZWN0IHg9IjkyIiB5PSIxMDAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI1MCIgZmlsbD0iIzhCNjkxNCIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNzgiIHJ4PSI1MiIgcnk9IjQwIiBmaWxsPSIjZWFiMzA4Ii8+PGVsbGlwc2UgY3g9Ijc1IiBjeT0iOTAiIHJ4PSIzNCIgcnk9IjI4IiBmaWxsPSIjY2E4YTA0Ii8+PGVsbGlwc2UgY3g9IjEyNSIgY3k9Ijg4IiByeD0iMzAiIHJ5PSIyNCIgZmlsbD0iI2VhYjMwOCIvPjxjaXJjbGUgY3g9Ijg1IiBjeT0iNjUiIHI9IjYiIGZpbGw9IiNmZGUwNDciLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI1OCIgcj0iNyIgZmlsbD0iI2ZkZTA0NyIvPjxjaXJjbGUgY3g9IjExNSIgY3k9IjY3IiByPSI1IiBmaWxsPSIjZmRlMDQ3Ii8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzkyNDAwZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkhhbmRyb2FudGh1cyBhbGJ1czwvdGV4dD48L3N2Zz4=',
+   status:'Vulnerável — Lista Vermelha MT',
+   desc:'Árvore decídua de 4 a 20 metros, característica da arborização urbana de Cáceres-MT. Casca cinza-acastanhada, rugosa e sulcada longitudinalmente. Folhas compostas digitadas, caducas. Flores tubulosas amarelas em panículas terminais, surgem antes das folhas novas (julho–setembro). Fruto síliqua lenhosa, linear. Amplitude altitudinal: 100–1200m s.n.m.',
+   importancia:'Espécie com alto valor paisagístico, usada na arborização urbana e restauração do Pantanal. Mel produzido por abelhas visitantes é apreciado regionalmente. Potencial candidata a Patrimônio Natural de Cáceres-MT.',
+   servicos:['sombra','paisagismo','polinizacao','termico'],dens:0.7,orig:'nativa_pantanal'},
+  {nome:'Ipê Roxo',sci:'Handroanthus impetiginosus',familia:'Bignoniaceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YzZThmZiIvPjxyZWN0IHg9IjkyIiB5PSIxMDAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI1MCIgZmlsbD0iIzZiNGMxMSIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNzgiIHJ4PSI1MiIgcnk9IjQwIiBmaWxsPSIjYTg1NWY3Ii8+PGVsbGlwc2UgY3g9Ijc1IiBjeT0iOTAiIHJ4PSIzNCIgcnk9IjI4IiBmaWxsPSIjN2MzYWVkIi8+PGVsbGlwc2UgY3g9IjEyNSIgY3k9Ijg4IiByeD0iMzAiIHJ5PSIyNCIgZmlsbD0iIzkzMzNlYSIvPjxjaXJjbGUgY3g9Ijg1IiBjeT0iNjUiIHI9IjYiIGZpbGw9IiNlODc5ZjkiLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI1OCIgcj0iNyIgZmlsbD0iI2U4NzlmOSIvPjxjaXJjbGUgY3g9IjExNSIgY3k9IjY3IiByPSI1IiBmaWxsPSIjZDk0NmVmIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzU4MWM4NyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkhhbmRyb2FudGh1cyBpbXBldGlnaW5vc3VzPC90ZXh0Pjwvc3ZnPg==',
+   status:'Quase Ameaçada',
+   desc:'Árvore de 8 a 30 metros, decídua. Tronco cilíndrico, casca acinzentada com fissuras profundas. Flores roxo-rosadas em inflorescências densas, antes da folhação. Madeira de alta densidade (0,8 g/cm³), durável e resistente. Amplamente usada na medicina popular — infusão da casca com propriedades anti-inflamatórias comprovadas.',
+   importancia:'Referência em fitoterapia brasileira. Espécie-chave para polinizadores nativos. Indicada para recuperação de matas ciliares.',
+   servicos:['sombra','paisagismo','medicinal','polinizacao'],dens:0.8,orig:'nativa_brasil'},
+  {nome:'Buriti',sci:'Mauritia flexuosa',familia:'Arecaceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9Ijk1IiB5PSIzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzkyNDAwZSIgcng9IjMiLz48bGluZSB4MT0iMTAwIiB5MT0iNDAiIHgyPSI1MCIgeTI9IjgwIiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSI0NSIgeDI9IjE1MCIgeTI9Ijc1IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzNSIgeDI9IjY1IiB5Mj0iNTUiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjM1IiB4Mj0iMTM1IiB5Mj0iNTAiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjMwIiB4Mj0iMTAwIiB5Mj0iMTAiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjgiIGZpbGw9IiNmNTllMGIiLz48Y2lyY2xlIGN4PSI4OCIgY3k9Ijc4IiByPSI2IiBmaWxsPSIjZjU5ZTBiIi8+PGNpcmNsZSBjeD0iMTEyIiBjeT0iNzYiIHI9IjciIGZpbGw9IiNkOTc3MDYiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTY2NTM0IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+TWF1cml0aWEgZmxleHVvc2E8L3RleHQ+PC9zdmc+',
+   status:'Pouco Preocupante',
+   desc:'Palmeira dioica de 20 a 35 metros, estritamente associada a veredas e ambientes úmidos. Estipe robusto com cicatrizes foliares. Folhas palmatissectas de até 2 metros de diâmetro. Frutos elipsoides com escamas vermelhas, ricos em carotenoides e vitamina A. Indicadora de lençol freático superficial — sua presença revela nascentes e cursos d’água.',
+   importancia:'Espécie-chave do Cerrado e Pantanal. Seus frutos alimentam araras, tucanos, pacas e antas. Utilizada em culinária, artesanato e cosmética. Tombamento recomendado em veredas.',
+   servicos:['fruto_humano','fruto_animal','sombra','hidrologia'],dens:0.4,orig:'nativa_brasil'},
+  {nome:'Jatobá',sci:'Hymenaea courbaril',familia:'Fabaceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjNjNyIvPjxyZWN0IHg9IjkwIiB5PSI4MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjY1IiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxyZWN0IHg9Ijk0IiB5PSI4OCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjU1IiBmaWxsPSIjOTI0MDBlIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjYwIiByeD0iNjIiIHJ5PSI0NSIgZmlsbD0iIzE2NjUzNCIvPjxlbGxpcHNlIGN4PSI3MCIgY3k9IjcwIiByeD0iNDAiIHJ5PSIzMCIgZmlsbD0iIzE1ODAzZCIvPjxlbGxpcHNlIGN4PSIxMzAiIGN5PSI2OCIgcng9IjM2IiByeT0iMjgiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNDUiIHJ4PSIzMCIgcnk9IjIwIiBmaWxsPSIjMjJjNTVlIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzc4MzUwZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkh5bWVuYWVhIGNvdXJiYXJpbDwvdGV4dD48L3N2Zz4=',
+   status:'Vulnerável',
+   desc:'Árvore de 20 a 40 metros, uma das maiores do Cerrado e Pantanal. Tronco robusto, casca acinzentada, rimosa. Folhas bifolioladas, coriáceas, persistentes. Frutos legumes lenhosos com polpa farinosa nutritiva. Resina fóssil (copal) usada em vernizes. Madeira com densidade 0,85 g/cm³, excelente para construção civil. Pode viver mais de 500 anos.',
+   importancia:'Grande estoque de carbono — indivíduos maduros estocam mais de 2 toneladas de C. Frutos consumidos por antas, cutias e cotias. Fundamental em projetos de restauração florestal.',
+   servicos:['fruto_humano','fruto_animal','sombra','carbono'],dens:0.85,orig:'nativa_brasil'},
+  {nome:'Aroeira Verdadeira',sci:'Myracrodruon urundeuva',familia:'Anacardiaceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZjdlZCIvPjxyZWN0IHg9IjkyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjYwIiBmaWxsPSIjN2MyZDEyIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2OCIgcng9IjU1IiByeT0iNDAiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI3OCIgcng9IjM4IiByeT0iMjgiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNzYiIHJ4PSIzNCIgcnk9IjI2IiBmaWxsPSIjMTQ1MzJkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjUyIiByeD0iMjgiIHJ5PSIxOCIgZmlsbD0iIzIyYzU1ZSIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iODIiIHI9IjMiIGZpbGw9IiNlZjQ0NDQiLz48Y2lyY2xlIGN4PSI5NSIgY3k9Ijg4IiByPSIzIiBmaWxsPSIjZGMyNjI2Ii8+PGNpcmNsZSBjeD0iMTEyIiBjeT0iODQiIHI9IjMiIGZpbGw9IiNlZjQ0NDQiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjN2MyZDEyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+TXlyYWNyb2RydW9uIHVydW5kZXV2YTwvdGV4dD48L3N2Zz4=',
+   status:'Ameaçada de Extinção — IBAMA',
+   desc:'Árvore de 7 a 14 metros, decídua, xerófita. Uma das madeiras mais densas do Brasil (0,9 g/cm³). Casca parda, profundamente sulcada. Folhas compostas imparipinadas. Flores pequenas, brancas, em panículas. Frutos drupas vermelhas. Raízes profundas que resistem a secas prolongadas. Exsudato resinoso com propriedades antimicrobianas.',
+   importancia:'Espécie protegida por lei federal. Madeira imputrescível usada em moirões, dormentes e obras hidráulicas. Casca medicinal reconhecida pela ANVISA. Candidata prioritária a tombamento municipal.',
+   servicos:['sombra','medicinal','carbono'],dens:0.9,orig:'nativa_brasil'},
+  {nome:'Paineira',sci:'Ceiba speciosa',familia:'Malvaceae',bioma:'Amazônia',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZkZjJmOCIvPjxyZWN0IHg9IjkyIiB5PSI3MCIgd2lkdGg9IjE2IiBoZWlnaHQ9Ijc1IiBmaWxsPSIjNmI3MjgwIiByeD0iNiIvPjxyZWN0IHg9Ijg4IiB5PSI5MCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUwIiBmaWxsPSIjNGI1NTYzIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1NSIgcng9IjU4IiByeT0iMzgiIGZpbGw9IiNlYzQ4OTkiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI2NiIgcng9IjM4IiByeT0iMjYiIGZpbGw9IiNkYjI3NzciLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNjQiIHJ4PSIzNCIgcnk9IjI0IiBmaWxsPSIjZjQ3MmI2Ii8+PGNpcmNsZSBjeD0iOTAiIGN5PSI0OCIgcj0iOCIgZmlsbD0iI2ZkZjRmZiIvPjxjaXJjbGUgY3g9IjEwOCIgY3k9IjQ0IiByPSI3IiBmaWxsPSIjZmRmNGZmIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNTQiIHI9IjYiIGZpbGw9IiNmY2U3ZjMiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjOWQxNzRkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+Q2VpYmEgc3BlY2lvc2E8L3RleHQ+PC9zdmc+',
+   status:'Pouco Preocupante',
+   desc:'Árvore de grande porte (15–30m), decídua, com tronco barrigudo coberto de espinhos cônicos. Flores rosa-lilás com centro branco-amarelado, vistosas. Fruto cápsula ovoide, deiscente, com fibras algodonosas brancas (paina). Sementes negras envolvidas na paina usada como enchimento. Tronco verde-acinzentado realiza fotossíntese.',
+   importancia:'Espécie ornamental de alto impacto visual para arborização urbana. Flores com abundante néctar atraem beija-flores e morcegos polinizadores. Fibra da paina utilizada por aves na construção de ninhos.',
+   servicos:['paisagismo','moradia','polinizacao','sombra'],dens:0.35,orig:'nativa_brasil'},
+  {nome:'Cerejeira-do-Cerrado',sci:'Amburana cearensis',familia:'Fabaceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkyIiB5PSI4OCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjU3IiBmaWxsPSIjOTI0MDBlIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3MCIgcng9IjU0IiByeT0iMzgiIGZpbGw9IiMyMmM1NWUiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4MCIgcng9IjM2IiByeT0iMjYiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iNzgiIHJ4PSIzMiIgcnk9IjI0IiBmaWxsPSIjMTU4MDNkIi8+PGNpcmNsZSBjeD0iODgiIGN5PSI2MiIgcj0iNSIgZmlsbD0iI2Y5ZmFmYiIvPjxjaXJjbGUgY3g9IjEwMiIgY3k9IjU2IiByPSI2IiBmaWxsPSIjZjlmYWZiIi8+PGNpcmNsZSBjeD0iMTE2IiBjeT0iNjQiIHI9IjQiIGZpbGw9IiNmOWZhZmIiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTQ1MzJkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+QW1idXJhbmEgY2VhcmVuc2lzPC90ZXh0Pjwvc3ZnPg==',
+   status:'Vulnerável — IUCN',
+   desc:'Árvore de 8 a 20 metros, decídua. Casca papiráceo-esfoliante, bege-acastanhada, aromática. Folhas compostas imparipinadas. Flores brancas perfumadas em racemos axilares. Semente com substância cumarina, responsável pelo aroma característico de baunilha. Madeira moderadamente pesada, resistente a insetos por compostos naturais.',
+   importancia:'Espécie de alto valor para etnobotânica — cumarina e imbúrana usadas em perfumaria e medicina popular. Ameaçada pelo extrativismo ilegal da madeira. Tombamento urgente recomendado.',
+   servicos:['sombra','paisagismo','medicinal'],dens:0.6,orig:'nativa_pantanal'},
+  {nome:'Manduvi',sci:'Sterculia apetala',familia:'Malvaceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZjlmZiIvPjxyZWN0IHg9IjkyIiB5PSI4MiIgd2lkdGg9IjE4IiBoZWlnaHQ9IjYzIiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2NCIgcng9IjU4IiByeT0iNDIiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSI3NiIgcng9IjQwIiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTMwIiBjeT0iNzQiIHJ4PSIzNiIgcnk9IjI4IiBmaWxsPSIjMTU4MDNkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjUwIiByeD0iMjYiIHJ5PSIxOCIgZmlsbD0iIzRhZGU4MCIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMCw1MCkiPjxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjEyIiByeT0iNiIgZmlsbD0iIzI1NjNlYiIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwKSIvPjxjaXJjbGUgY3g9Ii04IiBjeT0iMiIgcj0iMyIgZmlsbD0iIzFkNGVkOCIvPjwvZz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTY2NTM0IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+U3RlcmN1bGlhIGFwZXRhbGE8L3RleHQ+PC9zdmc+',
+   status:'Vulnerável — espécie-chave Pantanal',
+   desc:'Árvore de 15 a 30 metros, semicaducifolia. Tronco cilíndrico, casca acinzentada, levemente fissuras. Folhas grandes, palmatissectas. Frutos folículos, vermelhos quando maduros, com sementes negras ricas em lipídeos. Principal fonte alimentar da arara-azul-grande (Anodorhynchus hyacinthinus) no Pantanal. Ocorre em cordilheiras e capões.',
+   importancia:'Relação de dependência com a arara-azul-grande torna o manduvi indispensável para conservação desta ave. Comprometimento desta espécie implica colapso direto na população de araras. Tombamento como patrimônio natural é estratégia de conservação reconhecida.',
+   servicos:['fruto_animal','moradia','sombra','carbono'],dens:0.45,orig:'nativa_pantanal'},
+  {nome:'Mogno Brasileiro',sci:'Swietenia macrophylla',familia:'Meliaceae',bioma:'Amazônia',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjJmMiIvPjxyZWN0IHg9IjkwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9Ijg1IiBmaWxsPSIjN2MyZDEyIiByeD0iNiIvPjxwb2x5Z29uIHBvaW50cz0iOTAsNjAgMTAwLDE1IDExMCw2MCIgZmlsbD0iIzkyNDAwZSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1MCIgcng9IjY1IiByeT0iNDAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iNjUiIGN5PSI2MiIgcng9IjQ0IiByeT0iMzIiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iMTM1IiBjeT0iNjAiIHJ4PSI0MCIgcnk9IjMwIiBmaWxsPSIjMTQ1MzJkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjM2IiByeD0iMzIiIHJ5PSIyMiIgZmlsbD0iIzIyYzU1ZSIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiM3YzJkMTIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5Td2lldGVuaWEgbWFjcm9waHlsbGE8L3RleHQ+PC9zdmc+',
+   status:'Vulnerável — CITES Apêndice II',
+   desc:'Árvore emergente de 30 a 50 metros, um dos maiores representantes da flora neotropical. Tronco reto, cilíndrico, com base levemente estriada. Folhas compostas paripinadas, semicaducas. Fruto cápsula lenhosa, pentavalve, com sementes aladas. Madeira cerne avermelhado, textura média, brilhante, extremamente valorizada comercialmente.',
+   importancia:'Espécie listada no CITES e IBAMA. Seu comércio ilegal é um dos principais drivers de desmatamento amazônico. Presença de indivíduos maduros indica floresta primária conservada. Tombamento tem precedente legal nacional.',
+   servicos:['sombra','carbono','moradia'],dens:0.75,orig:'nativa_brasil'},
+  {nome:'Castanheira-do-Pará',sci:'Bertholletia excelsa',familia:'Lecythidaceae',bioma:'Amazônia',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkxIiB5PSI1NSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkwIiBmaWxsPSIjNzgzNTBmIiByeD0iNiIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI0NSIgcng9IjY4IiByeT0iMzUiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNjIiIGN5PSI1NSIgcng9IjQ1IiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTM4IiBjeT0iNTMiIHJ4PSI0MiIgcnk9IjI4IiBmaWxsPSIjMTQ1MzJkIi8+PGNpcmNsZSBjeD0iNzgiIGN5PSI2MiIgcj0iOCIgZmlsbD0iIzc4MzUwZiIvPjxjaXJjbGUgY3g9Ijk4IiBjeT0iNjYiIHI9IjkiIGZpbGw9IiM2YjMwMDgiLz48Y2lyY2xlIGN4PSIxMTYiIGN5PSI2MCIgcj0iNyIgZmlsbD0iIzc4MzUwZiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5CZXJ0aG9sbGV0aWEgZXhjZWxzYTwvdGV4dD48L3N2Zz4=',
+   status:'Vulnerável — IUCN Red List',
+   desc:'Árvore emergente de 30 a 50 metros, copa umbeliforme característica. Uma das maiores e mais longevas da Amazônia (até 1000 anos). Fruto pixídio lenhoso (ouriço) de 1 a 2 kg, contendo 8 a 24 sementes (castanhas). Só é polinizada por abelhas do gênero Eulaema, que dependem de orquídeas para completar seu ciclo. Exclusiva de florestas primárias não perturbadas.',
+   importancia:'Indicadora de integridade florestal. A extração sustentável das castanhas é um dos únicos modelos econômicos que incentiva preservação da floresta em pé. Tombamento de castanheiras centenárias tem respaldo jurídico.',
+   servicos:['fruto_humano','fruto_animal','carbono','hidrologia'],dens:0.75,orig:'nativa_brasil'},
+  {nome:'Acuri',sci:'Attalea phalerata',familia:'Arecaceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxwYXRoIGQ9Ik05NyAxNDAgUTk1IDgwIDEwMCAyMCIgc3Ryb2tlPSIjOTI0MDBlIiBzdHJva2Utd2lkdGg9IjgiIGZpbGw9Im5vbmUiLz48bGluZSB4MT0iMTAwIiB5MT0iMzUiIHgyPSI0NSIgeTI9IjY4IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzOCIgeDI9IjE1NSIgeTI9IjY1IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzMCIgeDI9IjYwIiB5Mj0iNDgiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjMwIiB4Mj0iMTQwIiB5Mj0iNDQiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjI2IiB4Mj0iMTAwIiB5Mj0iOCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjQiLz48Y2lyY2xlIGN4PSI4NSIgY3k9IjYwIiByPSI1IiBmaWxsPSIjZDk3NzA2Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNTUiIHI9IjYiIGZpbGw9IiNiNDUzMDkiLz48Y2lyY2xlIGN4PSIxMTUiIGN5PSI2MiIgcj0iNSIgZmlsbD0iI2Q5NzcwNiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5BdHRhbGVhIHBoYWxlcmF0YTwvdGV4dD48L3N2Zz4=',
+   status:'Pouco Preocupante',
+   desc:'Palmeira robusta de 8 a 15 metros, estipe solitário, coberto por bases foliares persistentes. Folhas pinadas de 5 a 8 metros. Inflorescências interfoliares com flores unissexuadas. Frutos elipsoides, mesocarpo fibroso, endocarpo duro — rico em óleo usado em culinária e cosmética. Abundante em capões e cordilheiras do Pantanal.',
+   importancia:'Espécie-chave para fauna do Pantanal. Frutos consumidos por araras, jacus, capivaras e antas. Estipe perfurado por pica-paus e corujas. A presença do acuri é indicadora de ambientes conservados do Pantanal.',
+   servicos:['fruto_animal','sombra','moradia','hidrologia'],dens:0.5,orig:'nativa_pantanal'},
+  {nome:'Angico-vermelho',sci:'Anadenanthera colubrina',familia:'Fabaceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZjdlZCIvPjxyZWN0IHg9IjkyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjYwIiBmaWxsPSIjN2MyZDEyIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2OCIgcng9IjUyIiByeT0iMzgiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI4MCIgcng9IjM2IiByeT0iMjYiIGZpbGw9IiMxNDUzMmQiLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNzgiIHJ4PSIzMiIgcnk9IjI0IiBmaWxsPSIjMTY2NTM0Ii8+PGNpcmNsZSBjeD0iODQiIGN5PSI3MiIgcj0iMyIgZmlsbD0iI2ZiYmYyNCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY4IiByPSIzIiBmaWxsPSIjZjU5ZTBiIi8+PGNpcmNsZSBjeD0iMTE2IiBjeT0iNzMiIHI9IjMiIGZpbGw9IiNmYmJmMjQiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjN2MyZDEyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+QW5hZGVuYW50aGVyYSBjb2x1YnJpbmE8L3RleHQ+PC9zdmc+',
+   status:'Pouco Preocupante',
+   desc:'Árvore de 10 a 25 metros, tronco com espinhos ou tubérculos na casca jovem. Folhas bipinadas. Flores brancas a creme em capítulos globosos, aromáticas. Fruto legume falcado, deiscente. Casca com alto teor de taninos (40%) — importante uso medicinal e curtume. Ocorre em cerradão, caatinga e transição cerrado-pantanal.',
+   importancia:'Excelente para recuperação de áreas degradadas — crescimento rápido e fixação de nitrogênio. Casca usada na medicina popular como cicatrizante, adstringente e anti-inflamatório. Madeira densa utilizada para mourões e carvão vegetal.',
+   servicos:['sombra','medicinal','carbono'],dens:0.8,orig:'nativa_brasil'},
+  {nome:'Gameleira',sci:'Ficus obtusifolia',familia:'Moraceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkwIiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxwYXRoIGQ9Ik05MCw5MCBRNjAsOTUgNTUsMTIwIFE2MCwxMDAgOTAsOTUiIGZpbGw9IiM5MjQwMGUiLz48cGF0aCBkPSJNMTEwLDg4IFExNDAsOTMgMTQ1LDExOCBRMTQwLDk4IDExMCw5MyIgZmlsbD0iIzkyNDAwZSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1MCIgcng9IjYwIiByeT0iNDAiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSI2MiIgcng9IjQyIiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTMwIiBjeT0iNjAiIHJ4PSIzOCIgcnk9IjI4IiBmaWxsPSIjMTQ1MzJkIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzE2NjUzNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkZpY3VzIG9idHVzaWZvbGlhPC90ZXh0Pjwvc3ZnPg==',
+   status:'Pouco Preocupante',
+   desc:'Figueira de 15 a 25 metros, hemiepífita ou de raízes adventícias fusionadas formando estruturas complexas. Folhas simples, coriáceas, obovadas. Figos pequenos, roxos quando maduros, consumidos por aves e mamíferos. Sistema radicular extenso pode minar calçadas mas é fundamental para estabilização de margens. Crescimento lento, indivíduos centenários comuns.',
+   importancia:'Uma das árvores com maior interação ecológica do Pantanal — mais de 80 espécies de vertebrados consomem seus frigos. Árvore geralmente poupada no desmatamento por valor cultural. Indivíduos com raízes aéreas monumentais são candidatos naturais a patrimônio.',
+   servicos:['sombra','fruto_animal','moradia','termico'],dens:0.45,orig:'nativa_pantanal'},
+  {nome:'Cambará',sci:'Vochysia divergens',familia:'Vochysiaceae',bioma:'Pantanal',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZmJlYiIvPjxyZWN0IHg9IjkyIiB5PSI5MCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjU1IiBmaWxsPSIjNzgzNTBmIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3MiIgcng9IjUwIiByeT0iMzYiIGZpbGw9IiMyMmM1NWUiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4MiIgcng9IjM0IiByeT0iMjQiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iODAiIHJ4PSIzMCIgcnk9IjIyIiBmaWxsPSIjMTU4MDNkIi8+PHJlY3QgeD0iODIiIHk9Ijk1IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNSIgZmlsbD0iIzZiNzI4MCIgcng9IjIiLz48cmVjdCB4PSI5MCIgeT0iOTgiIHdpZHRoPSI1IiBoZWlnaHQ9IjIyIiBmaWxsPSIjOWNhM2FmIiByeD0iMiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiM3ODM1MGYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5Wb2NoeXNpYSBkaXZlcmdlbnM8L3RleHQ+PC9zdmc+',
+   status:'Pouco Preocupante — expansão monitorada',
+   desc:'Árvore de 8 a 20 metros, pioneira invasora de áreas úmidas. Tronco reto, casca bege-acinzentada, esfoliante. Folhas verticiladas, lanceoladas, com glândulas extraforais. Flores amarelas em racemos terminais (maio–julho). Fruto cápsula tricoca. Indicadora de perturbação: avança sobre campos úmidos e veredas em consequência de queimadas frequentes.',
+   importancia:'Espécie bioindicadora de desequilíbrio ecológico no Pantanal. Seu monitoramento é relevante para avaliar o impacto das queimadas e mudanças climáticas sobre os campos úmidos. Fornece néctar para abelhas nativas.',
+   servicos:['sombra','carbono','polinizacao'],dens:0.5,orig:'nativa_pantanal'},
+  {nome:'Pequi',sci:'Caryocar brasiliense',familia:'Caryocaraceae',bioma:'Cerrado',
+   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZmNlOCIvPjxyZWN0IHg9IjkyIiB5PSI5NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjUwIiBmaWxsPSIjNzgzNTBmIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3OCIgcng9IjQ4IiByeT0iMzQiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4OCIgcng9IjMyIiByeT0iMjIiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iODYiIHJ4PSIyOCIgcnk9IjIwIiBmaWxsPSIjMTY2NTM0Ii8+PGNpcmNsZSBjeD0iODgiIGN5PSI4MiIgcj0iOSIgZmlsbD0iI2VhYjMwOCIvPjxjaXJjbGUgY3g9IjEwNCIgY3k9Ijc4IiByPSI4IiBmaWxsPSIjY2E4YTA0Ii8+PGNpcmNsZSBjeD0iMTE4IiBjeT0iODQiIHI9IjciIGZpbGw9IiNlYWIzMDgiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjNzgzNTBmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+Q2FyeW9jYXIgYnJhc2lsaWVuc2U8L3RleHQ+PC9zdmc+',
+   status:'Vulnerável — espécie símbolo',
+   desc:'Árvore de 3 a 10 metros, decídua, de crescimento lento. Tronco tortuoso, casca corticosa e grossa, altamente resistente ao fogo. Folhas compostas trifolioladas. Flores brancas grandes, com muitos estames amarelos. Fruto drupáceo com mesocarpo amarelo-gorduroso e endocarpo espinhoso. O fruto é alimento cultural central de MT e GO. Pode viver mais de 800 anos.',
+   importancia:'Espécie símbolo do Cerrado mato-grossense. Proibido cortar por legislação estadual. Frutos consomidos por araras, cutias, antas e humanos. Óleo com propriedades emolientes e alta demanda gastronômica. Tombamento individual de exemplares centenários é legalmente viável.',
+   servicos:['fruto_humano','fruto_animal','sombra','medicinal'],dens:0.65,orig:'nativa_brasil'},
+  {nome:'Embaúba',sci:'Cecropia pachystachya',familia:'Urticaceae',bioma:'Amazônia',emoji:'🦥',foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9Ijk1IiB5PSIzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2EzYTNhMyIgcng9IjMiLz48bGluZSB4MT0iMTAwIiB5MT0iNTAiIHgyPSI0NSIgeTI9Ijg1IiBzdHJva2U9IiMyMmM1NWUiIHN0cm9rZS13aWR0aD0iNCIvPjxsaW5lIHgxPSIxMDAiIHkxPSI1NSIgeDI9IjE1NSIgeTI9IjgwIiBzdHJva2U9IiMyMmM1NWUiIHN0cm9rZS13aWR0aD0iNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5DZWNyb3BpYSBwYWNoeXN0YWNoeWE8L3RleHQ+PC9zdmc+',
+   desc:'Casa das preguiças e formigas. Cresce muito rápido.',
+   curiosidade:'A embaúba e a preguiça são amigas inseparáveis — a preguiça dorme em seus galhos!',
+   servicos:['fruto_animal','moradia','hidrologia'],dens:0.3,orig:'nativa_brasil'},
+];
+
+let catFiltro = 'todos';
+
+let _catArr = [];
+function renderCatalogo(){
+  const q = (document.getElementById('catSearch')?.value||'').toLowerCase();
+  const arr = CATALOGO.filter(e=>{
+    const mb = catFiltro==='todos'||e.bioma===catFiltro;
+    const ms = !q||[e.nome,e.sci,e.familia,e.bioma].join(' ').toLowerCase().includes(q);
+    return mb&&ms;
+  });
+  const grid = document.getElementById('catGrid');
+  if(!grid) return;
+  _catArr = arr;
+  if(!arr.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#74a57e;">Nenhuma espécie encontrada.</div>';return;}
+  const biomaColor={'Pantanal':'#0ea5e9','Cerrado':'#f59e0b','Amazônia':'#22c55e'};
+  grid.innerHTML = arr.map((e,i)=>`
+    <div data-cat="${i}"
+      style="background:#fff;border-radius:16px;box-shadow:0 2px 14px rgba(0,0,0,.1);overflow:hidden;cursor:pointer;transition:transform .15s;" onclick="openCatByIndex(this.dataset.cat)">
+      <div style="height:110px;overflow:hidden;position:relative;background:#d8f3dc;">
+        <img src="${e.foto}" alt="${e.nome}"
+          style="width:100%;height:100%;object-fit:cover;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,#d8f3dc,#95d5b2);">🌿</div>
+        <div style="position:absolute;top:6px;right:6px;background:${biomaColor[e.bioma]||'#52b788'};color:#fff;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:700;">${e.bioma}</div>
+        ${e.status&&e.status.includes('Ameaça')?'<div style="position:absolute;top:6px;left:6px;background:#e05252;color:#fff;padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:700;">⚠️ AMEAÇADA</div>':''}
+      </div>
+      <div style="padding:10px 11px 12px;">
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;color:#1b4332;margin-bottom:1px;line-height:1.2;">${e.nome}</div>
+        <div style="font-style:italic;font-size:10px;color:#74a57e;">${e.sci}</div>
+      </div>
+    </div>`).join('');
+}
+
+function filterCat(){renderCatalogo();}
+function filterCatBioma(b,el){
+  catFiltro=b;
+  document.querySelectorAll('#catBiomas .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderCatalogo();
+}
+
+function openCatByIndex(i){ openCatCard(_catArr[parseInt(i)]); }
+function openCatCard(e){
+  if(typeof e === 'string'){ e = CATALOGO.find(x=>x.nome===e); }
+  if(!e) return;
+  window._catCurrent = e;
+  const svcsMap={sombra:'🌤️ Sombra',fruto_humano:'🍎 Fruto humano',fruto_animal:'🦜 Fauna',
+    paisagismo:'🌸 Paisagismo',termico:'🌡️ Reg. Térmica',moradia:'🐦 Moradia/Ninhos',
+    carbono:'🌍 Sequestro de Carbono',polinizacao:'🐝 Polinizadores',hidrologia:'💧 Regulação Hídrica',medicinal:'💊 Uso Medicinal'};
+  const origLabel={'nativa_pantanal':'Nativa do Pantanal','nativa_brasil':'Nativa do Brasil','exotica':'Exótica','invasora':'Exótica Invasora'};
+  const biomaColor={'Pantanal':'#0ea5e9','Cerrado':'#f59e0b','Amazônia':'#22c55e'};
+  const bc=biomaColor[e.bioma]||'#52b788';
+  const isAmeacada=e.status&&(e.status.includes('Ameaça')||e.status.includes('Vulnerável')||e.status.includes('CITES'));
+
+  // Foto no header do sheet
+  const ph=document.getElementById('shPhoto');
+  ph.innerHTML=`<img src="${e.foto}" alt="${e.nome}" style="width:100%;height:100%;object-fit:cover;"
+    onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#d8f3dc,#95d5b2)'"/>`;
+
+  document.getElementById('shBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+      <span style="background:${bc};color:#fff;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;">${e.bioma}</span>
+      ${isAmeacada?`<span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;">⚠️ ${e.status}</span>`:''}
+    </div>
+    <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#1b4332;margin-bottom:2px;">${e.nome}</div>
+    <div style="font-style:italic;color:#74a57e;font-size:13px;margin-bottom:4px;">${e.sci}</div>
+    <div style="font-size:12px;color:#2d6a4f;font-weight:600;margin-bottom:14px;">Família ${e.familia} · ${origLabel[e.orig]||e.orig||'—'} · ρ = ${e.dens} g/cm³</div>
+
+    <div class="sec">
+      <div class="sec-title">Descrição Botânica</div>
+      <div style="font-size:13px;line-height:1.75;color:#344e41;">${e.desc}</div>
+    </div>
+
+    ${e.importancia?`
+    <div class="sec">
+      <div class="sec-title">Importância e Tombamento</div>
+      <div style="font-size:13px;line-height:1.75;color:#344e41;">${e.importancia}</div>
+    </div>`:''}
+
+    <div class="sec">
+      <div class="sec-title">Serviços Ecossistêmicos</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${(e.servicos||[]).map(s=>`<span style="background:#d8f3dc;color:#1b4332;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;">${svcsMap[s]||s}</span>`).join('')}
+      </div>
+    </div>
+
+    <button onclick="window._catCurrent&&usarEspecieCatalogo(window._catCurrent)"
+      style="margin-top:6px;width:100%;height:48px;background:linear-gradient(135deg,#2d6a4f,#40916c);color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 3px 12px rgba(45,106,79,.3);">
+      ✏️ Usar no Cadastro desta Espécie
+    </button>`;
+
+  document.getElementById('shDelBtn').style.display='none';
+  document.getElementById('shMapBtn').style.display='none';
+  document.getElementById('shOverlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+}
+
+function usarEspecieCatalogo(e){
+  if(!e) return;
+  if(typeof e==='string') e=CATALOGO.find(x=>x.nome===e);
+  if(!e) return;
+  closeSheet();
+  goScreen('add');
+  setTimeout(()=>{
+    const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
+    set('f_nome',e.nome); set('f_sci',e.sci); set('f_fam',e.familia);
+    set('f_orig',e.orig||''); set('f_dens',e.dens);
+    if(e.servicos) document.querySelectorAll('#svcsEl input[type=checkbox]').forEach(cb=>{if(e.servicos.includes(cb.value))cb.checked=true;});
+    showToast('✅ Espécie do catálogo aplicada!');
+  },300);
+}
 
 // ═══════ DEMO DATA ═══════
 function demoData(){return[
