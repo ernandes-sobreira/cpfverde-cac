@@ -774,21 +774,16 @@ document.addEventListener('DOMContentLoaded',()=>{
       </div>
     </div>
 
-    <!-- 6 Serviços -->
+    <!-- 6 Serviços Ecossistêmicos com escala -->
     <div class="form-section">
       <div class="form-sec-hdr"><div class="form-sec-ico">🌿</div><div class="form-sec-title">7. Serviços Ecossistêmicos</div></div>
       <div class="form-sec-body">
-        <div class="svc-checks" id="svcsEl">
-          <label class="svc-check"><input type="checkbox" value="sombra"> 🌤️ Sombra</label>
-          <label class="svc-check"><input type="checkbox" value="fruto_humano"> 🍎 Fruto p/ humanos</label>
-          <label class="svc-check"><input type="checkbox" value="fruto_animal"> 🦜 Fruto p/ fauna</label>
-          <label class="svc-check"><input type="checkbox" value="paisagismo"> 🌸 Paisagismo</label>
-          <label class="svc-check"><input type="checkbox" value="termico"> 🌡️ Reg. térmica</label>
-          <label class="svc-check"><input type="checkbox" value="moradia"> 🐦 Moradia fauna</label>
-          <label class="svc-check"><input type="checkbox" value="carbono"> 🌍 Sequestro C</label>
-          <label class="svc-check"><input type="checkbox" value="polinizacao"> 🐝 Polinizadores</label>
-          <label class="svc-check"><input type="checkbox" value="hidrologia"> 💧 Hidrologia</label>
-          <label class="svc-check"><input type="checkbox" value="medicinal"> 💊 Medicinal</label>
+        <p style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:10px;">
+          Para cada serviço presente, avalie a <b>intensidade</b> de 0 a 3:<br>
+          <b>0</b> = Ausente · <b>1</b> = Baixo · <b>2</b> = Médio · <b>3</b> = Alto
+        </p>
+        <div id="svcsEl" style="display:flex;flex-direction:column;gap:10px;">
+          <!-- gerado pelo JS buildSvcForm() -->
         </div>
       </div>
     </div>
@@ -833,6 +828,86 @@ document.addEventListener('DOMContentLoaded',()=>{
     </div>
 
 
+
+    <!-- 9b Análise Térmica -->
+    <div class="form-section" style="border-top:3px solid #f59e0b;">
+      <div class="form-sec-hdr" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);">
+        <div class="form-sec-ico" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">🌡️</div>
+        <div>
+          <div class="form-sec-title" style="color:#92400e;">10. Análise Térmica</div>
+          <div style="font-size:11px;color:#b45309;margin-top:1px;">Temperatura na sombra, ao sol e imagem térmica</div>
+        </div>
+      </div>
+      <div class="form-sec-body">
+        <div class="row3">
+          <div class="fld">
+            <label>Temp. Sombra (°C)</label>
+            <input type="number" id="f_t_sombra" step="0.1" placeholder="—" oninput="calcTermico()"/>
+            <small>Medida sob a copa da árvore</small>
+          </div>
+          <div class="fld">
+            <label>Temp. Sol (°C)</label>
+            <input type="number" id="f_t_sol" step="0.1" placeholder="—" oninput="calcTermico()"/>
+            <small>Medida ao lado, exposta ao sol</small>
+          </div>
+          <div class="fld">
+            <label>Redução (°C)</label>
+            <input type="number" id="f_t_reducao" step="0.1" readonly placeholder="auto"/>
+            <small>Calculada automaticamente</small>
+          </div>
+        </div>
+        <div class="row2" style="margin-top:2px;">
+          <div class="fld">
+            <label>Hora da Medição</label>
+            <input type="time" id="f_t_hora"/>
+          </div>
+          <div class="fld">
+            <label>Condição do Céu</label>
+            <select id="f_t_ceu">
+              <option value="">—</option>
+              <option value="aberto">☀️ Céu aberto / sem nuvens</option>
+              <option value="parcial">⛅ Parcialmente nublado</option>
+              <option value="nublado">☁️ Nublado</option>
+            </select>
+          </div>
+        </div>
+        <!-- Resultado térmico calculado -->
+        <div id="termicoResult" style="display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;padding:12px;margin-top:8px;border-left:4px solid #f59e0b;">
+          <div style="font-size:10px;color:#b45309;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">🌡️ Serviço de Regulação Térmica</div>
+          <div id="termicoTexto" style="font-size:14px;font-weight:700;color:#92400e;"></div>
+          <div id="termicoClass" style="font-size:12px;color:#b45309;margin-top:3px;"></div>
+        </div>
+        <!-- Upload imagem térmica -->
+        <div style="margin-top:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b45309;margin-bottom:8px;">📷 Imagem Térmica (câmera FLIR, termômetro c/ visor)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="photo-area" style="border-color:#f59e0b;border-width:2px;">
+              <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'termico_sombra')"/>
+              <div style="font-size:26px;">🌡️</div>
+              <p style="font-size:11px;color:#b45309;font-weight:600;margin-top:3px;">Imagem sob sombra</p>
+            </div>
+            <div class="photo-area" style="border-color:#ef4444;border-width:2px;">
+              <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'termico_sol')"/>
+              <div style="font-size:26px;">☀️</div>
+              <p style="font-size:11px;color:#ef4444;font-weight:600;margin-top:3px;">Imagem ao sol</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;" id="termoPreviewWrap">
+            <div id="prev_termico_sombra" style="display:none;flex:1;position:relative;">
+              <img style="width:100%;height:90px;object-fit:cover;border-radius:8px;border:2px solid #f59e0b;"/>
+              <button onclick="clearTermoPhoto('termico_sombra')" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;">✕</button>
+            </div>
+            <div id="prev_termico_sol" style="display:none;flex:1;position:relative;">
+              <img style="width:100%;height:90px;object-fit:cover;border-radius:8px;border:2px solid #ef4444;"/>
+              <button onclick="clearTermoPhoto('termico_sol')" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;">✕</button>
+            </div>
+          </div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;font-size:12px;color:#166534;margin-top:10px;line-height:1.6;">
+          <b>Como medir:</b> Posicione o termômetro a 1,5m de altura. Meça primeiro sob a copa (sombra), depois no local ensolarado mais próximo sem interferência da copa. Registre no mesmo horário. Horário ideal: 10h–14h (pico de calor).
+        </div>
+      </div>
+    </div>
 
     <!-- 10 Coleta -->
     <div class="form-section">
@@ -979,9 +1054,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="sheet-handle"></div>
   <div class="sheet-photo" id="shPhoto"><span>🌳</span></div>
   <div class="sheet-scroll" id="shBody"></div>
-  <div class="sheet-actions">
-    <button class="action-btn action-del" id="shDelBtn">🗑️ Excluir</button>
-    <button class="action-btn action-map" id="shMapBtn">🗺️ Ver no Mapa</button>
+  <div class="sheet-actions" style="gap:7px;">
+    <button class="action-btn action-del" id="shDelBtn" style="flex:1;">🗑️</button>
+    <button class="action-btn" id="shEditBtn" style="flex:2;background:#fef3c7;color:#92400e;display:none;">✏️ Editar</button>
+    <button class="action-btn action-map" id="shMapBtn" style="flex:1;">🗺️</button>
   </div>
 </div>
 
@@ -1355,6 +1431,8 @@ function openSheet(id){
 
   document.getElementById('shDelBtn').style.display='flex';
   document.getElementById('shMapBtn').style.display='flex';
+  document.getElementById('shEditBtn').style.display='flex';
+  document.getElementById('shEditBtn').onclick = ()=>{ closeSheet(); startEdit(id); };
   document.getElementById('shDelBtn').onclick = async()=>{
     if(!confirm('Excluir este indivíduo?'))return;
     closeSheet(); await delInd(id); showToast('🗑️ Removido');
@@ -1398,64 +1476,109 @@ function initForm(){
   _keepCoords = false;
   document.getElementById('f_data').value = new Date().toISOString().split('T')[0];
   buildCritForm();
+  buildSvcForm();
+  svcVals={}; termoPhotos={};
 }
-// Descrições detalhadas por pontuação para cada critério
+// Descrições completas por critério e pontuação
+const CRIT_INFO = {
+  vitalidade:{
+    o_que_e:'A vitalidade foliar mede a quantidade e qualidade das folhas da árvore. Folhas são os órgãos de fotossíntese — sem elas a árvore não produz energia para crescer e se defender.',
+    como_avaliar:'Olhe para a copa e compare com o esperado para a espécie naquela época do ano. Algumas espécies perdem folhas na seca — isso é normal (fenologia). Avalie sempre em relação ao padrão da espécie.',
+    atencao:'Cuidado: espécies decíduas naturalmente ficam sem folhas na seca. Isso NÃO é nota 0 se for comportamento normal da espécie.'
+  },
+  tronco:{
+    o_que_e:'O tronco é a estrutura principal de suporte da árvore. Cavidades, podridão e rachaduras comprometem a resistência mecânica e podem causar queda.',
+    como_avaliar:'Bata levemente no tronco com os nós dos dedos. Som oco indica cavidade interna. Examine a base, o fuste e os galhos principais. Use uma lanterna se necessário.',
+    atencao:'Cavidade + inclinação + vento = risco real de queda. Se notar cavidade profunda, registre como urgente independente dos outros critérios.'
+  },
+  copa:{
+    o_que_e:'A copa é a parte aérea da árvore formada por galhos e folhagem. Sua forma indica o histórico de manejo, condições de crescimento e saúde geral.',
+    como_avaliar:'Observe a simetria, a densidade de galhos e a presença de galhos secos ou quebrados. Uma copa saudável tem distribuição equilibrada ao redor do tronco.',
+    atencao:'Podas drásticas (chamadas de topiaria severa) deixam a copa assimétrica mas não indicam doença. Diferencie copa assimétrica por poda (nota 2) de copa com galhos mortos (nota 1 ou 0).'
+  },
+  raiz:{
+    o_que_e:'O sistema radicular ancora a árvore e absorve água e nutrientes. Em ambiente urbano, as raízes frequentemente entram em conflito com calçadas, encanamentos e fundações.',
+    como_avaliar:'Observe a região do colo (base do tronco) e o entorno da árvore. Calçadas levantadas, solo compactado ao redor, raízes expostas acima do solo são indicadores importantes.',
+    atencao:'Raízes sobre o asfalto são sinal de que a árvore está buscando oxigênio — o solo embaixo está compactado demais. É urgente garantir área permeável ao redor do tronco.'
+  },
+  pragas:{
+    o_que_e:'Pragas e doenças incluem fungos, bactérias, insetos-praga, ácaros e parasitas que prejudicam o desenvolvimento da árvore. A presença de polinizadores e fauna diversa NÃO é praga.',
+    como_avaliar:'Procure: galerias de insetos na casca, fungos em forma de orelha no tronco, fumaça branca de fungos, folhas com manchas ou deformações, presença de formigas cortadeiras ativas, cochonilhas.',
+    atencao:'Formigas doceiras (sem corte de folhas) não são praga — são indicadoras de pulgões. Já formigas cortadeiras com trilha ativa e folhas sendo levadas = nota 0 ou 1.'
+  },
+  crescimento:{
+    o_que_e:'O padrão de crescimento indica o vigor da árvore. Brotações novas, folhas jovens e incremento de copa são sinais de uma árvore metabolicamente ativa.',
+    como_avaliar:'Observe a presença de brotos novos, folhas jovens de cor mais clara, extensão de galhos do ano atual. Compare o porte com o esperado para a espécie e a idade estimada.',
+    atencao:'Árvores em solo muito compactado ou com pouca água podem ter crescimento lento sem estar doentes. Considere o contexto urbano na avaliação.'
+  },
+  fixacao:{
+    o_que_e:'A fixação e verticalidade indicam a estabilidade física da árvore. Uma árvore muito inclinada pode cair com ventos fortes ou chuvas, especialmente se o solo estiver saturado.',
+    como_avaliar:'Observe o ângulo do tronco em relação à vertical. Use o aplicativo "Medidor de Nível" do celular encostado no tronco para medir o ângulo com precisão.',
+    atencao:'Inclinação recente (árvore que ficou torta depois de chuva forte) é mais preocupante que inclinação antiga estabilizada. Verifique se o solo ao redor está afundado.'
+  },
+  casca:{
+    o_que_e:'A casca (ritidoma) é a camada externa de proteção do tronco. Ela protege contra insetos, fungos, dessecação e danos físicos. Cada espécie tem uma casca característica.',
+    como_avaliar:'Observe rachaduras profundas (além da textura natural), lesões com exsudato (escorrimento de seiva), áreas com casca morta ou ausente, presença de líquen e musgo.',
+    atencao:'Líquen e musgo na casca são normais e não prejudicam a árvore — pelo contrário, indicam ambiente de boa qualidade do ar. Não confundir com fungos parasitas (que têm aspecto de orelha ou cogumelo).'
+  },
+};
+
 const CRIT_DETALHES = {
   vitalidade:[
-    {n:0,cor:'#e05252',txt:'Sem folhas ou completamente seca/morta'},
-    {n:1,cor:'#f97316',txt:'Folhagem muito esparsa — menos de 25% do esperado'},
-    {n:2,cor:'#e9a833',txt:'Folhagem rarefeita — 25 a 50% do esperado'},
-    {n:3,cor:'#65a30d',txt:'Folhagem normal para a espécie e época do ano'},
-    {n:4,cor:'#16a34a',txt:'Folhagem exuberante — densa, vigorosa, verde intensa'},
+    {n:0,cor:'#dc2626',icone:'🍂',txt:'Sem folhas ou completamente seca',detalhe:'Árvore sem folhagem alguma fora do período normal de dormência, ou com folhas completamente secas e mortas. Estrutura totalmente comprometida.'},
+    {n:1,cor:'#ea580c',icone:'🍁',txt:'Folhagem muito esparsa — menos de 25%',detalhe:'Pouquíssimas folhas visíveis, copa quase vazia. A árvore está sob estresse severo — pode ser seca extrema, ataque de praga, doença sistêmica ou deficiência nutricional grave.'},
+    {n:2,cor:'#ca8a04',icone:'🌿',txt:'Folhagem rarefeita — 25 a 50% do esperado',detalhe:'Copa com menos da metade do volume foliar esperado. Galhos visíveis entre a folhagem. Sinal de estresse moderado que merece atenção e investigação da causa.'},
+    {n:3,cor:'#65a30d',icone:'🌳',txt:'Folhagem normal para a espécie',detalhe:'Volume foliar adequado para a espécie e a época do ano. A árvore está cumprindo sua função ecológica normalmente. Pequenas variações são aceitáveis.'},
+    {n:4,cor:'#16a34a',icone:'🌲',txt:'Folhagem exuberante e vigorosa',detalhe:'Copa densa, folhas de coloração típica e intensa, brotações novas visíveis. Árvore em pleno vigor vegetativo. Excelente condição para máxima prestação de serviços ecossistêmicos.'},
   ],
   tronco:[
-    {n:0,cor:'#e05252',txt:'Oco, podridão severa ou comprometimento estrutural grave'},
-    {n:1,cor:'#f97316',txt:'Rachado, ferimento profundo ou cavidade visível'},
-    {n:2,cor:'#e9a833',txt:'Cicatriz estável ou lesão superficial em cicatrização'},
-    {n:3,cor:'#65a30d',txt:'Pequenas marcas ou impactos físicos sem comprometer estrutura'},
-    {n:4,cor:'#16a34a',txt:'Tronco sadio, íntegro, sem lesões ou anomalias'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Podridão severa ou cavidade estrutural grave',detalhe:'Tronco oco com mais de 30% da seção transversal comprometida, podridão avançada, ou fratura parcial já ocorrida. Risco iminente de queda. Registrar como URGENTE e acionar o poder público.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Rachado, cavidade visível ou ferimento profundo',detalhe:'Rachaduras longitudinais profundas, cavidade com abertura visível, ferimento expondo o lenho interno. Estrutura comprometida mas ainda parcialmente funcional. Necessita avaliação técnica especializada.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Cicatriz estável ou lesão superficial',detalhe:'Marca de poda antiga com tecido cicatricial visível, lesão por impacto de veículo ou vandalismo sem comprometer a estrutura interna. A árvore está se recuperando.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Pequenas marcas sem comprometimento',detalhe:'Apenas marcas superficiais na casca ou pequenos impactos físicos que não afetam a integridade estrutural. Tronco firme ao teste de percussão (bater com os nós dos dedos).'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Tronco sadio e íntegro',detalhe:'Sem qualquer lesão, rachadura ou anomalia. Casca contínua e característica da espécie. Som maciço ao teste de percussão. Tronco representa suporte estrutural pleno.'},
   ],
   copa:[
-    {n:0,cor:'#e05252',txt:'Copa morta ou inexistente'},
-    {n:1,cor:'#f97316',txt:'Copa muito rarefeita, assimétrica por podas drásticas'},
-    {n:2,cor:'#e9a833',txt:'Copa irregular, assimetria moderada'},
-    {n:3,cor:'#65a30d',txt:'Copa boa, bem formada com pequenas irregularidades'},
-    {n:4,cor:'#16a34a',txt:'Copa simétrica, densa e bem distribuída'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Copa morta ou inexistente',detalhe:'Todos os galhos secos, sem folhagem. Copa morta mesmo que o tronco ainda esteja vivo (pode ocorrer em fulminação por raio ou ataque severo de praga). Avaliação de remoção necessária.'},
+    {n:1,cor:'#ea580c',icone:'✂️',txt:'Copa muito rarefeita ou mutilada',detalhe:'Copa com menos de 25% do volume esperado por podas severas (chamadas de topiaria drástica), morte de galhos extensos ou desequilíbrio acentuado. Função ecológica muito comprometida.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Copa irregular ou moderadamente assimétrica',detalhe:'Assimetria visível por podas anteriores, crescimento direcionado por obstáculos, ou perda de galhos de um lado. A árvore ainda cumpre funções básicas mas com eficiência reduzida.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Copa boa com pequenas irregularidades',detalhe:'Formato geral adequado à espécie, distribuição equilibrada, possíveis pequenas assimetrias não comprometedoras. Galhos vivos em todas as direções principais.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Copa simétrica, densa e bem distribuída',detalhe:'Distribuição uniforme de galhos ao redor do tronco, volume típico da espécie, galhos vivos até a periferia. Copa representa o potencial máximo de sombra, habitat e captura de carbono.'},
   ],
   raiz:[
-    {n:0,cor:'#e05252',txt:'Raízes expostas e danificadas ou sistema comprometido'},
-    {n:1,cor:'#f97316',txt:'Raízes parcialmente expostas, levantamento severo de calçada'},
-    {n:2,cor:'#e9a833',txt:'Raízes com sinais de estresse, levantamento leve'},
-    {n:3,cor:'#65a30d',txt:'Sistema radicular bom, poucos conflitos visíveis'},
-    {n:4,cor:'#16a34a',txt:'Raízes protegidas, solo permeável, sem conflitos'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Sistema radicular exposto e gravemente comprometido',detalhe:'Raízes principais expostas e danificadas por corte, compactação extrema ou construção civil. Solo impermeabilizado completamente ao redor. A árvore está em colapso nutricional e instável.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Raízes expostas com levantamento severo',detalhe:'Raízes grossas visíveis acima do solo, calçada levantada mais de 5cm, conflito sério com infraestrutura. Solo muito compactado. A árvore busca oxigênio e espaço fora do solo.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Sinais de estresse radicular',detalhe:'Levantamento leve de calçada (menos de 3cm), solo com alguma compactação, ausência de área permeável ao redor do tronco. A árvore consegue sobreviver mas com limitações.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Sistema radicular bom',detalhe:'Solo com alguma permeabilidade ao redor do tronco, poucas raízes visíveis na superfície, sem conflitos significativos com infraestrutura. A árvore se nutre adequadamente.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Raízes protegidas, solo permeável',detalhe:'Área permeável ao redor do tronco (grelha, jardim ou piso drenante), sem raízes superficiais expostas, sem conflitos com calçada. Condição ideal para pleno desenvolvimento.'},
   ],
   pragas:[
-    {n:0,cor:'#e05252',txt:'Infestação severa — insetos, fungos ou doenças comprometendo a árvore'},
-    {n:1,cor:'#f97316',txt:'Infestação moderada visível em várias partes'},
-    {n:2,cor:'#e9a833',txt:'Infestação leve, localizada'},
-    {n:3,cor:'#65a30d',txt:'Apenas traços ou sinais antigos sem atividade recente'},
-    {n:4,cor:'#16a34a',txt:'Sem pragas ou doenças visíveis'},
+    {n:0,cor:'#dc2626',icone:'🐛',txt:'Infestação severa comprometendo a sobrevivência',detalhe:'Formigas cortadeiras com trilha ativa e desfolha intensa, fungo de podridão (concha ou orelha no tronco), cochonilha cobrindo galhos, galerias de inseto de madeira com serragem ativa. A árvore está em risco.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Infestação moderada em várias partes',detalhe:'Sinais de ataque em múltiplas regiões da árvore (galhos, folhas E tronco). Presença de fungos em mais de um ponto. Tratamento fitossanitário necessário com urgência.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Infestação leve e localizada',detalhe:'Sinais de ataque restritos a uma área da árvore. Manchas foliares em menos de 30% das folhas, pequena colônia de cochonilha, fungo localizado. Monitoramento e possível tratamento preventivo.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Apenas traços antigos sem atividade',detalhe:'Cicatrizes ou manchas de ataques passados sem sinais de atividade recente. A árvore se recuperou ou controlou o agente. Apenas monitoramento periódico necessário.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Sem pragas ou doenças visíveis',detalhe:'Nenhum sinal de ataque de inseto, fungo ou doença. Folhas íntegras, casca sem galerias, ausência de exsudatos anormais. Árvore fitossanitariamente sadia.'},
   ],
   crescimento:[
-    {n:0,cor:'#e05252',txt:'Crescimento estagnado ou árvore moribunda'},
-    {n:1,cor:'#f97316',txt:'Crescimento muito lento, anormal para a espécie'},
-    {n:2,cor:'#e9a833',txt:'Crescimento lento, abaixo do esperado'},
-    {n:3,cor:'#65a30d',txt:'Crescimento normal para a espécie e condições locais'},
-    {n:4,cor:'#16a34a',txt:'Crescimento vigoroso, brotações ativas e abundantes'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Crescimento estagnado — árvore moribunda',detalhe:'Sem qualquer sinal de crescimento nos últimos meses. Nenhuma brotação nova. Galhos terminais secos progressivamente. A árvore está em processo de morte mesmo que ainda tenha alguma folhagem.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Crescimento muito lento e anormal',detalhe:'Incremento muito abaixo do esperado para a espécie. Brotações raras e fracas. Pode indicar deficiência nutricional grave, solo muito compactado ou estresse hídrico crônico.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Crescimento lento, abaixo do esperado',detalhe:'A árvore cresce mas abaixo do potencial da espécie. Pode ser por restrição de solo urbano, competição, ou condições desfavoráveis do local. Não é urgente mas merece atenção.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Crescimento normal para a espécie',detalhe:'Incremento de galhos e copa dentro do esperado para a espécie, porte e condições locais. Brotações sazonais presentes. A árvore está em equilíbrio com o ambiente.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Crescimento vigoroso e ativo',detalhe:'Brotações novas abundantes e vigorosas, extensão significativa de galhos novos, folhas jovens visíveis. A árvore está em seu pico de vigor. Condição ideal para máximo sequestro de carbono.'},
   ],
   fixacao:[
-    {n:0,cor:'#e05252',txt:'Inclinação acima de 30° — risco iminente de queda'},
-    {n:1,cor:'#f97316',txt:'Inclinação de 15° a 30°'},
-    {n:2,cor:'#e9a833',txt:'Leve inclinação (5° a 15°)'},
-    {n:3,cor:'#65a30d',txt:'Tronco reto, aparentemente estável'},
-    {n:4,cor:'#16a34a',txt:'Tronco reto e muito estável, raízes bem fixadas'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Inclinação acima de 30° — risco iminente',detalhe:'Árvore com inclinação pronunciada, especialmente se recente (após chuva ou vento). Solo provavelmente saturado ou raízes danificadas. RISCO DE QUEDA. Registrar como urgente e sinalizar a área.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Inclinação entre 15° e 30°',detalhe:'Inclinação visível a olho nu, tronco claramente fora da vertical. Mesmo que antiga e estabilizada, requer avaliação técnica para determinar se há risco crescente. Monitorar regularmente.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Leve inclinação — 5° a 15°',detalhe:'Desvio perceptível da vertical mas não alarmante. Pode ser crescimento direcionado pela luz (fototropismo) ou inclinação antiga estabilizada. Monitorar sem urgência.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Tronco reto e aparentemente estável',detalhe:'Tronco próximo à vertical, sem sinais de instabilidade. Base aparentemente firme no solo. Condição adequada para árvore urbana.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Perfeitamente vertical e muito estável',detalhe:'Tronco exatamente vertical, base larga e bem fixada, solo íntegro ao redor. Máxima estabilidade estrutural. A árvore resiste a ventos fortes sem risco de tombamento.'},
   ],
   casca:[
-    {n:0,cor:'#e05252',txt:'Casca morta, descamando em extensão ou ausente'},
-    {n:1,cor:'#f97316',txt:'Lesões extensas na casca (mais de 30% da circunferência)'},
-    {n:2,cor:'#e9a833',txt:'Lesões localizadas ou marcas de poda/impacto'},
-    {n:3,cor:'#65a30d',txt:'Pequenas marcas superficiais, casca em bom estado geral'},
-    {n:4,cor:'#16a34a',txt:'Casca íntegra, sem lesões, característica da espécie'},
+    {n:0,cor:'#dc2626',icone:'💀',txt:'Casca morta, descamando extensivamente',detalhe:'Perda de casca em mais de 50% da circunferência do tronco (anelamento), expondo o lenho. Isso interrompe o fluxo de seiva e condena a árvore. Avaliação urgente necessária.'},
+    {n:1,cor:'#ea580c',icone:'⚠️',txt:'Lesões extensas — mais de 30% da circunferência',detalhe:'Danos mecânicos por vandalismo, colisão de veículo, poda incorreta ou ataque de inseto cobrindo grande parte do tronco. Risco de entrada de fungos e comprometimento estrutural.'},
+    {n:2,cor:'#ca8a04',icone:'🔶',txt:'Lesões localizadas ou marcas de intervenção',detalhe:'Cicatrizes de podas passadas, marcas de impacto físico ou lesões menores. A casca está majoritariamente íntegra. A árvore está em processo de recuperação natural.'},
+    {n:3,cor:'#65a30d',icone:'✅',txt:'Casca em bom estado com marcas leves',detalhe:'Casca íntegra em mais de 90% da circunferência, possíveis pequenas marcas superficiais sem profundidade. A barreira protetora está funcionando adequadamente.'},
+    {n:4,cor:'#16a34a',icone:'💚',txt:'Casca completamente íntegra',detalhe:'Ritidoma contínuo, característico da espécie, sem qualquer lesão visível. Proteção máxima contra insetos, fungos e dessecação. Possível presença de líquen (normal e saudável).'},
   ],
 };
 
@@ -1463,24 +1586,77 @@ function buildCritForm(){
   const c=document.getElementById('critForm'); c.innerHTML=''; sVals={};
   CRIT.forEach(cr=>{
     const dets = CRIT_DETALHES[cr.k]||[];
+    const info = CRIT_INFO[cr.k]||{};
+
+    // Botões com ícone + número
     const btns = dets.map(d=>`
-      <div class="score-btn" data-k="${cr.k}" data-v="${d.n}" onclick="setSaude('${cr.k}',${d.n},this)">
-        <div style="font-size:16px;font-weight:900;">${d.n}</div>
+      <div class="score-btn" data-k="${cr.k}" data-v="${d.n}"
+           onclick="setSaude('${cr.k}',${d.n},this)"
+           title="${d.txt}">
+        <div style="font-size:18px;line-height:1;">${d.icone}</div>
+        <div style="font-size:13px;font-weight:900;">${d.n}</div>
       </div>`).join('');
+
+    // Descrição da nota selecionada (aparece ao tocar)
     const detDesc = dets.map(d=>`
-      <div id="det_${cr.k}_${d.n}" style="display:none;background:${d.cor}18;border-left:3px solid ${d.cor};border-radius:0 8px 8px 0;padding:7px 10px;font-size:12.5px;color:#1b4332;margin-top:6px;">
-        <b style="color:${d.cor};">Nota ${d.n}:</b> ${d.txt}
+      <div id="det_${cr.k}_${d.n}"
+           style="display:none;background:${d.cor}15;border-left:4px solid ${d.cor};
+                  border-radius:0 10px 10px 0;padding:10px 12px;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <span style="font-size:16px;">${d.icone}</span>
+          <b style="color:${d.cor};font-size:13px;">Nota ${d.n} — ${d.txt}</b>
+        </div>
+        <div style="font-size:12.5px;color:#344e41;line-height:1.6;">${d.detalhe}</div>
       </div>`).join('');
+
     c.innerHTML+=`
       <div class="crit-row">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div class="crit-label">${cr.l}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="crit-label">${cr.l}</div>
+            <button class="help-btn" style="background:#dbeafe;color:#1e40af;"
+              onclick="showCritInfo('${cr.k}')">?</button>
+          </div>
           <span style="font-size:9.5px;color:var(--t3);font-weight:600;">peso ${cr.p}×</span>
         </div>
         <div class="score-btns">${btns}</div>
         <div id="detWrap_${cr.k}">${detDesc}</div>
       </div>`;
   });
+}
+
+function showCritInfo(k){
+  const info = CRIT_INFO[k];
+  const cr = CRIT.find(c=>c.k===k);
+  if(!info||!cr) return;
+  showTip('crit_'+k);
+  // Montar tip dinâmico
+  document.getElementById('tipEmoji').textContent = '🩺';
+  document.getElementById('tipTitle').textContent = cr.l;
+  document.getElementById('tipBody').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;color:#2d6a4f;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;">O que é?</div>
+      <div style="font-size:13.5px;line-height:1.7;">${info.o_que_e}</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;color:#2d6a4f;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;">Como avaliar?</div>
+      <div style="font-size:13.5px;line-height:1.7;">${info.como_avaliar}</div>
+    </div>
+    <div style="background:#fff9db;border-radius:8px;padding:10px 12px;border-left:3px solid #fbbf24;">
+      <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:4px;">⚠️ Atenção</div>
+      <div style="font-size:13px;line-height:1.6;">${info.atencao}</div>
+    </div>
+    <div style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
+      <div style="font-size:11px;font-weight:700;color:#2d6a4f;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Escala de pontuação:</div>
+      ${(CRIT_DETALHES[k]||[]).map(d=>`
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;padding:8px;background:${d.cor}12;border-radius:8px;border-left:3px solid ${d.cor};">
+          <div style="font-size:18px;flex-shrink:0;">${d.icone}</div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:${d.cor};">Nota ${d.n} — ${d.txt}</div>
+            <div style="font-size:11.5px;color:#344e41;line-height:1.5;margin-top:2px;">${d.detalhe}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 function setSaude(k,v,el){
   sVals[k]=v;
@@ -1505,6 +1681,191 @@ function calcSaude(){
   document.getElementById('notaStatus').textContent=st;
   return nota;
 }
+// ── SERVIÇOS ECOSSISTÊMICOS COM ESCALA ────────────────────
+const SVCS_DEF = [
+  {k:'sombra',     ico:'🌤️', lbl:'Fornecimento de Sombra',
+   escala:['Ausente — sem copa significativa','Baixo — sombra parcial, menos de 10m²','Médio — sombra de 10 a 40m², conforto perceptível','Alto — sombra intensa acima de 40m², redução térmica expressiva']},
+  {k:'fruto_humano',ico:'🍎', lbl:'Frutos Comestíveis p/ Humanos',
+   escala:['Ausente — não produz frutos comestíveis','Baixo — produção esporádica ou pouca quantidade','Médio — produção regular com valor alimentar local','Alto — produção abundante, espécie frutífera relevante']},
+  {k:'fruto_animal',ico:'🦜', lbl:'Recursos Alimentares p/ Fauna',
+   escala:['Ausente — sem frutos ou sementes para fauna','Baixo — 1 a 2 espécies animais observadas se alimentando','Médio — 3 a 5 espécies, recurso alimentar relevante','Alto — mais de 5 espécies, espécie-chave para fauna local']},
+  {k:'paisagismo',  ico:'🌸', lbl:'Paisagismo e Estética Urbana',
+   escala:['Ausente — sem valor ornamental perceptível','Baixo — contribuição visual modesta','Médio — floração ou forma atrativa, valoriza o logradouro','Alto — espécie marcante, referência visual do local']},
+  {k:'termico',    ico:'🌡️', lbl:'Regulação Térmica Urbana',
+   escala:['Ausente — sem redução mensurável de temperatura','Baixo — redução de 1 a 2°C medida no local','Médio — redução de 3 a 5°C, conforto claramente perceptível','Alto — redução acima de 5°C, ilha de frescor urbano']},
+  {k:'moradia',    ico:'🐦', lbl:'Moradia e Nidificação de Fauna',
+   escala:['Ausente — sem uso como abrigo ou ninho observado','Baixo — uso esporádico por 1 espécie','Médio — ninho ativo ou uso regular por 2 a 3 espécies','Alto — múltiplos ninhos ou abrigo de espécies ameaçadas']},
+  {k:'carbono',    ico:'🌍', lbl:'Sequestro de Carbono',
+   escala:['Ausente — árvore morta ou sem crescimento','Baixo — estoque estimado abaixo de 50 kg C','Médio — estoque de 50 a 200 kg C','Alto — estoque acima de 200 kg C, indivíduo de grande porte']},
+  {k:'polinizacao',ico:'🐝', lbl:'Recurso para Polinizadores',
+   escala:['Ausente — sem flores ou floração não observada','Baixo — floração pequena, poucos polinizadores','Médio — floração abundante, abelhas e borboletas regulares','Alto — espécie muito visitada, fundamental para polinizadores nativos']},
+  {k:'hidrologia', ico:'💧', lbl:'Regulação Hídrica',
+   escala:['Ausente — sem contribuição hídrica mensurável','Baixo — interceptação de chuva leve, pouco impacto','Médio — interceptação significativa, reduz escoamento superficial','Alto — espécie ripária ou em área úmida, papel hidrológico crítico']},
+  {k:'medicinal',  ico:'💊', lbl:'Uso Medicinal Comprovado',
+   escala:['Ausente — sem uso medicinal documentado','Baixo — uso popular informal, sem comprovação científica','Médio — uso tradicional reconhecido pela comunidade','Alto — uso medicinal documentado em literatura científica ou ANVISA']},
+];
+
+let svcVals = {};
+
+function buildSvcForm(){
+  const el = document.getElementById('svcsEl');
+  if(!el) return;
+  svcVals = {};
+  el.innerHTML = SVCS_DEF.map(s=>`
+    <div style="background:var(--f5);border-radius:10px;padding:11px 13px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:20px;">${s.ico}</span>
+        <div style="font-size:13px;font-weight:700;color:var(--t1);flex:1;">${s.lbl}</div>
+        <button class="help-btn" style="background:#dbeafe;color:#1e40af;" onclick="showSvcInfo('${s.k}')">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+        ${s.escala.map((e,i)=>`
+          <div class="score-btn" data-sk="${s.k}" data-sv="${i}"
+               onclick="setSvc('${s.k}',${i},this)"
+               style="padding:8px 3px;font-size:10.5px;font-weight:700;text-align:center;line-height:1.2;">
+            <div style="font-size:16px;margin-bottom:2px;">${['⬜','🟡','🟠','🟢'][i]}</div>
+            <div>${i}</div>
+          </div>`).join('')}
+      </div>
+      <div id="svc_det_${s.k}" style="display:none;margin-top:7px;font-size:12px;color:var(--t2);background:#fff;border-radius:7px;padding:8px 10px;border-left:3px solid var(--vc);line-height:1.55;"></div>
+    </div>`).join('');
+}
+
+function setSvc(k, v, el){
+  svcVals[k] = v;
+  document.querySelectorAll(`.score-btn[data-sk="${k}"]`).forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const def = SVCS_DEF.find(s=>s.k===k);
+  const det = document.getElementById('svc_det_'+k);
+  if(det && def){
+    const cores = ['#9ca3af','#ca8a04','#ea580c','#16a34a'];
+    det.style.display='block';
+    det.style.borderLeftColor = cores[v];
+    det.innerHTML = `<b style="color:${cores[v]}">Nível ${v}:</b> ${def.escala[v]}`;
+  }
+}
+
+function showSvcInfo(k){
+  const def = SVCS_DEF.find(s=>s.k===k);
+  if(!def) return;
+  document.getElementById('tipEmoji').textContent = def.ico;
+  document.getElementById('tipTitle').textContent = def.lbl;
+  document.getElementById('tipBody').innerHTML = `
+    <div style="margin-bottom:12px;font-size:13.5px;line-height:1.7;color:#344e41;">
+      Avalie a intensidade deste serviço nesta árvore específica, com base no que você observa no local.
+    </div>
+    ${def.escala.map((e,i)=>`
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;padding:9px 11px;
+                  background:${['#f9fafb','#fef9c3','#ffedd5','#dcfce7'][i]};border-radius:9px;
+                  border-left:3px solid ${['#9ca3af','#ca8a04','#ea580c','#16a34a'][i]};">
+        <div style="font-size:22px;flex-shrink:0;">${['⬜','🟡','🟠','🟢'][i]}</div>
+        <div>
+          <div style="font-weight:700;color:${['#6b7280','#92400e','#9a3412','#166534'][i]};font-size:13px;">
+            Nível ${i} ${['— Ausente','— Baixo','— Médio','— Alto'][i]}
+          </div>
+          <div style="font-size:12.5px;color:#374151;margin-top:2px;line-height:1.5;">${e}</div>
+        </div>
+      </div>`).join('')}`;
+  document.getElementById('tipOverlay').classList.add('open');
+}
+
+// ── ANÁLISE TÉRMICA ────────────────────────────────────────────────────
+let termoPhotos = {};
+
+async function handleTermoPhoto(e, tipo){
+  const f = e.target.files[0]; if(!f) return;
+  showToast('🔄 Comprimindo...');
+  const b64 = await compressImage(f, 1200, 0.85);
+  termoPhotos[tipo] = b64;
+  const wrap = document.getElementById('prev_'+tipo);
+  if(wrap){
+    wrap.style.display='block';
+    wrap.querySelector('img').src = b64;
+  }
+  showToast('✅ Imagem térmica carregada');
+}
+
+function clearTermoPhoto(tipo){
+  termoPhotos[tipo] = null;
+  const wrap = document.getElementById('prev_'+tipo);
+  if(wrap) wrap.style.display='none';
+}
+
+function calcTermico(){
+  const ts = parseFloat(document.getElementById('f_t_sombra').value);
+  const te = parseFloat(document.getElementById('f_t_sol').value);
+  const redEl = document.getElementById('f_t_reducao');
+  const resEl = document.getElementById('termicoResult');
+  const txtEl = document.getElementById('termicoTexto');
+  const clsEl = document.getElementById('termicoClass');
+  if(!isNaN(ts) && !isNaN(te)){
+    const red = te - ts;
+    redEl.value = red.toFixed(1);
+    resEl.style.display = 'block';
+    txtEl.textContent = `Redução de ${red.toFixed(1)}°C (${te.toFixed(1)}°C → ${ts.toFixed(1)}°C)`;
+    const nivel = red < 1 ? 'Nível 0 — Ausente' : red < 3 ? 'Nível 1 — Baixo' : red < 5 ? 'Nível 2 — Médio' : 'Nível 3 — Alto';
+    const cor = red < 1 ? '#6b7280' : red < 3 ? '#ca8a04' : red < 5 ? '#ea580c' : '#16a34a';
+    clsEl.style.color = cor;
+    clsEl.textContent = nivel + ' de regulação térmica';
+    // Preencher automaticamente o nível do serviço térmico
+    const btn = document.querySelector(`.score-btn[data-sk="termico"][data-sv="${red<1?0:red<3?1:red<5?2:3}"]`);
+    if(btn) setSvc('termico', red<1?0:red<3?1:red<5?2:3, btn);
+  } else {
+    redEl.value = '';
+    resEl.style.display = 'none';
+  }
+}
+
+// ── EDIÇÃO DE INDIVÍDUO ───────────────────────────────────────────────
+let _editId = null;
+
+function startEdit(id){
+  const ind = (window._inds||[]).find(i=>i.id===id);
+  if(!ind) return;
+  _editId = id;
+  _keepCoords = true;
+  goScreen('add');
+  setTimeout(()=>{ fillFormFromInd(ind); }, 300);
+}
+
+function fillFormFromInd(ind){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
+  set('f_nome',ind.nome); set('f_sci',ind.sci); set('f_fam',ind.familia);
+  set('f_gen',ind.gen); set('f_orig',ind.orig); set('f_fen',ind.fen);
+  set('f_tax',ind.taxObs); set('f_lat',ind.lat); set('f_lng',ind.lng);
+  set('f_acc',ind.acc); set('f_alt',ind.altGPS);
+  set('f_bairro',ind.bairro); set('f_ref',ind.ref); set('f_pai',ind.paisagem);
+  set('f_data',ind.data); set('f_ht',ind.ht); set('f_hf',ind.hf);
+  set('f_hb',ind.hb); set('f_dap',ind.dap); set('f_cap',ind.cap);
+  set('f_nf',ind.nf||1); set('f_cns',ind.cns); set('f_clo',ind.clo);
+  set('f_som',ind.sombra); set('f_di',ind.di); set('f_inc',ind.inc||0);
+  set('f_ce',ind.confElet); set('f_cc',ind.confCalc);
+  set('f_man',ind.manejo); set('f_risco',ind.risco||0);
+  set('f_dens',ind.dens||0.6); set('f_ck',ind.carbKg);
+  set('f_av',ind.aves); set('f_in',ind.insetos);
+  set('f_ma',ind.mamiferos); set('f_ep',ind.epifitas);
+  set('f_ni',ind.ninhos); set('f_bi',ind.bioIdx);
+  set('f_col',ind.col); set('f_inst',ind.inst); set('f_obs',ind.obs);
+  // Temperatura
+  set('f_t_sombra',ind.tSombra); set('f_t_sol',ind.tSol);
+  set('f_t_hora',ind.tHora); set('f_t_ceu',ind.tCeu);
+  if(ind.tSombra && ind.tSol) calcTermico();
+  // Foto
+  if(ind.foto){ photoB64=ind.foto; const p=document.getElementById('photo-preview'); p.src=ind.foto; document.getElementById('photoPreviewWrap').style.display='block'; document.getElementById('btnIA').style.display='flex'; }
+  // Saúde
+  if(ind.saudeDetalhes){ Object.entries(ind.saudeDetalhes).forEach(([k,v])=>{ if(v!=null){ const btn=document.querySelector(`.score-btn[data-k="${k}"][data-v="${v}"]`); if(btn) setSaude(k,parseInt(v),btn); } }); }
+  // Serviços com níveis
+  if(ind.svcNiveis){ Object.entries(ind.svcNiveis).forEach(([k,v])=>{ if(v!=null){ const btn=document.querySelector(`.score-btn[data-sk="${k}"][data-sv="${v}"]`); if(btn) setSvc(k,parseInt(v),btn); } }); }
+  // Código
+  const cd=document.getElementById('codigoDisplay'); if(cd) cd.textContent=ind.id;
+  const sb=document.querySelector('.submit-btn'); if(sb){ sb.textContent='✏️ Salvar Edição'; sb.style.background='linear-gradient(135deg,#b45309,#d97706)'; }
+  document.getElementById('f_lat').value = ind.lat;
+  document.getElementById('f_lng').value = ind.lng;
+  document.getElementById('gpsInfo').textContent = '📍 Coordenadas do registro original';
+  autoCalc();
+  showToast('✏️ Editando '+ind.id+' — '+ind.nome);
+}
+
 function autoCalc(){
   const dap=parseFloat(document.getElementById('f_dap').value)||0;
   const cns=parseFloat(document.getElementById('f_cns').value)||0;
@@ -1780,7 +2141,15 @@ async function saveInd(){
     confCalc:document.getElementById('f_cc').value,
     manejo:document.getElementById('f_man').value,
     risco:parseInt(document.getElementById('f_risco').value)||0,
-    servicos:[...document.querySelectorAll('#svcsEl input:checked')].map(c=>c.value),
+    servicos: Object.keys(svcVals).filter(k=>svcVals[k]>0),
+    svcNiveis: {...svcVals},
+    tSombra: parseFloat(document.getElementById('f_t_sombra').value)||null,
+    tSol: parseFloat(document.getElementById('f_t_sol').value)||null,
+    tReducao: parseFloat(document.getElementById('f_t_reducao').value)||null,
+    tHora: document.getElementById('f_t_hora').value||null,
+    tCeu: document.getElementById('f_t_ceu').value||null,
+    termicoSombra: termoPhotos['termico_sombra']||null,
+    termicoSol: termoPhotos['termico_sol']||null,
     dens:parseFloat(document.getElementById('f_dens').value)||0.6,
     carbKg:parseFloat(document.getElementById('f_ck').value)||null,
     aves:document.getElementById('f_av').value.trim(),
@@ -1795,6 +2164,21 @@ async function saveInd(){
     foto:photoB64, fotosExtra:extraPhotosB64.slice(0,5), ts:new Date().toISOString()
   };
   showToast('💾 Salvando...');
+  if(_editId){
+    // Edição — substituir localmente ou no Firebase
+    ind.id = _editId;
+    if(window._FB && window._inds){
+      const old = (window._inds||[]).find(i=>i.id===_editId);
+      if(old && old._fid){
+        try{ await window._FB.del(old._fid); }catch(e){}
+      }
+    } else {
+      window._inds = (window._inds||[]).filter(i=>i.id!==_editId);
+    }
+    _editId = null;
+    const sb = document.querySelector('.submit-btn');
+    if(sb){ sb.textContent='💾 Registrar Indivíduo no Cadastro'; sb.style.background=''; }
+  }
   await addInd(ind);
   showToast(`✅ ${ind.id} — ${ind.nome} salvo!`);
   resetForm(); goScreen('list');
@@ -1811,6 +2195,13 @@ function resetForm(){
   document.getElementById('btnIA').style.display='none';
   const cw=document.getElementById('corsWarning'); if(cw) cw.style.display='none';
   extraPhotosB64=[]; renderExtraPhotos(); _iaData=null;
+  svcVals={}; termoPhotos={};
+  _editId=null;
+  const sb=document.querySelector('.submit-btn');
+  if(sb){sb.textContent='💾 Registrar Indivíduo no Cadastro';sb.style.background='';}
+  const td=['f_t_sombra','f_t_sol','f_t_reducao','f_t_hora','f_t_ceu'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const tr=document.getElementById('termicoResult'); if(tr) tr.style.display='none';
+  ['termico_sombra','termico_sol'].forEach(t=>{const w=document.getElementById('prev_'+t);if(w)w.style.display='none';});
   document.getElementById('notaNum').textContent='—';
   document.getElementById('notaBar').style.width='0%';
   document.getElementById('notaStatus').textContent='Preencha os critérios abaixo';
