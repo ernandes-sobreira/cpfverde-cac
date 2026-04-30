@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       <div class="form-sec-body">
         <div class="row2">
           <div class="fld"><label>Nome Popular *</label><input id="f_nome" placeholder="Ex: Ipê Amarelo"/></div>
-          <div class="fld"><label>Nome Científico</label><input id="f_sci" placeholder="Ex: Handroanthus albus"/></div>
+          <div class="fld"><label>Nome Científico</label><input id="f_sci" placeholder="Ex: Handroanthus albus" oninput="aplicarDensidade(document.getElementById('f_nome').value, this.value)"/></div>
         </div>
         <div class="row2">
           <div class="fld"><label>Família</label><input id="f_fam" placeholder="Bignoniaceae"/></div>
@@ -792,17 +792,45 @@ document.addEventListener('DOMContentLoaded',()=>{
     <div class="form-section">
       <div class="form-sec-hdr"><div class="form-sec-ico">🌍</div><div class="form-sec-title">8. Estoque de Carbono</div></div>
       <div class="form-sec-body">
-        <p style="font-size:12px;color:var(--t3);line-height:1.6;">Equação alométrica tropical (Chave et al. 2014):<br><code style="font-size:11px;background:var(--g7);padding:1px 5px;border-radius:4px;">B = 0,0673 × (ρ × DAP² × H)^0,976</code> → C = B × 0,47</p>
-        <div class="row2 mt8">
-          <div class="fld"><label>Densidade ρ (g/cm³)</label>
-            <select id="f_dens" onchange="autoCalc()">
-              <option value="0.4">0,40 — Muito leve</option><option value="0.5">0,50 — Leve</option>
-              <option value="0.6" selected>0,60 — Média (padrão)</option><option value="0.7">0,70 — Semipesada</option>
-              <option value="0.8">0,80 — Pesada</option><option value="0.9">0,90 — Muito pesada</option>
-            </select>
+
+        <!-- Resultado visual principal -->
+        <div id="carbonoResultBox" style="display:none;background:linear-gradient(135deg,#0d2818,#1b4332);border-radius:12px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:10px;color:#95d5b2;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🌍 Esta árvore armazena</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px;">
+            <div style="font-family:'Lora',serif;font-size:38px;font-weight:700;color:#fff;" id="carbonoNum">—</div>
+            <div style="color:rgba(255,255,255,.6);font-size:14px;padding-bottom:8px;">kg de carbono</div>
           </div>
-          <div class="fld"><label>Carbono est. (kg C)</label><input type="number" id="f_ck" readonly placeholder="auto"/><small>CO₂eq = C × 3,67</small></div>
+          <div id="carbonoAnalogia" style="font-size:13px;color:#95d5b2;line-height:1.6;"></div>
+          <div style="margin-top:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;">
+            <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;" id="carbonoTecnico"></div>
+          </div>
         </div>
+
+        <!-- Fonte da densidade -->
+        <div id="densSource" style="display:none;background:#d1fae5;border-radius:8px;padding:9px 12px;font-size:12px;color:#065f46;margin-bottom:10px;">
+          <b>✅ Densidade carregada automaticamente</b> para esta espécie.
+        </div>
+
+        <!-- Densidade (oculta por padrão, mostra só se necessário) -->
+        <div id="densManualWrap">
+          <div class="fld">
+            <label>Densidade da madeira <button class="help-btn" onclick="showTip('densidade')">?</button></label>
+            <select id="f_dens" onchange="autoCalc()">
+              <option value="0.3">0,30 — Muito leve (embaúba, balsa)</option>
+              <option value="0.4">0,40 — Leve (paineira, cecropia)</option>
+              <option value="0.5">0,50 — Média-leve (cedro, teca)</option>
+              <option value="0.6" selected>0,60 — Média tropical (padrão)</option>
+              <option value="0.65">0,65 — Média-pesada (pequi, sibipiruna)</option>
+              <option value="0.7">0,70 — Semipesada (ipê amarelo, jatobá)</option>
+              <option value="0.75">0,75 — Pesada (mogno, castanha)</option>
+              <option value="0.8">0,80 — Muito pesada (ipê roxo, aroeira)</option>
+              <option value="0.9">0,90 — Duríssima (guatambú, angico)</option>
+            </select>
+            <small>Preenchida automaticamente pela IA. Altere se souber o valor específico.</small>
+          </div>
+        </div>
+
+        <input type="number" id="f_ck" style="display:none;" readonly/>
       </div>
     </div>
 
@@ -971,7 +999,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     <span class="chip" onclick="filterCatBioma('Cerrado',this)">🌾 Cerrado</span>
     <span class="chip" onclick="filterCatBioma('Amazônia',this)">🌳 Amazônia</span>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="catGrid"></div>
+  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;" id="catGrid"></div>
 </div>
 
 <!-- SOBRE -->
@@ -1866,15 +1894,111 @@ function fillFormFromInd(ind){
   showToast('✏️ Editando '+ind.id+' — '+ind.nome);
 }
 
+// ── BANCO DE DENSIDADE POR GÊNERO/ESPÉCIE (g/cm³) ──────────────────────
+// Fonte: Global Wood Density Database (Chave et al. 2009) + literatura neotropical
+const DENS_DB = {
+  // Por espécie (nome científico exato)
+  'handroanthus albus':0.70,'handroanthus impetiginosus':0.80,'handroanthus ochraceus':0.72,
+  'tabebuia aurea':0.68,'tabebuia roseoalba':0.65,
+  'hymenaea courbaril':0.85,'hymenaea stigonocarpa':0.82,
+  'myracrodruon urundeuva':0.90,'anadenanthera colubrina':0.80,'anadenanthera peregrina':0.78,
+  'bertholletia excelsa':0.75,'swietenia macrophylla':0.72,'cedrela odorata':0.45,
+  'caryocar brasiliense':0.65,'caryocar villosum':0.70,
+  'mauritia flexuosa':0.40,'attalea phalerata':0.50,'attalea speciosa':0.48,
+  'ceiba speciosa':0.35,'ceiba pentandra':0.30,
+  'ficus obtusifolia':0.45,'ficus insipida':0.42,
+  'vochysia divergens':0.50,'vochysia tucanorum':0.52,
+  'sterculia apetala':0.45,'sterculia striata':0.48,
+  'amburana cearensis':0.60,'amburana cearensis':0.58,
+  'cecropia pachystachya':0.30,'cecropia palmata':0.28,
+  'mangifera indica':0.60,'psidium guajava':0.70,
+  'caesalpinia pluviosa':0.75,'caesalpinia ferrea':0.95,
+  'mimosa caesalpiniifolia':0.85,'enterolobium contortisiliquum':0.55,
+  'astronium fraxinifolium':0.85,'astronium urundeuva':0.90,
+  // Por gênero (fallback)
+  'handroanthus':0.72,'tabebuia':0.65,'jacaranda':0.58,
+  'hymenaea':0.83,'copaifera':0.75,'dipteryx':0.88,
+  'swietenia':0.72,'cedrela':0.45,'toona':0.42,
+  'bertholletia':0.75,'lecythis':0.72,'eschweilera':0.80,
+  'caryocar':0.67,'vochysia':0.51,'qualea':0.60,
+  'mauritia':0.40,'attalea':0.50,'acrocomia':0.55,
+  'ceiba':0.33,'eriotheca':0.38,'pseudobombax':0.35,
+  'ficus':0.44,'maclura':0.65,'brosimum':0.72,
+  'myracrodruon':0.90,'astronium':0.87,'anacardium':0.55,
+  'spondias':0.48,'tapirira':0.52,'mangifera':0.60,
+  'caesalpinia':0.75,'delonix':0.55,'peltophorum':0.68,
+  'anadenanthera':0.79,'enterolobium':0.55,'albizia':0.50,
+  'eucalyptus':0.65,'terminalia':0.70,'combretum':0.72,
+  'cecropia':0.30,'trema':0.38,'celtis':0.60,
+  'tectona':0.55,'gmelina':0.48,'vitex':0.68,
+};
+
+function getDensidadeEspecie(nomePopular, nomeSci){
+  if(!nomeSci) return null;
+  const sci = nomeSci.toLowerCase().trim();
+  // Busca exata pela espécie
+  if(DENS_DB[sci]) return DENS_DB[sci];
+  // Busca pelo gênero
+  const genero = sci.split(' ')[0];
+  if(DENS_DB[genero]) return DENS_DB[genero];
+  return null;
+}
+
+function aplicarDensidade(nomePopular, nomeSci){
+  const dens = getDensidadeEspecie(nomePopular, nomeSci);
+  const sel = document.getElementById('f_dens');
+  const src = document.getElementById('densSource');
+  if(dens && sel){
+    // Selecionar a opção mais próxima
+    let bestOpt = null, bestDiff = 999;
+    [...sel.options].forEach(o=>{
+      const diff = Math.abs(parseFloat(o.value) - dens);
+      if(diff < bestDiff){ bestDiff=diff; bestOpt=o; }
+    });
+    if(bestOpt) bestOpt.selected = true;
+    if(src){ src.style.display='block'; src.innerHTML=`<b>✅ Densidade ${dens} g/cm³</b> carregada automaticamente para <i>${nomeSci}</i> (banco GlobalWoodDensity).<br>Esta árvore tem madeira ${dens<=0.4?'muito leve':dens<=0.55?'leve':dens<=0.65?'média':dens<=0.75?'semipesada':'pesada a duríssima'}.`; }
+    autoCalc();
+    return true;
+  }
+  if(src) src.style.display='none';
+  return false;
+}
+
 function autoCalc(){
   const dap=parseFloat(document.getElementById('f_dap').value)||0;
   const cns=parseFloat(document.getElementById('f_cns').value)||0;
   const clo=parseFloat(document.getElementById('f_clo').value)||0;
   const h=parseFloat(document.getElementById('f_ht').value)||0;
   const dens=parseFloat(document.getElementById('f_dens').value)||0.6;
-  if(dap&&!document.getElementById('f_cap').value) document.getElementById('f_cap').value=(dap*Math.PI).toFixed(1);
+  if(dap&&!document.getElementById('f_cap').value)
+    document.getElementById('f_cap').value=(dap*Math.PI).toFixed(1);
   if(cns&&clo){const a=(cns+clo)/4;document.getElementById('f_som').value=(Math.PI*a*a).toFixed(1);}
-  if(dap&&h&&dens){const bio=0.0673*Math.pow(dens*dap*dap*h,0.976);document.getElementById('f_ck').value=(bio*0.47).toFixed(1);}
+  if(dap&&h&&dens){
+    const bio=0.0673*Math.pow(dens*dap*dap*h,0.976);
+    const carb=(bio*0.47);
+    document.getElementById('f_ck').value=carb.toFixed(1);
+    // Atualizar painel visual
+    const box=document.getElementById('carbonoResultBox');
+    const num=document.getElementById('carbonoNum');
+    const ana=document.getElementById('carbonoAnalogia');
+    const tec=document.getElementById('carbonoTecnico');
+    if(box&&num){
+      box.style.display='block';
+      num.textContent=Math.round(carb);
+      // Analogias para crianças
+      const co2=Math.round(carb*3.67);
+      const carros=Math.round(co2/4600*10)/10; // carro médio emite ~4,6 ton CO2/ano
+      const voos=Math.round(co2/90*10)/10; // voo SP-Cuiabá ~90kg CO2
+      const pessoas=Math.round(carb/77); // pessoa adulta ~77kg de carbono
+      let analogia='';
+      if(carb<10) analogia=`Equivale a ${co2} kg de CO₂ — o que uma pessoa libera em ${Math.round(co2/4)} dias.`;
+      else if(carb<50) analogia=`Equivale a ${co2} kg de CO₂ — como ${voos} voos de ônibus aéreo Cáceres–Cuiabá.`;
+      else if(carb<150) analogia=`Equivale a ${co2} kg de CO₂ — como ${Math.round(carros*10)/10} meses de emissão de um carro.`;
+      else analogia=`Equivale a ${co2} kg de CO₂ — como ${Math.round(carros*10)/10} anos de emissão de um carro! Esta árvore é um gigante do clima.`;
+      ana.innerHTML=`🌱 <b>${co2} kg de CO₂</b> neutralizados<br>${analogia}`;
+      tec.innerHTML=`Método: Chave et al. (2014) · Biomassa aérea: ~${Math.round(bio)} kg · ρ = ${dens} g/cm³ · DAP = ${dap} cm · H = ${h} m`;
+    }
+  }
 }
 function captGPS(){
   if(!navigator.geolocation){showToast('⚠️ GPS não disponível neste browser');return;}
@@ -2078,7 +2202,9 @@ function aplicarIA(d){
   set('f_gen',  d.genero);
   set('f_orig', d.origem);
   set('f_fen',  d.fenologia);
-  if(d.densidade_madeira) set('f_dens', d.densidade_madeira);
+  // Aplicar densidade do banco primeiro, fallback para IA
+  const densAplicada = aplicarDensidade(d.nome_popular, d.nome_cientifico);
+  if(!densAplicada && d.densidade_madeira) set('f_dens', d.densidade_madeira);
   // Observações taxonômicas = obs_tax + importancia
   const taxTxt = [d.observacoes_tax, d.importancia_ecologica, d.usos].filter(Boolean).join(' | ');
   if(taxTxt) set('f_tax', taxTxt);
@@ -2405,6 +2531,18 @@ const TIPS = {
 <b>Senescência 🍂:</b> As folhas estão ficando amarelas ou caindo. Normal em espécies decíduas (que perdem folhas no seco).<br><br>
 <b>Dormência:</b> A árvore está "descansando", sem folhas. Comum em algumas espécies durante a seca.`
   },
+  densidade:{
+    emoji:'🌲',
+    title:'Densidade da Madeira',
+    body:`<b>O que é?</b> A densidade da madeira (ρ) é o peso de 1 cm³ de madeira seca. Madeiras densas são mais pesadas e armazenam mais carbono por volume.<br><br>
+<b>Por que importa para o carbono?</b> A equação alométrica usa a densidade para estimar quanto de biomassa (peso seco) está no tronco e galhos. Uma aroeira com a mesma espessura que uma embaúba armazena 3 vezes mais carbono, porque sua madeira é muito mais densa.<br><br>
+<b>O app preenche automaticamente!</b> Ao identificar a espécie pela IA ou digitando o nome científico, o banco de dados interno busca a densidade registrada na literatura científica (GlobalWoodDensity Database, Chave et al. 2009).<br><br>
+<b>Exemplos de densidade:</b><br>
+🪶 Embaúba, Paineira → ~0,30–0,35 g/cm³ (leve como cortiça)<br>
+🌿 Buriti, Cedro → ~0,40–0,50 g/cm³ (madeira de balsa)<br>
+🌳 Ipê Amarelo, Mogno → ~0,70–0,75 g/cm³ (madeira sólida)<br>
+⚫ Aroeira, Angico → ~0,85–0,90 g/cm³ (afunda na água!)`
+  },
   ia:{
     emoji:'🤖',
     title:'O que é a Identificação por IA?',
@@ -2439,96 +2577,96 @@ function closeTip(){
 // Fotos: Wikimedia Commons, licença CC-BY-SA / domínio público
 const CATALOGO = [
   {nome:'Ipê Amarelo',sci:'Handroanthus albus',familia:'Bignoniaceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjljMyIvPjxyZWN0IHg9IjkyIiB5PSIxMDAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI1MCIgZmlsbD0iIzhCNjkxNCIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNzgiIHJ4PSI1MiIgcnk9IjQwIiBmaWxsPSIjZWFiMzA4Ii8+PGVsbGlwc2UgY3g9Ijc1IiBjeT0iOTAiIHJ4PSIzNCIgcnk9IjI4IiBmaWxsPSIjY2E4YTA0Ii8+PGVsbGlwc2UgY3g9IjEyNSIgY3k9Ijg4IiByeD0iMzAiIHJ5PSIyNCIgZmlsbD0iI2VhYjMwOCIvPjxjaXJjbGUgY3g9Ijg1IiBjeT0iNjUiIHI9IjYiIGZpbGw9IiNmZGUwNDciLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI1OCIgcj0iNyIgZmlsbD0iI2ZkZTA0NyIvPjxjaXJjbGUgY3g9IjExNSIgY3k9IjY3IiByPSI1IiBmaWxsPSIjZmRlMDQ3Ii8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzkyNDAwZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkhhbmRyb2FudGh1cyBhbGJ1czwvdGV4dD48L3N2Zz4=',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Handroanthus_albus1.jpg/480px-Handroanthus_albus1.jpg',
    status:'Vulnerável — Lista Vermelha MT',
    desc:'Árvore decídua de 4 a 20 metros, característica da arborização urbana de Cáceres-MT. Casca cinza-acastanhada, rugosa e sulcada longitudinalmente. Folhas compostas digitadas, caducas. Flores tubulosas amarelas em panículas terminais, surgem antes das folhas novas (julho–setembro). Fruto síliqua lenhosa, linear. Amplitude altitudinal: 100–1200m s.n.m.',
    importancia:'Espécie com alto valor paisagístico, usada na arborização urbana e restauração do Pantanal. Mel produzido por abelhas visitantes é apreciado regionalmente. Potencial candidata a Patrimônio Natural de Cáceres-MT.',
    servicos:['sombra','paisagismo','polinizacao','termico'],dens:0.7,orig:'nativa_pantanal'},
   {nome:'Ipê Roxo',sci:'Handroanthus impetiginosus',familia:'Bignoniaceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YzZThmZiIvPjxyZWN0IHg9IjkyIiB5PSIxMDAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI1MCIgZmlsbD0iIzZiNGMxMSIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNzgiIHJ4PSI1MiIgcnk9IjQwIiBmaWxsPSIjYTg1NWY3Ii8+PGVsbGlwc2UgY3g9Ijc1IiBjeT0iOTAiIHJ4PSIzNCIgcnk9IjI4IiBmaWxsPSIjN2MzYWVkIi8+PGVsbGlwc2UgY3g9IjEyNSIgY3k9Ijg4IiByeD0iMzAiIHJ5PSIyNCIgZmlsbD0iIzkzMzNlYSIvPjxjaXJjbGUgY3g9Ijg1IiBjeT0iNjUiIHI9IjYiIGZpbGw9IiNlODc5ZjkiLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI1OCIgcj0iNyIgZmlsbD0iI2U4NzlmOSIvPjxjaXJjbGUgY3g9IjExNSIgY3k9IjY3IiByPSI1IiBmaWxsPSIjZDk0NmVmIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzU4MWM4NyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkhhbmRyb2FudGh1cyBpbXBldGlnaW5vc3VzPC90ZXh0Pjwvc3ZnPg==',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Handroanthus_impetiginosus.jpg/480px-Handroanthus_impetiginosus.jpg',
    status:'Quase Ameaçada',
    desc:'Árvore de 8 a 30 metros, decídua. Tronco cilíndrico, casca acinzentada com fissuras profundas. Flores roxo-rosadas em inflorescências densas, antes da folhação. Madeira de alta densidade (0,8 g/cm³), durável e resistente. Amplamente usada na medicina popular — infusão da casca com propriedades anti-inflamatórias comprovadas.',
    importancia:'Referência em fitoterapia brasileira. Espécie-chave para polinizadores nativos. Indicada para recuperação de matas ciliares.',
    servicos:['sombra','paisagismo','medicinal','polinizacao'],dens:0.8,orig:'nativa_brasil'},
   {nome:'Buriti',sci:'Mauritia flexuosa',familia:'Arecaceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9Ijk1IiB5PSIzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzkyNDAwZSIgcng9IjMiLz48bGluZSB4MT0iMTAwIiB5MT0iNDAiIHgyPSI1MCIgeTI9IjgwIiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSI0NSIgeDI9IjE1MCIgeTI9Ijc1IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzNSIgeDI9IjY1IiB5Mj0iNTUiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjM1IiB4Mj0iMTM1IiB5Mj0iNTAiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjMwIiB4Mj0iMTAwIiB5Mj0iMTAiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjgiIGZpbGw9IiNmNTllMGIiLz48Y2lyY2xlIGN4PSI4OCIgY3k9Ijc4IiByPSI2IiBmaWxsPSIjZjU5ZTBiIi8+PGNpcmNsZSBjeD0iMTEyIiBjeT0iNzYiIHI9IjciIGZpbGw9IiNkOTc3MDYiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTY2NTM0IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+TWF1cml0aWEgZmxleHVvc2E8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Mauritia_flexuosa_-_buriti.jpg/480px-Mauritia_flexuosa_-_buriti.jpg',
    status:'Pouco Preocupante',
    desc:'Palmeira dioica de 20 a 35 metros, estritamente associada a veredas e ambientes úmidos. Estipe robusto com cicatrizes foliares. Folhas palmatissectas de até 2 metros de diâmetro. Frutos elipsoides com escamas vermelhas, ricos em carotenoides e vitamina A. Indicadora de lençol freático superficial — sua presença revela nascentes e cursos d’água.',
    importancia:'Espécie-chave do Cerrado e Pantanal. Seus frutos alimentam araras, tucanos, pacas e antas. Utilizada em culinária, artesanato e cosmética. Tombamento recomendado em veredas.',
    servicos:['fruto_humano','fruto_animal','sombra','hidrologia'],dens:0.4,orig:'nativa_brasil'},
   {nome:'Jatobá',sci:'Hymenaea courbaril',familia:'Fabaceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjNjNyIvPjxyZWN0IHg9IjkwIiB5PSI4MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjY1IiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxyZWN0IHg9Ijk0IiB5PSI4OCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjU1IiBmaWxsPSIjOTI0MDBlIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjYwIiByeD0iNjIiIHJ5PSI0NSIgZmlsbD0iIzE2NjUzNCIvPjxlbGxpcHNlIGN4PSI3MCIgY3k9IjcwIiByeD0iNDAiIHJ5PSIzMCIgZmlsbD0iIzE1ODAzZCIvPjxlbGxpcHNlIGN4PSIxMzAiIGN5PSI2OCIgcng9IjM2IiByeT0iMjgiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTAwIiBjeT0iNDUiIHJ4PSIzMCIgcnk9IjIwIiBmaWxsPSIjMjJjNTVlIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzc4MzUwZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkh5bWVuYWVhIGNvdXJiYXJpbDwvdGV4dD48L3N2Zz4=',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Hymenaea_courbaril_MS_4053.jpg/480px-Hymenaea_courbaril_MS_4053.jpg',
    status:'Vulnerável',
    desc:'Árvore de 20 a 40 metros, uma das maiores do Cerrado e Pantanal. Tronco robusto, casca acinzentada, rimosa. Folhas bifolioladas, coriáceas, persistentes. Frutos legumes lenhosos com polpa farinosa nutritiva. Resina fóssil (copal) usada em vernizes. Madeira com densidade 0,85 g/cm³, excelente para construção civil. Pode viver mais de 500 anos.',
    importancia:'Grande estoque de carbono — indivíduos maduros estocam mais de 2 toneladas de C. Frutos consumidos por antas, cutias e cotias. Fundamental em projetos de restauração florestal.',
    servicos:['fruto_humano','fruto_animal','sombra','carbono'],dens:0.85,orig:'nativa_brasil'},
   {nome:'Aroeira Verdadeira',sci:'Myracrodruon urundeuva',familia:'Anacardiaceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZjdlZCIvPjxyZWN0IHg9IjkyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjYwIiBmaWxsPSIjN2MyZDEyIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2OCIgcng9IjU1IiByeT0iNDAiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI3OCIgcng9IjM4IiByeT0iMjgiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNzYiIHJ4PSIzNCIgcnk9IjI2IiBmaWxsPSIjMTQ1MzJkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjUyIiByeD0iMjgiIHJ5PSIxOCIgZmlsbD0iIzIyYzU1ZSIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iODIiIHI9IjMiIGZpbGw9IiNlZjQ0NDQiLz48Y2lyY2xlIGN4PSI5NSIgY3k9Ijg4IiByPSIzIiBmaWxsPSIjZGMyNjI2Ii8+PGNpcmNsZSBjeD0iMTEyIiBjeT0iODQiIHI9IjMiIGZpbGw9IiNlZjQ0NDQiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjN2MyZDEyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+TXlyYWNyb2RydW9uIHVydW5kZXV2YTwvdGV4dD48L3N2Zz4=',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Myracrodruon_urundeuva_2.jpg/480px-Myracrodruon_urundeuva_2.jpg',
    status:'Ameaçada de Extinção — IBAMA',
    desc:'Árvore de 7 a 14 metros, decídua, xerófita. Uma das madeiras mais densas do Brasil (0,9 g/cm³). Casca parda, profundamente sulcada. Folhas compostas imparipinadas. Flores pequenas, brancas, em panículas. Frutos drupas vermelhas. Raízes profundas que resistem a secas prolongadas. Exsudato resinoso com propriedades antimicrobianas.',
    importancia:'Espécie protegida por lei federal. Madeira imputrescível usada em moirões, dormentes e obras hidráulicas. Casca medicinal reconhecida pela ANVISA. Candidata prioritária a tombamento municipal.',
    servicos:['sombra','medicinal','carbono'],dens:0.9,orig:'nativa_brasil'},
   {nome:'Paineira',sci:'Ceiba speciosa',familia:'Malvaceae',bioma:'Amazônia',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZkZjJmOCIvPjxyZWN0IHg9IjkyIiB5PSI3MCIgd2lkdGg9IjE2IiBoZWlnaHQ9Ijc1IiBmaWxsPSIjNmI3MjgwIiByeD0iNiIvPjxyZWN0IHg9Ijg4IiB5PSI5MCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUwIiBmaWxsPSIjNGI1NTYzIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1NSIgcng9IjU4IiByeT0iMzgiIGZpbGw9IiNlYzQ4OTkiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI2NiIgcng9IjM4IiByeT0iMjYiIGZpbGw9IiNkYjI3NzciLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNjQiIHJ4PSIzNCIgcnk9IjI0IiBmaWxsPSIjZjQ3MmI2Ii8+PGNpcmNsZSBjeD0iOTAiIGN5PSI0OCIgcj0iOCIgZmlsbD0iI2ZkZjRmZiIvPjxjaXJjbGUgY3g9IjEwOCIgY3k9IjQ0IiByPSI3IiBmaWxsPSIjZmRmNGZmIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNTQiIHI9IjYiIGZpbGw9IiNmY2U3ZjMiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjOWQxNzRkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+Q2VpYmEgc3BlY2lvc2E8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Ceiba_speciosa_1.jpg/480px-Ceiba_speciosa_1.jpg',
    status:'Pouco Preocupante',
    desc:'Árvore de grande porte (15–30m), decídua, com tronco barrigudo coberto de espinhos cônicos. Flores rosa-lilás com centro branco-amarelado, vistosas. Fruto cápsula ovoide, deiscente, com fibras algodonosas brancas (paina). Sementes negras envolvidas na paina usada como enchimento. Tronco verde-acinzentado realiza fotossíntese.',
    importancia:'Espécie ornamental de alto impacto visual para arborização urbana. Flores com abundante néctar atraem beija-flores e morcegos polinizadores. Fibra da paina utilizada por aves na construção de ninhos.',
    servicos:['paisagismo','moradia','polinizacao','sombra'],dens:0.35,orig:'nativa_brasil'},
   {nome:'Cerejeira-do-Cerrado',sci:'Amburana cearensis',familia:'Fabaceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkyIiB5PSI4OCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjU3IiBmaWxsPSIjOTI0MDBlIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3MCIgcng9IjU0IiByeT0iMzgiIGZpbGw9IiMyMmM1NWUiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4MCIgcng9IjM2IiByeT0iMjYiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iNzgiIHJ4PSIzMiIgcnk9IjI0IiBmaWxsPSIjMTU4MDNkIi8+PGNpcmNsZSBjeD0iODgiIGN5PSI2MiIgcj0iNSIgZmlsbD0iI2Y5ZmFmYiIvPjxjaXJjbGUgY3g9IjEwMiIgY3k9IjU2IiByPSI2IiBmaWxsPSIjZjlmYWZiIi8+PGNpcmNsZSBjeD0iMTE2IiBjeT0iNjQiIHI9IjQiIGZpbGw9IiNmOWZhZmIiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTQ1MzJkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+QW1idXJhbmEgY2VhcmVuc2lzPC90ZXh0Pjwvc3ZnPg==',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Amburana_cearensis.jpg/480px-Amburana_cearensis.jpg',
    status:'Vulnerável — IUCN',
    desc:'Árvore de 8 a 20 metros, decídua. Casca papiráceo-esfoliante, bege-acastanhada, aromática. Folhas compostas imparipinadas. Flores brancas perfumadas em racemos axilares. Semente com substância cumarina, responsável pelo aroma característico de baunilha. Madeira moderadamente pesada, resistente a insetos por compostos naturais.',
    importancia:'Espécie de alto valor para etnobotânica — cumarina e imbúrana usadas em perfumaria e medicina popular. Ameaçada pelo extrativismo ilegal da madeira. Tombamento urgente recomendado.',
    servicos:['sombra','paisagismo','medicinal'],dens:0.6,orig:'nativa_pantanal'},
   {nome:'Manduvi',sci:'Sterculia apetala',familia:'Malvaceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZjlmZiIvPjxyZWN0IHg9IjkyIiB5PSI4MiIgd2lkdGg9IjE4IiBoZWlnaHQ9IjYzIiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2NCIgcng9IjU4IiByeT0iNDIiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSI3NiIgcng9IjQwIiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTMwIiBjeT0iNzQiIHJ4PSIzNiIgcnk9IjI4IiBmaWxsPSIjMTU4MDNkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjUwIiByeD0iMjYiIHJ5PSIxOCIgZmlsbD0iIzRhZGU4MCIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMCw1MCkiPjxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjEyIiByeT0iNiIgZmlsbD0iIzI1NjNlYiIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwKSIvPjxjaXJjbGUgY3g9Ii04IiBjeT0iMiIgcj0iMyIgZmlsbD0iIzFkNGVkOCIvPjwvZz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjMTY2NTM0IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+U3RlcmN1bGlhIGFwZXRhbGE8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Sterculia_apetala_fruits.jpg/480px-Sterculia_apetala_fruits.jpg',
    status:'Vulnerável — espécie-chave Pantanal',
    desc:'Árvore de 15 a 30 metros, semicaducifolia. Tronco cilíndrico, casca acinzentada, levemente fissuras. Folhas grandes, palmatissectas. Frutos folículos, vermelhos quando maduros, com sementes negras ricas em lipídeos. Principal fonte alimentar da arara-azul-grande (Anodorhynchus hyacinthinus) no Pantanal. Ocorre em cordilheiras e capões.',
    importancia:'Relação de dependência com a arara-azul-grande torna o manduvi indispensável para conservação desta ave. Comprometimento desta espécie implica colapso direto na população de araras. Tombamento como patrimônio natural é estratégia de conservação reconhecida.',
    servicos:['fruto_animal','moradia','sombra','carbono'],dens:0.45,orig:'nativa_pantanal'},
   {nome:'Mogno Brasileiro',sci:'Swietenia macrophylla',familia:'Meliaceae',bioma:'Amazônia',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZjJmMiIvPjxyZWN0IHg9IjkwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9Ijg1IiBmaWxsPSIjN2MyZDEyIiByeD0iNiIvPjxwb2x5Z29uIHBvaW50cz0iOTAsNjAgMTAwLDE1IDExMCw2MCIgZmlsbD0iIzkyNDAwZSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1MCIgcng9IjY1IiByeT0iNDAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iNjUiIGN5PSI2MiIgcng9IjQ0IiByeT0iMzIiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iMTM1IiBjeT0iNjAiIHJ4PSI0MCIgcnk9IjMwIiBmaWxsPSIjMTQ1MzJkIi8+PGVsbGlwc2UgY3g9IjEwMCIgY3k9IjM2IiByeD0iMzIiIHJ5PSIyMiIgZmlsbD0iIzIyYzU1ZSIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiM3YzJkMTIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5Td2lldGVuaWEgbWFjcm9waHlsbGE8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Swietenia_macrophylla_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-214.jpg/480px-Swietenia_macrophylla_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-214.jpg',
    status:'Vulnerável — CITES Apêndice II',
    desc:'Árvore emergente de 30 a 50 metros, um dos maiores representantes da flora neotropical. Tronco reto, cilíndrico, com base levemente estriada. Folhas compostas paripinadas, semicaducas. Fruto cápsula lenhosa, pentavalve, com sementes aladas. Madeira cerne avermelhado, textura média, brilhante, extremamente valorizada comercialmente.',
    importancia:'Espécie listada no CITES e IBAMA. Seu comércio ilegal é um dos principais drivers de desmatamento amazônico. Presença de indivíduos maduros indica floresta primária conservada. Tombamento tem precedente legal nacional.',
    servicos:['sombra','carbono','moradia'],dens:0.75,orig:'nativa_brasil'},
   {nome:'Castanheira-do-Pará',sci:'Bertholletia excelsa',familia:'Lecythidaceae',bioma:'Amazônia',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkxIiB5PSI1NSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkwIiBmaWxsPSIjNzgzNTBmIiByeD0iNiIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI0NSIgcng9IjY4IiByeT0iMzUiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNjIiIGN5PSI1NSIgcng9IjQ1IiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTM4IiBjeT0iNTMiIHJ4PSI0MiIgcnk9IjI4IiBmaWxsPSIjMTQ1MzJkIi8+PGNpcmNsZSBjeD0iNzgiIGN5PSI2MiIgcj0iOCIgZmlsbD0iIzc4MzUwZiIvPjxjaXJjbGUgY3g9Ijk4IiBjeT0iNjYiIHI9IjkiIGZpbGw9IiM2YjMwMDgiLz48Y2lyY2xlIGN4PSIxMTYiIGN5PSI2MCIgcj0iNyIgZmlsbD0iIzc4MzUwZiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5CZXJ0aG9sbGV0aWEgZXhjZWxzYTwvdGV4dD48L3N2Zz4=',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Castanheira_do_Par%C3%A1.jpg/480px-Castanheira_do_Par%C3%A1.jpg',
    status:'Vulnerável — IUCN Red List',
    desc:'Árvore emergente de 30 a 50 metros, copa umbeliforme característica. Uma das maiores e mais longevas da Amazônia (até 1000 anos). Fruto pixídio lenhoso (ouriço) de 1 a 2 kg, contendo 8 a 24 sementes (castanhas). Só é polinizada por abelhas do gênero Eulaema, que dependem de orquídeas para completar seu ciclo. Exclusiva de florestas primárias não perturbadas.',
    importancia:'Indicadora de integridade florestal. A extração sustentável das castanhas é um dos únicos modelos econômicos que incentiva preservação da floresta em pé. Tombamento de castanheiras centenárias tem respaldo jurídico.',
    servicos:['fruto_humano','fruto_animal','carbono','hidrologia'],dens:0.75,orig:'nativa_brasil'},
   {nome:'Acuri',sci:'Attalea phalerata',familia:'Arecaceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxwYXRoIGQ9Ik05NyAxNDAgUTk1IDgwIDEwMCAyMCIgc3Ryb2tlPSIjOTI0MDBlIiBzdHJva2Utd2lkdGg9IjgiIGZpbGw9Im5vbmUiLz48bGluZSB4MT0iMTAwIiB5MT0iMzUiIHgyPSI0NSIgeTI9IjY4IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzOCIgeDI9IjE1NSIgeTI9IjY1IiBzdHJva2U9IiMxNTgwM2QiIHN0cm9rZS13aWR0aD0iMyIvPjxsaW5lIHgxPSIxMDAiIHkxPSIzMCIgeDI9IjYwIiB5Mj0iNDgiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjMwIiB4Mj0iMTQwIiB5Mj0iNDQiIHN0cm9rZT0iIzE1ODAzZCIgc3Ryb2tlLXdpZHRoPSIzIi8+PGxpbmUgeDE9IjEwMCIgeTE9IjI2IiB4Mj0iMTAwIiB5Mj0iOCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjQiLz48Y2lyY2xlIGN4PSI4NSIgY3k9IjYwIiByPSI1IiBmaWxsPSIjZDk3NzA2Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNTUiIHI9IjYiIGZpbGw9IiNiNDUzMDkiLz48Y2lyY2xlIGN4PSIxMTUiIGN5PSI2MiIgcj0iNSIgZmlsbD0iI2Q5NzcwNiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5BdHRhbGVhIHBoYWxlcmF0YTwvdGV4dD48L3N2Zz4=',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Attalea_phalerata_MS_3706.jpg/480px-Attalea_phalerata_MS_3706.jpg',
    status:'Pouco Preocupante',
    desc:'Palmeira robusta de 8 a 15 metros, estipe solitário, coberto por bases foliares persistentes. Folhas pinadas de 5 a 8 metros. Inflorescências interfoliares com flores unissexuadas. Frutos elipsoides, mesocarpo fibroso, endocarpo duro — rico em óleo usado em culinária e cosmética. Abundante em capões e cordilheiras do Pantanal.',
    importancia:'Espécie-chave para fauna do Pantanal. Frutos consumidos por araras, jacus, capivaras e antas. Estipe perfurado por pica-paus e corujas. A presença do acuri é indicadora de ambientes conservados do Pantanal.',
    servicos:['fruto_animal','sombra','moradia','hidrologia'],dens:0.5,orig:'nativa_pantanal'},
   {nome:'Angico-vermelho',sci:'Anadenanthera colubrina',familia:'Fabaceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZjdlZCIvPjxyZWN0IHg9IjkyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjYwIiBmaWxsPSIjN2MyZDEyIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI2OCIgcng9IjUyIiByeT0iMzgiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzIiIGN5PSI4MCIgcng9IjM2IiByeT0iMjYiIGZpbGw9IiMxNDUzMmQiLz48ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNzgiIHJ4PSIzMiIgcnk9IjI0IiBmaWxsPSIjMTY2NTM0Ii8+PGNpcmNsZSBjeD0iODQiIGN5PSI3MiIgcj0iMyIgZmlsbD0iI2ZiYmYyNCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY4IiByPSIzIiBmaWxsPSIjZjU5ZTBiIi8+PGNpcmNsZSBjeD0iMTE2IiBjeT0iNzMiIHI9IjMiIGZpbGw9IiNmYmJmMjQiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjN2MyZDEyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+QW5hZGVuYW50aGVyYSBjb2x1YnJpbmE8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Angico_-_Anadenanthera_colubrina.jpg/480px-Angico_-_Anadenanthera_colubrina.jpg',
    status:'Pouco Preocupante',
    desc:'Árvore de 10 a 25 metros, tronco com espinhos ou tubérculos na casca jovem. Folhas bipinadas. Flores brancas a creme em capítulos globosos, aromáticas. Fruto legume falcado, deiscente. Casca com alto teor de taninos (40%) — importante uso medicinal e curtume. Ocorre em cerradão, caatinga e transição cerrado-pantanal.',
    importancia:'Excelente para recuperação de áreas degradadas — crescimento rápido e fixação de nitrogênio. Casca usada na medicina popular como cicatrizante, adstringente e anti-inflamatório. Madeira densa utilizada para mourões e carvão vegetal.',
    servicos:['sombra','medicinal','carbono'],dens:0.8,orig:'nativa_brasil'},
   {nome:'Gameleira',sci:'Ficus obtusifolia',familia:'Moraceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9IjkwIiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNzgzNTBmIiByeD0iNSIvPjxwYXRoIGQ9Ik05MCw5MCBRNjAsOTUgNTUsMTIwIFE2MCwxMDAgOTAsOTUiIGZpbGw9IiM5MjQwMGUiLz48cGF0aCBkPSJNMTEwLDg4IFExNDAsOTMgMTQ1LDExOCBRMTQwLDk4IDExMCw5MyIgZmlsbD0iIzkyNDAwZSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI1MCIgcng9IjYwIiByeT0iNDAiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSI2MiIgcng9IjQyIiByeT0iMzAiIGZpbGw9IiMxNjY1MzQiLz48ZWxsaXBzZSBjeD0iMTMwIiBjeT0iNjAiIHJ4PSIzOCIgcnk9IjI4IiBmaWxsPSIjMTQ1MzJkIi8+PHRleHQgeD0iMTAwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iOSIgZmlsbD0iIzE2NjUzNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkZpY3VzIG9idHVzaWZvbGlhPC90ZXh0Pjwvc3ZnPg==',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Ficus_obtusifolia.jpg/480px-Ficus_obtusifolia.jpg',
    status:'Pouco Preocupante',
    desc:'Figueira de 15 a 25 metros, hemiepífita ou de raízes adventícias fusionadas formando estruturas complexas. Folhas simples, coriáceas, obovadas. Figos pequenos, roxos quando maduros, consumidos por aves e mamíferos. Sistema radicular extenso pode minar calçadas mas é fundamental para estabilização de margens. Crescimento lento, indivíduos centenários comuns.',
    importancia:'Uma das árvores com maior interação ecológica do Pantanal — mais de 80 espécies de vertebrados consomem seus frigos. Árvore geralmente poupada no desmatamento por valor cultural. Indivíduos com raízes aéreas monumentais são candidatos naturais a patrimônio.',
    servicos:['sombra','fruto_animal','moradia','termico'],dens:0.45,orig:'nativa_pantanal'},
   {nome:'Cambará',sci:'Vochysia divergens',familia:'Vochysiaceae',bioma:'Pantanal',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZmZmJlYiIvPjxyZWN0IHg9IjkyIiB5PSI5MCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjU1IiBmaWxsPSIjNzgzNTBmIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3MiIgcng9IjUwIiByeT0iMzYiIGZpbGw9IiMyMmM1NWUiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4MiIgcng9IjM0IiByeT0iMjQiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iODAiIHJ4PSIzMCIgcnk9IjIyIiBmaWxsPSIjMTU4MDNkIi8+PHJlY3QgeD0iODIiIHk9Ijk1IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNSIgZmlsbD0iIzZiNzI4MCIgcng9IjIiLz48cmVjdCB4PSI5MCIgeT0iOTgiIHdpZHRoPSI1IiBoZWlnaHQ9IjIyIiBmaWxsPSIjOWNhM2FmIiByeD0iMiIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiM3ODM1MGYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5Wb2NoeXNpYSBkaXZlcmdlbnM8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Vochysia_divergens_%28Cambara%29.jpg/480px-Vochysia_divergens_%28Cambara%29.jpg',
    status:'Pouco Preocupante — expansão monitorada',
    desc:'Árvore de 8 a 20 metros, pioneira invasora de áreas úmidas. Tronco reto, casca bege-acinzentada, esfoliante. Folhas verticiladas, lanceoladas, com glândulas extraforais. Flores amarelas em racemos terminais (maio–julho). Fruto cápsula tricoca. Indicadora de perturbação: avança sobre campos úmidos e veredas em consequência de queimadas frequentes.',
    importancia:'Espécie bioindicadora de desequilíbrio ecológico no Pantanal. Seu monitoramento é relevante para avaliar o impacto das queimadas e mudanças climáticas sobre os campos úmidos. Fornece néctar para abelhas nativas.',
    servicos:['sombra','carbono','polinizacao'],dens:0.5,orig:'nativa_pantanal'},
   {nome:'Pequi',sci:'Caryocar brasiliense',familia:'Caryocaraceae',bioma:'Cerrado',
-   foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2ZlZmNlOCIvPjxyZWN0IHg9IjkyIiB5PSI5NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjUwIiBmaWxsPSIjNzgzNTBmIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSI3OCIgcng9IjQ4IiByeT0iMzQiIGZpbGw9IiMxNmEzNGEiLz48ZWxsaXBzZSBjeD0iNzQiIGN5PSI4OCIgcng9IjMyIiByeT0iMjIiIGZpbGw9IiMxNTgwM2QiLz48ZWxsaXBzZSBjeD0iMTI2IiBjeT0iODYiIHJ4PSIyOCIgcnk9IjIwIiBmaWxsPSIjMTY2NTM0Ii8+PGNpcmNsZSBjeD0iODgiIGN5PSI4MiIgcj0iOSIgZmlsbD0iI2VhYjMwOCIvPjxjaXJjbGUgY3g9IjEwNCIgY3k9Ijc4IiByPSI4IiBmaWxsPSIjY2E4YTA0Ii8+PGNpcmNsZSBjeD0iMTE4IiBjeT0iODQiIHI9IjciIGZpbGw9IiNlYWIzMDgiLz48dGV4dCB4PSIxMDAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI5IiBmaWxsPSIjNzgzNTBmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+Q2FyeW9jYXIgYnJhc2lsaWVuc2U8L3RleHQ+PC9zdmc+',
+   foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Pequi_frutos.jpg/480px-Pequi_frutos.jpg',
    status:'Vulnerável — espécie símbolo',
    desc:'Árvore de 3 a 10 metros, decídua, de crescimento lento. Tronco tortuoso, casca corticosa e grossa, altamente resistente ao fogo. Folhas compostas trifolioladas. Flores brancas grandes, com muitos estames amarelos. Fruto drupáceo com mesocarpo amarelo-gorduroso e endocarpo espinhoso. O fruto é alimento cultural central de MT e GO. Pode viver mais de 800 anos.',
    importancia:'Espécie símbolo do Cerrado mato-grossense. Proibido cortar por legislação estadual. Frutos consomidos por araras, cutias, antas e humanos. Óleo com propriedades emolientes e alta demanda gastronômica. Tombamento individual de exemplares centenários é legalmente viável.',
    servicos:['fruto_humano','fruto_animal','sombra','medicinal'],dens:0.65,orig:'nativa_brasil'},
-  {nome:'Embaúba',sci:'Cecropia pachystachya',familia:'Urticaceae',bioma:'Amazônia',emoji:'🦥',foto:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2YwZmRmNCIvPjxyZWN0IHg9Ijk1IiB5PSIzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2EzYTNhMyIgcng9IjMiLz48bGluZSB4MT0iMTAwIiB5MT0iNTAiIHgyPSI0NSIgeTI9Ijg1IiBzdHJva2U9IiMyMmM1NWUiIHN0cm9rZS13aWR0aD0iNCIvPjxsaW5lIHgxPSIxMDAiIHkxPSI1NSIgeDI9IjE1NSIgeTI9IjgwIiBzdHJva2U9IiMyMmM1NWUiIHN0cm9rZS13aWR0aD0iNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjkiIGZpbGw9IiMxNjY1MzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5DZWNyb3BpYSBwYWNoeXN0YWNoeWE8L3RleHQ+PC9zdmc+',
+  {nome:'Embaúba',sci:'Cecropia pachystachya',familia:'Urticaceae',bioma:'Amazônia',emoji:'🦥',foto:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Cecropia_pachystachya_-_emba%C3%BAba.jpg/480px-Cecropia_pachystachya_-_emba%C3%BAba.jpg',
    desc:'Casa das preguiças e formigas. Cresce muito rápido.',
    curiosidade:'A embaúba e a preguiça são amigas inseparáveis — a preguiça dorme em seus galhos!',
    servicos:['fruto_animal','moradia','hidrologia'],dens:0.3,orig:'nativa_brasil'},
@@ -2549,22 +2687,35 @@ function renderCatalogo(){
   _catArr = arr;
   if(!arr.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#74a57e;">Nenhuma espécie encontrada.</div>';return;}
   const biomaColor={'Pantanal':'#0ea5e9','Cerrado':'#f59e0b','Amazônia':'#22c55e'};
-  grid.innerHTML = arr.map((e,i)=>`
-    <div data-cat="${i}"
-      style="background:#fff;border-radius:16px;box-shadow:0 2px 14px rgba(0,0,0,.1);overflow:hidden;cursor:pointer;transition:transform .15s;" onclick="openCatByIndex(this.dataset.cat)">
-      <div style="height:110px;overflow:hidden;position:relative;background:#d8f3dc;">
-        <img src="${e.foto}" alt="${e.nome}"
-          style="width:100%;height:100%;object-fit:cover;"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-        <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,#d8f3dc,#95d5b2);">🌿</div>
-        <div style="position:absolute;top:6px;right:6px;background:${biomaColor[e.bioma]||'#52b788'};color:#fff;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:700;">${e.bioma}</div>
-        ${e.status&&e.status.includes('Ameaça')?'<div style="position:absolute;top:6px;left:6px;background:#e05252;color:#fff;padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:700;">⚠️ AMEAÇADA</div>':''}
+  grid.innerHTML = arr.map((e,i)=>{
+    const bc=biomaColor[e.bioma]||'#52b788';
+    const ameacada=e.status&&(e.status.includes('Ameaça')||e.status.includes('Vulnerável'));
+    return `<div data-cat="${i}"
+      style="background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);
+             overflow:hidden;cursor:pointer;transition:all .15s;border:2px solid transparent;"
+      onclick="openCatByIndex(this.dataset.cat)"
+      onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+      <!-- Faixa de cor por bioma -->
+      <div style="height:6px;background:${bc};"></div>
+      <div style="padding:12px 13px 13px;">
+        <!-- Badges topo -->
+        <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+          <span style="background:${bc}22;color:${bc};padding:2px 8px;border-radius:99px;font-size:9.5px;font-weight:700;border:1px solid ${bc}44;">${e.bioma}</span>
+          ${ameacada?'<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:700;">⚠️ AMEAÇADA</span>':''}
+        </div>
+        <!-- Nome popular -->
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;color:#1b4332;margin-bottom:3px;line-height:1.2;">${e.nome}</div>
+        <!-- Nome científico -->
+        <div style="font-style:italic;font-size:11px;color:#74a57e;margin-bottom:6px;">${e.sci}</div>
+        <!-- Família -->
+        <div style="font-size:10.5px;color:#a0a0a0;margin-bottom:8px;">Família ${e.familia}</div>
+        <!-- Serviços como pílulas compactas -->
+        <div style="display:flex;gap:3px;flex-wrap:wrap;">
+          ${(e.servicos||[]).slice(0,4).map(s=>({sombra:'🌤️',fruto_humano:'🍎',fruto_animal:'🦜',paisagismo:'🌸',termico:'🌡️',moradia:'🐦',carbono:'🌍',polinizacao:'🐝',hidrologia:'💧',medicinal:'💊'})[s]||'').filter(Boolean).map(ico=>`<span style="font-size:14px;">${ico}</span>`).join('')}
+        </div>
       </div>
-      <div style="padding:10px 11px 12px;">
-        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;color:#1b4332;margin-bottom:1px;line-height:1.2;">${e.nome}</div>
-        <div style="font-style:italic;font-size:10px;color:#74a57e;">${e.sci}</div>
-      </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterCat(){renderCatalogo();}
