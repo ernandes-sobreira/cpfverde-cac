@@ -547,7 +547,81 @@ document.addEventListener('DOMContentLoaded',()=>{
 <div class="screen" id="screen-add">
   <div class="form-screen" id="formScroll">
 
-    <!-- 1 Identificação -->
+    <!-- SEÇÃO FOTO+IA — PRIMEIRA COISA A FAZER -->
+    <div class="form-section" style="border-top:4px solid #845EC2;">
+      <div class="form-sec-hdr" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
+        <div class="form-sec-ico" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);">📷</div>
+        <div>
+          <div class="form-sec-title" style="color:#5b21b6;">1. Foto e Identificação por IA</div>
+          <div style="font-size:11px;color:#7c3aed;margin-top:1px;">Tire a foto → IA identifica tudo automaticamente</div>
+        </div>
+        <button class="help-btn" style="background:#ede9fe;color:#5b21b6;margin-left:auto;" onclick="showTip('ia')">?</button>
+      </div>
+      <div class="form-sec-body">
+        <!-- Código do indivíduo -->
+        <div id="codigoBox" style="background:linear-gradient(135deg,#1b4332,#2d6a4f);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:9.5px;color:#95d5b2;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Código do Indivíduo</div>
+            <div id="codigoDisplay" style="font-family:'Lora',serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:2px;">—</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:9px;color:#95d5b2;margin-bottom:2px;">Gerado automaticamente</div>
+            <div id="codigoData" style="font-size:11px;color:rgba(255,255,255,.6);">—</div>
+          </div>
+        </div>
+        <!-- Botões de foto -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+          <div class="photo-area" style="border-color:#7c3aed;border-width:2px;">
+            <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(event,'principal')"/>
+            <div style="font-size:32px;">📸</div>
+            <p style="font-size:12px;color:#7c3aed;margin-top:4px;font-weight:700;">Câmera</p>
+          </div>
+          <div class="photo-area" style="border-color:#2563eb;border-width:2px;">
+            <input type="file" accept="image/*" onchange="handlePhoto(event,'principal')"/>
+            <div style="font-size:32px;">🖼️</div>
+            <p style="font-size:12px;color:#2563eb;margin-top:4px;font-weight:700;">Galeria</p>
+          </div>
+        </div>
+        <!-- Preview -->
+        <div id="photoPreviewWrap" style="display:none;margin-top:10px;position:relative;">
+          <img id="photo-preview" alt="preview" style="width:100%;border-radius:var(--r12);max-height:220px;object-fit:cover;display:block;"/>
+          <div id="photoInfo" style="font-size:11px;color:var(--t3);text-align:center;margin-top:4px;"></div>
+          <button onclick="clearPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;">✕</button>
+        </div>
+        <!-- Botão IA -->
+        <button id="btnIA" onclick="identificarEspecie()"
+          style="display:none;width:100%;margin-top:10px;height:54px;
+                 background:linear-gradient(135deg,#7c3aed,#2563eb);
+                 color:#fff;border:none;border-radius:var(--r12);
+                 font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;
+                 cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.4);
+                 display:none;align-items:center;justify-content:center;gap:10px;">
+          🔍 Identificar com IA
+        </button>
+        <!-- Aviso CORS se arquivo local -->
+        <div id="corsWarning" style="display:none;background:#fef9c3;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400e;margin-top:8px;line-height:1.55;">
+          ⚠️ <b>IA requer GitHub Pages.</b> Hospede em <code>ernandes-sobreira.github.io/cpfverde</code> para ativar a identificação automática. Ou preencha manualmente abaixo.
+        </div>
+        <!-- Resultado IA -->
+        <div id="iaResult" style="display:none;margin-top:10px;background:linear-gradient(135deg,#f0faf3,#e0f2fe);border-radius:var(--r12);padding:14px;border:2px solid #95d5b2;">
+          <div style="font-size:11px;color:#7c3aed;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">🤖 Identificação pela IA — preenchido automaticamente</div>
+          <div id="iaResultBody"></div>
+          <button id="btnAplicar" onclick="aplicarIA()" style="display:none;margin-top:10px;width:100%;height:40px;background:#2d6a4f;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ Aplicar dados</button>
+        </div>
+        <!-- Fotos adicionais -->
+        <div style="margin-top:14px;border-top:1px solid #f0f4f1;padding-top:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);margin-bottom:8px;">Fotos adicionais (casca, copa, frutos...)</div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;" id="extraPhotos"></div>
+          <div class="photo-area" style="margin-top:8px;padding:12px;">
+            <input type="file" accept="image/*" multiple onchange="addExtraPhotos(event)"/>
+            <div style="font-size:20px;">➕</div>
+            <p style="font-size:11px;color:var(--t3);">Adicionar mais fotos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Identificação Taxonômica (preenchida pela IA) -->
     <!-- Banner coletor -->
   <div style="background:linear-gradient(135deg,#1b4332,#2d6a4f);padding:14px 16px;display:flex;align-items:center;gap:12px;">
     <div style="font-size:28px;">👤</div>
@@ -560,7 +634,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   </div>
 
   <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🔬</div><div class="form-sec-title">1. Identificação Taxonômica</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🔬</div><div class="form-sec-title">2. Identificação Taxonômica</div></div>
       <div class="form-sec-body">
         <div class="row2">
           <div class="fld"><label>Nome Popular *</label><input id="f_nome" placeholder="Ex: Ipê Amarelo"/></div>
@@ -584,7 +658,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 2 Localização -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">📍</div><div class="form-sec-title">2. Localização</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">📍</div><div class="form-sec-title">3. Localização</div></div>
       <div class="form-sec-body">
         <button class="gps-btn" onclick="captGPS()">📡 Capturar GPS Agora</button>
         <div class="gps-info" id="gpsInfo">Ou preencha as coordenadas manualmente</div>
@@ -611,7 +685,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 3 Métricas -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">📏</div><div class="form-sec-title">3. Métricas Dendrométricas</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">📏</div><div class="form-sec-title">4. Métricas Dendrométricas</div></div>
       <div class="form-sec-body">
         <div class="row3">
           <div class="fld">
@@ -670,7 +744,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 4 Saúde -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🩺</div><div class="form-sec-title">4. Diagnóstico de Saúde <button class="help-btn" style="background:#d8f3dc;color:#1b4332;" onclick="showTip('saude_geral')">?</button></div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🩺</div><div class="form-sec-title">5. Diagnóstico de Saúde <button class="help-btn" style="background:#d8f3dc;color:#1b4332;" onclick="showTip('saude_geral')">?</button></div></div>
       <div class="form-sec-body">
         <div class="nota-box">
           <div class="nota-num" id="notaNum">—</div>
@@ -685,7 +759,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 5 Conflitos -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">⚠️</div><div class="form-sec-title">5. Conflitos e Manejo</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">⚠️</div><div class="form-sec-title">6. Conflitos e Manejo</div></div>
       <div class="form-sec-body">
         <div class="row2">
           <div class="fld"><label>Fiação Elétrica</label><select id="f_ce"><option value="nenhum">Nenhum</option><option value="leve">Leve</option><option value="moderado">Moderado</option><option value="grave">Grave</option></select></div>
@@ -702,7 +776,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 6 Serviços -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🌿</div><div class="form-sec-title">6. Serviços Ecossistêmicos</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🌿</div><div class="form-sec-title">7. Serviços Ecossistêmicos</div></div>
       <div class="form-sec-body">
         <div class="svc-checks" id="svcsEl">
           <label class="svc-check"><input type="checkbox" value="sombra"> 🌤️ Sombra</label>
@@ -721,7 +795,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 7 Carbono -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🌍</div><div class="form-sec-title">7. Estoque de Carbono</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🌍</div><div class="form-sec-title">8. Estoque de Carbono</div></div>
       <div class="form-sec-body">
         <p style="font-size:12px;color:var(--t3);line-height:1.6;">Equação alométrica tropical (Chave et al. 2014):<br><code style="font-size:11px;background:var(--g7);padding:1px 5px;border-radius:4px;">B = 0,0673 × (ρ × DAP² × H)^0,976</code> → C = B × 0,47</p>
         <div class="row2 mt8">
@@ -739,7 +813,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     <!-- 8 Biodiversidade -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">🦋</div><div class="form-sec-title">8. Biodiversidade</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">🦋</div><div class="form-sec-title">9. Biodiversidade</div></div>
       <div class="form-sec-body">
         <div class="row2">
           <div class="fld"><label>Aves observadas</label><input id="f_av" placeholder="sabiá, bem-te-vi..."/></div>
@@ -758,55 +832,11 @@ document.addEventListener('DOMContentLoaded',()=>{
       </div>
     </div>
 
-    <!-- 9 Foto + IA -->
-    <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">📷</div><div class="form-sec-title">9. Foto e Identificação por IA <button class="help-btn" style="background:#ede9fe;color:#5b21b6;" onclick="showTip('ia')">?</button></div></div>
-      <div class="form-sec-body">
-        <!-- Botões de foto -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="photo-area" style="border-color:#40916c;">
-            <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(event,'principal')"/>
-            <div style="font-size:28px;">📸</div>
-            <p style="font-size:12px;color:var(--t3);margin-top:4px;">Tirar foto agora</p>
-          </div>
-          <div class="photo-area" style="border-color:#845EC2;">
-            <input type="file" accept="image/*" onchange="handlePhoto(event,'principal')"/>
-            <div style="font-size:28px;">🖼️</div>
-            <p style="font-size:12px;color:var(--t3);margin-top:4px;">Da galeria</p>
-          </div>
-        </div>
-        <!-- Preview com compressão -->
-        <div id="photoPreviewWrap" style="display:none;margin-top:10px;position:relative;">
-          <img id="photo-preview" alt="preview" style="width:100%;border-radius:var(--r12);max-height:220px;object-fit:cover;display:block;"/>
-          <div id="photoInfo" style="font-size:11px;color:var(--t3);text-align:center;margin-top:4px;"></div>
-          <button onclick="clearPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;">✕</button>
-        </div>
-        <!-- Botão IA identificar espécie -->
-        <button id="btnIA" onclick="identificarEspecie()" style="display:none;width:100%;margin-top:10px;height:50px;background:linear-gradient(135deg,#845EC2,#0081CF);color:#fff;border:none;border-radius:var(--r12);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:none;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(132,94,194,.4);">
-          🔍 Identificar Espécie com IA
-        </button>
-        <!-- Resultado IA -->
-        <div id="iaResult" style="display:none;margin-top:10px;background:linear-gradient(135deg,#f0faf3,#e0f2fe);border-radius:var(--r12);padding:14px;border:2px solid #95d5b2;">
-          <div style="font-size:11px;color:#0081CF;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">🤖 Análise da IA</div>
-          <div id="iaResultBody"></div>
-          <button id="btnAplicar" onclick="aplicarIA()" style="margin-top:10px;width:100%;height:40px;background:#2d6a4f;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ Usar esses dados</button>
-        </div>
-        <!-- Fotos adicionais -->
-        <div style="margin-top:12px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);margin-bottom:8px;">Fotos adicionais (casca, copa, frutos...)</div>
-          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;" id="extraPhotos"></div>
-          <div class="photo-area" style="margin-top:8px;padding:14px;">
-            <input type="file" accept="image/*" multiple onchange="addExtraPhotos(event)"/>
-            <div style="font-size:20px;">➕</div>
-            <p style="font-size:11.5px;color:var(--t3);">Adicionar mais fotos</p>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- 10 Coleta -->
     <div class="form-section">
-      <div class="form-sec-hdr"><div class="form-sec-ico">✍️</div><div class="form-sec-title">10. Coleta e Observações</div></div>
+      <div class="form-sec-hdr"><div class="form-sec-ico">✍️</div><div class="form-sec-title">10. Observações de Campo</div></div>
       <div class="form-sec-body">
         <div class="row2">
           <div class="fld"><label>Vistoriador</label><input id="f_col" placeholder="Nome completo"/></div>
@@ -1346,6 +1376,12 @@ function closeSheet(){
 // ═══════ FORM ═══════
 let _keepCoords = false;
 function initForm(){
+  // Mostrar próximo código e data
+  const nextId = nxtId();
+  const el = document.getElementById('codigoDisplay');
+  const elData = document.getElementById('codigoData');
+  if(el) el.textContent = nextId;
+  if(elData) elData.textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
   const savedName = localStorage.getItem('cpfverde_coletor');
   if(savedName){
     setTimeout(()=>{
@@ -1528,6 +1564,10 @@ async function handlePhoto(e, tipo){
   document.getElementById('photoPreviewWrap').style.display='block';
   document.getElementById('photoInfo').textContent = `📁 Original: ${Math.round(f.size/1024)}KB → Comprimida: ${kb}KB`;
   document.getElementById('btnIA').style.display='flex';
+  // Mostrar aviso de CORS se arquivo local
+  if(location.protocol==='file:'){
+    document.getElementById('corsWarning').style.display='block';
+  }
   showToast(`✅ Foto pronta (${kb}KB)`);
 }
 
@@ -1535,6 +1575,7 @@ function clearPhoto(){
   photoB64=null;
   document.getElementById('photoPreviewWrap').style.display='none';
   document.getElementById('btnIA').style.display='none';
+  document.getElementById('corsWarning').style.display='none';
   document.getElementById('iaResult').style.display='none';
 }
 
@@ -1561,6 +1602,13 @@ function renderExtraPhotos(){
 // ── IDENTIFICAÇÃO POR IA (Claude Vision) ─────────────────
 async function identificarEspecie(){
   if(!photoB64){showToast('⚠️ Tire uma foto primeiro');return;}
+  // Detectar se está em arquivo local (sem HTTPS)
+  const isLocal = location.protocol === 'file:' || location.hostname === 'localhost';
+  if(isLocal){
+    document.getElementById('corsWarning').style.display='block';
+    showToast('⚠️ IA requer GitHub Pages (HTTPS)');
+    return;
+  }
   const btn=document.getElementById('btnIA');
   btn.innerHTML='⏳ Analisando imagem...'; btn.disabled=true;
 
@@ -1744,6 +1792,7 @@ function resetForm(){
   document.getElementById('photoPreviewWrap').style.display='none';
   document.getElementById('iaResult').style.display='none';
   document.getElementById('btnIA').style.display='none';
+  const cw=document.getElementById('corsWarning'); if(cw) cw.style.display='none';
   extraPhotosB64=[]; renderExtraPhotos(); _iaData=null;
   document.getElementById('notaNum').textContent='—';
   document.getElementById('notaBar').style.width='0%';
