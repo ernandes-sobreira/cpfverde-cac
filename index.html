@@ -1636,8 +1636,12 @@ Analise esta foto e identifique a espécie arbórea. Responda APENAS em JSON vá
 
 Nos servicos, inclua APENAS os que se aplicam à espécie identificada, da lista de valores possíveis: sombra, paisagismo, fruto_humano, fruto_animal, termico, moradia, carbono, polinizacao, hidrologia, medicinal.`;
 
+  // PROXY — Supabase Edge Function (sem CORS)
+  // Troque pela URL da sua Edge Function após configurar
+  const PROXY = 'https://kwvhcmodrzhnpsgazjhx.supabase.co/functions/v1/cpfverde-ia';
+
   try{
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+    const resp = await fetch(PROXY, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -1649,23 +1653,36 @@ Nos servicos, inclua APENAS os que se aplicam à espécie identificada, da lista
         ]}]
       })
     });
+    if(!resp.ok){
+      const err = await resp.text();
+      throw new Error('Proxy: ' + resp.status + ' ' + err.substring(0,80));
+    }
     const data = await resp.json();
     if(data.error){throw new Error(data.error.message||'Erro API');}
     const txt = data.content.map(c=>c.text||'').join('');
     const clean = txt.replace(/```json|```/g,'').trim();
     _iaData = JSON.parse(clean);
-    // APLICA AUTOMATICAMENTE ao formulário
     aplicarIA(_iaData);
     renderIAResult(_iaData);
   }catch(e){
     console.error('IA erro:',e);
-    if(e.message.includes('API key')||e.message.includes('auth')){
-      showToast('⚠️ Requer HTTPS — hospede no GitHub Pages para usar IA');
+    const msg = e.message||'';
+    if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('xxxxxxxxxxx')){
+      showToast('⚠️ Configure o proxy para ativar a IA');
+      document.getElementById('corsWarning').style.display='block';
+      document.getElementById('corsWarning').innerHTML = `
+        <b>⚙️ Para ativar a IA (5 min, grátis):</b><br>
+        1. Acesse <a href="https://supabase.com" target="_blank" style="color:#b45309;font-weight:700;">supabase.com</a> → Login com GitHub<br>
+        2. Crie um projeto → vá em <b>Edge Functions</b><br>
+        3. Crie função chamada <code>cpfverde-ia</code><br>
+        4. Cole o código do arquivo <code>supabase-function.ts</code><br>
+        5. Em <b>Settings → Secrets</b> adicione <code>ANTHROPIC_API_KEY</code><br>
+        6. Copie a URL da função e me mande — atualizo em 1 minuto!`;
     } else {
-      showToast('⚠️ ' + e.message.substring(0,60));
+      showToast('⚠️ ' + msg.substring(0,70));
     }
   }
-  btn.innerHTML='🔍 Analisar Outra Foto'; btn.disabled=false;
+  btn.innerHTML='🔍 Identificar com IA'; btn.disabled=false;
 }
 
 function renderIAResult(d){
