@@ -984,22 +984,131 @@ document.addEventListener('DOMContentLoaded',()=>{
   </div>
 </div>
 
-<!-- CATÁLOGO -->
-<div class="screen" id="screen-cat">
-  <div style="background:linear-gradient(135deg,#0d2818,#2d6a4f);padding:16px;text-align:center;flex-shrink:0;">
-    <div style="font-size:36px;margin-bottom:6px;">📚</div>
-    <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:#fff;">Catálogo de Espécies</div>
-    <div style="font-size:12px;color:#95d5b2;margin-top:4px;">Pantanal · Cerrado · Amazônia MT</div>
-    <input id="catSearch" oninput="filterCat()" placeholder="🔍 Buscar espécie..." 
-      style="margin-top:12px;width:100%;height:40px;border-radius:99px;border:none;padding:0 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;"/>
+<!-- NOTAS DE CAMPO -->
+<div class="screen" id="screen-notas">
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <!-- Header -->
+    <div style="background:var(--g2);padding:14px 16px;flex-shrink:0;">
+      <div style="font-family:'Lora',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">📝 Notas de Campo</div>
+      <div style="font-size:11px;color:var(--g6);">Observações gerais, croquis, referências da vistoria</div>
+    </div>
+    <!-- Lista de notas -->
+    <div style="flex:1;overflow-y:auto;padding:12px;" id="notasList"></div>
+    <!-- Botão nova nota -->
+    <div style="padding:12px;background:var(--w);border-top:1px solid var(--f0);">
+      <button onclick="abrirNovaNota()" style="width:100%;height:48px;background:var(--g3);color:#fff;border:none;border-radius:var(--r12);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">
+        ＋ Nova Nota
+      </button>
+    </div>
   </div>
-  <div style="display:flex;overflow-x:auto;gap:6px;padding:10px 14px;background:#fff;border-bottom:1px solid #eee;scrollbar-width:none;flex-shrink:0;" id="catBiomas">
-    <span class="chip on" onclick="filterCatBioma('todos',this)">Todos</span>
-    <span class="chip" onclick="filterCatBioma('Pantanal',this)">🌊 Pantanal</span>
-    <span class="chip" onclick="filterCatBioma('Cerrado',this)">🌾 Cerrado</span>
-    <span class="chip" onclick="filterCatBioma('Amazônia',this)">🌳 Amazônia</span>
+</div>
+
+<!-- EXPORTAR DADOS -->
+<div class="screen" id="screen-export">
+  <div style="flex:1;overflow-y:auto;">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1b4332,#2d6a4f);padding:20px 16px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:6px;">📊</div>
+      <div style="font-family:'Lora',serif;font-size:20px;font-weight:700;color:#fff;">Exportar Dados</div>
+      <div style="font-size:12px;color:var(--g6);margin-top:4px;">Baixe todos os registros para análise estatística</div>
+    </div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:10px;" id="exportCards">
+
+      <!-- CSV completo -->
+      <div style="background:var(--w);border-radius:var(--r12);padding:16px;box-shadow:var(--sh);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="width:44px;height:44px;background:#dcfce7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📋</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--t1);">CSV Completo</div>
+            <div style="font-size:12px;color:var(--t3);">Todos os campos — para Excel, R, Python</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:12px;">
+          Exporta todos os indivíduos com: código, nome, espécie, coordenadas, métricas dendrométricas, nota de saúde (por critério), estoque de carbono, temperatura, serviços ecossistêmicos e biodiversidade.
+        </div>
+        <button onclick="exportCSV('completo')" style="width:100%;height:44px;background:var(--g3);color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ⬇️ Baixar CSV Completo
+        </button>
+      </div>
+
+      <!-- CSV simplificado -->
+      <div style="background:var(--w);border-radius:var(--r12);padding:16px;box-shadow:var(--sh);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="width:44px;height:44px;background:#dbeafe;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📄</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--t1);">CSV Simplificado</div>
+            <div style="font-size:12px;color:var(--t3);">Campos principais — para apresentações</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:12px;">
+          Código, nome popular, espécie, família, origem, bairro, DAP, altura, copa, carbono estimado, nota de saúde e coordenadas.
+        </div>
+        <button onclick="exportCSV('simples')" style="width:100%;height:44px;background:#3b82f6;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ⬇️ Baixar CSV Simplificado
+        </button>
+      </div>
+
+      <!-- JSON -->
+      <div style="background:var(--w);border-radius:var(--r12);padding:16px;box-shadow:var(--sh);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="width:44px;height:44px;background:#ede9fe;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🔧</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--t1);">JSON Completo</div>
+            <div style="font-size:12px;color:var(--t3);">Para desenvolvedores e GIS</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:12px;">
+          Exporta todos os dados em formato JSON estruturado, incluindo fotos em base64, histórico de saúde e coordenadas para uso em QGIS, ArcGIS ou Python.
+        </div>
+        <button onclick="exportJSON()" style="width:100%;height:44px;background:#7c3aed;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ⬇️ Baixar JSON
+        </button>
+      </div>
+
+      <!-- GeoJSON para QGIS -->
+      <div style="background:var(--w);border-radius:var(--r12);padding:16px;box-shadow:var(--sh);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="width:44px;height:44px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🗺️</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--t1);">GeoJSON</div>
+            <div style="font-size:12px;color:var(--t3);">Para QGIS, ArcGIS e Google Earth</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:12px;">
+          Pontos georreferenciados (WGS84) com todos os atributos. Abre direto no QGIS para análise espacial e produção de mapas temáticos.
+        </div>
+        <button onclick="exportGeoJSON()" style="width:100%;height:44px;background:#d97706;color:#fff;border:none;border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ⬇️ Baixar GeoJSON
+        </button>
+      </div>
+
+      <!-- Guia de campo PDF -->
+      <div style="background:linear-gradient(135deg,#0d2818,#1b4332);border-radius:var(--r12);padding:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📗</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#fff;">Guia de Campo — Cerrado</div>
+            <div style="font-size:12px;color:var(--g6);">500 espécies · MMA 2011</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--g6);line-height:1.6;margin-bottom:12px;">
+          Guia de Campo da Vegetação do Cerrado com 500 espécies. Fotos reais, nome científico, família, hábito, habitat e distribuição por estados. Referência oficial do Ministério do Meio Ambiente (João de Deus Medeiros, 2011).
+        </div>
+        <a href="https://www.mma.gov.br/estruturas/sbf_chm_rbbio/_arquivos/guia_de_campo_vegetação_do_cerrado_500_especies_72.pdf"
+           target="_blank"
+           style="display:block;width:100%;height:44px;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
+          📗 Abrir Guia de Campo (PDF oficial MMA)
+        </a>
+      </div>
+
+      <!-- Resumo dos dados -->
+      <div style="background:var(--w);border-radius:var(--r12);padding:16px;box-shadow:var(--sh);">
+        <div style="font-weight:700;font-size:14px;color:var(--g2);margin-bottom:12px;">📈 Resumo do Banco de Dados</div>
+        <div id="resumoStats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+      </div>
+
+    </div>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;" id="catGrid"></div>
 </div>
 
 <!-- SOBRE -->
@@ -1072,8 +1181,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   <button class="nav-btn on" id="nb-map" onclick="goScreen('map')"><span class="nav-ico">🗺️</span>Mapa</button>
   <button class="nav-btn" id="nb-list" onclick="goScreen('list')"><span class="nav-ico">📋</span>Lista</button>
   <button class="nav-add" onclick="goScreen('map');setTimeout(startPinMode,300)" id="nb-add" title="Cadastrar nova árvore">🌳</button>
-  <button class="nav-btn" id="nb-cat" onclick="goScreen('cat')"><span class="nav-ico">🌲</span>Catálogo</button>
-  <button class="nav-btn" id="nb-sobre" onclick="goScreen('sobre')"><span class="nav-ico">ℹ️</span>Sobre</button>
+  <button class="nav-btn" id="nb-notas" onclick="goScreen('notas')"><span class="nav-ico">📝</span>Notas</button>
+  <button class="nav-btn" id="nb-export" onclick="goScreen('export')"><span class="nav-ico">📊</span>Dados</button>
 </div>
 
 <!-- DETAIL SHEET -->
@@ -1163,7 +1272,9 @@ function goScreen(name) {
   if (name==='list') { renderList(); }
   if (name==='add') { initForm(); } // form
   if (name==='sobre') { buildOrientandos(); }
-  if (name==='cat') { renderCatalogo(); }
+  if (name==='notas') { renderNotas(); }
+  if (name==='export') { atualizarResumo(); }
+
 }
 
 // ═══════ DATA ═══════
@@ -2332,6 +2443,181 @@ function resetForm(){
   document.getElementById('notaBar').style.width='0%';
   document.getElementById('notaStatus').textContent='Preencha os critérios abaixo';
   document.getElementById('gpsInfo').textContent='Ou preencha as coordenadas manualmente';
+}
+
+// ═══════ NOTAS DE CAMPO ═══════
+let _notasDB = JSON.parse(localStorage.getItem('cpfverde_notas')||'[]');
+
+function salvarNotas(){ localStorage.setItem('cpfverde_notas', JSON.stringify(_notasDB)); }
+
+function renderNotas(){
+  const el = document.getElementById('notasList');
+  if(!el) return;
+  if(!_notasDB.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 16px;color:var(--t4);"><div style="font-size:40px;margin-bottom:8px;">📝</div><div style="font-size:14px;">Nenhuma nota ainda.<br>Toque em + para adicionar.</div></div>';
+    return;
+  }
+  el.innerHTML = _notasDB.slice().reverse().map((n,i)=>`
+    <div style="background:var(--w);border-radius:var(--r12);padding:14px;margin-bottom:8px;box-shadow:var(--sh);border-left:4px solid ${n.cor||'var(--g5)'};">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <div style="font-weight:700;font-size:14px;color:var(--t1);">${n.titulo||'Sem título'}</div>
+        <button onclick="deletarNota(${_notasDB.length-1-i})" style="background:none;border:none;color:var(--t4);font-size:16px;cursor:pointer;flex-shrink:0;">✕</button>
+      </div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.65;white-space:pre-wrap;">${n.texto}</div>
+      <div style="font-size:10px;color:var(--t4);margin-top:8px;">📅 ${n.data} ${n.hora||''} ${n.ind?'· '+n.ind:''}</div>
+    </div>`).join('');
+}
+
+function abrirNovaNota(){
+  const inds = (window._inds||[]);
+  const optsInds = inds.length ? inds.map(i=>`<option value="${i.id}">${i.id} — ${i.nome}</option>`).join('') : '<option value="">Nenhum indivíduo cadastrado</option>';
+  document.getElementById('tipEmoji').textContent='📝';
+  document.getElementById('tipTitle').textContent='Nova Nota de Campo';
+  document.getElementById('tipBody').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="fld"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);">Título</label>
+        <input id="nota_titulo" placeholder="Ex: Observação incomum, croqui, dúvida..."
+          style="height:42px;padding:0 12px;border:1.5px solid #e2ece3;border-radius:8px;font-family:'Nunito',sans-serif;font-size:14px;width:100%;outline:none;"/>
+      </div>
+      <div class="fld"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);">Nota</label>
+        <textarea id="nota_texto" placeholder="Digite suas observações, dúvidas, descrições de campo..."
+          style="min-height:120px;padding:10px 12px;border:1.5px solid #e2ece3;border-radius:8px;font-family:'Nunito',sans-serif;font-size:14px;width:100%;outline:none;resize:none;"></textarea>
+      </div>
+      <div class="fld"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);">Vincular a indivíduo (opcional)</label>
+        <select id="nota_ind" style="height:42px;padding:0 12px;border:1.5px solid #e2ece3;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;width:100%;outline:none;">
+          <option value="">— Nota geral —</option>
+          ${optsInds}
+        </select>
+      </div>
+      <div style="display:flex;gap:6px;">
+        ${['#52b788','#3b82f6','#f59e0b','#e05252','#8b5cf6'].map(cor=>`
+          <div data-cor="${cor}" onclick="document.querySelectorAll('[data-cor]').forEach(e=>e.style.outline='none');this.style.outline='3px solid #000';window._notaCor='${cor}'"
+            style="width:32px;height:32px;border-radius:50%;background:${cor};cursor:pointer;"></div>`).join('')}
+      </div>
+    </div>`;
+  window._notaCor = '#52b788';
+  document.querySelector('[data-cor="#52b788"]').style.outline='3px solid #000';
+  document.getElementById('btnAplicar').style.display='block';
+  document.getElementById('btnAplicar').textContent='💾 Salvar Nota';
+  document.getElementById('btnAplicar').onclick = salvarNota;
+  document.getElementById('tipOverlay').classList.add('open');
+}
+
+function salvarNota(){
+  const titulo = document.getElementById('nota_titulo').value.trim();
+  const texto = document.getElementById('nota_texto').value.trim();
+  if(!texto){showToast('⚠️ Escreva algo na nota');return;}
+  const nota = {
+    titulo: titulo||'Nota sem título',
+    texto,
+    ind: document.getElementById('nota_ind').value||'',
+    cor: window._notaCor||'#52b788',
+    data: new Date().toLocaleDateString('pt-BR'),
+    hora: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    ts: new Date().toISOString()
+  };
+  _notasDB.push(nota);
+  salvarNotas();
+  closeTip();
+  renderNotas();
+  showToast('✅ Nota salva!');
+}
+
+function deletarNota(idx){
+  if(!confirm('Excluir esta nota?'))return;
+  _notasDB.splice(idx,1);
+  salvarNotas(); renderNotas();
+  showToast('🗑️ Nota removida');
+}
+
+// ═══════ EXPORTAÇÃO DE DADOS ═══════
+function atualizarResumo(){
+  const el=document.getElementById('resumoStats'); if(!el) return;
+  const inds=window._inds||[];
+  const totalC=inds.reduce((s,i)=>s+(i.carbKg||0),0);
+  const mediaSaude=inds.filter(i=>i.saudeNota!=null).reduce((s,i,_,a)=>s+i.saudeNota/a.length,0)||0;
+  const itens=[
+    {lbl:'Total de Árvores',val:inds.length,ico:'🌳'},
+    {lbl:'Bom Estado (≥7)',val:inds.filter(i=>(i.saudeNota||0)>=7).length,ico:'✅'},
+    {lbl:'Estado Crítico (<4)',val:inds.filter(i=>i.saudeNota!=null&&i.saudeNota<4).length,ico:'🔴'},
+    {lbl:'Espécies Nativas',val:inds.filter(i=>['nativa_pantanal','nativa_brasil'].includes(i.orig)).length,ico:'🌿'},
+    {lbl:'Carbono Total (kg)',val:Math.round(totalC),ico:'🌍'},
+    {lbl:'Saúde Média',val:mediaSaude.toFixed(1)+'/10',ico:'🩺'},
+    {lbl:'Com Imagem Térmica',val:inds.filter(i=>i.termicoSombra||i.termicoSol).length,ico:'🌡️'},
+    {lbl:'Notas de Campo',val:_notasDB.length,ico:'📝'},
+  ];
+  el.innerHTML=itens.map(it=>`
+    <div style="background:var(--f5);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:18px;">${it.ico}</div>
+      <div style="font-family:'Lora',serif;font-size:20px;font-weight:700;color:var(--g2);">${it.val}</div>
+      <div style="font-size:9.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${it.lbl}</div>
+    </div>`).join('');
+}
+
+function downloadFile(content, filename, mime){
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇️ Download iniciado: '+filename);
+}
+
+function exportCSV(modo){
+  const inds = window._inds||[];
+  if(!inds.length){showToast('⚠️ Nenhum indivíduo cadastrado');return;}
+  let headers, rows;
+  if(modo==='simples'){
+    headers=['Código','Nome Popular','Nome Científico','Família','Origem','Bairro','Referência','Data','Coletor','DAP_cm','CAP_cm','Altura_m','Copa_NS_m','Copa_LO_m','Sombra_m2','Carbono_kgC','Nota_Saude','Latitude','Longitude'];
+    rows=inds.map(i=>[i.id,i.nome,i.sci||'',i.familia||'',i.orig||'',i.bairro||'',i.ref||'',i.data||'',i.col||'',i.dap||'',i.cap||'',i.ht||'',i.cns||'',i.clo||'',i.sombra||'',i.carbKg||'',i.saudeNota!=null?i.saudeNota:'',i.lat,i.lng]);
+  } else {
+    headers=['Código','Nome Popular','Nome Científico','Família','Gênero','Origem','Bioma','Fenologia','Bairro','Logradouro','Referência','Paisagem','Data','Hora','Coletor','Instituição','Lat','Lng','Precisão_GPS_m','Altitude_m','DAP_cm','CAP_cm','Altura_m','H_Fuste_m','H_Bif_m','N_Fustes','Copa_NS_m','Copa_LO_m','Sombra_m2','Dist_Imovel_m','Inclinacao_graus','Nota_Saude_Final','Crit_Vitalidade','Crit_Tronco','Crit_Copa','Crit_Raiz','Crit_Pragas','Crit_Crescimento','Crit_Fixacao','Crit_Casca','Conf_Eletrica','Conf_Calcada','Manejo','Risco_Queda','Servicos','Nivel_Sombra','Nivel_Termico','Nivel_Carbono','Nivel_Fruto_Humano','Nivel_Fruto_Animal','Densidade_Madeira','Carbono_kgC','CO2eq_kg','Biomassa_kg','Temp_Sombra_C','Temp_Sol_C','Reducao_Termica_C','Hora_Medicao','Ceu','Aves','Insetos','Mamiferos','Epifitas','Ninhos','Indice_Fauna','Observacoes'];
+    rows=inds.map(i=>{
+      const sd=i.saudeDetalhes||{};
+      const sv=i.svcNiveis||{};
+      return [i.id,i.nome,i.sci||'',i.familia||'',i.gen||'',i.orig||'',i.bioma||'',i.fen||'',i.bairro||'',i.rua||'',i.ref||'',i.paisagem||'',i.data||'',i.ts?new Date(i.ts).toLocaleTimeString('pt-BR'):'',i.col||'',i.inst||'',i.lat,i.lng,i.acc||'',i.altGPS||'',i.dap||'',i.cap||'',i.ht||'',i.hf||'',i.hb||'',i.nf||1,i.cns||'',i.clo||'',i.sombra||'',i.di||'',i.inc||0,i.saudeNota!=null?i.saudeNota:'',sd.vitalidade!=null?sd.vitalidade:'',sd.tronco!=null?sd.tronco:'',sd.copa!=null?sd.copa:'',sd.raiz!=null?sd.raiz:'',sd.pragas!=null?sd.pragas:'',sd.crescimento!=null?sd.crescimento:'',sd.fixacao!=null?sd.fixacao:'',sd.casca!=null?sd.casca:'',i.confElet||'',i.confCalc||'',i.manejo||'',i.risco||0,(i.servicos||[]).join(';'),sv.sombra||0,sv.termico||0,sv.carbono||0,sv.fruto_humano||0,sv.fruto_animal||0,i.dens||0.6,i.carbKg||'',i.carbKg?Math.round(i.carbKg*3.67):'',i.carbKg?Math.round(i.carbKg/0.47):'',i.tSombra||'',i.tSol||'',i.tReducao||'',i.tHora||'',i.tCeu||'',i.aves||'',i.insetos||'',i.mamiferos||'',i.epifitas||'',i.ninhos||'',i.bioIdx||'',`"${(i.obs||'').replace(/"/g,'""')}"`];
+    });
+  }
+  const escape = v => (v===null||v===undefined)?'':String(v).includes(',')?`"${v}"`:v;
+  const csv = [headers.join(','),...rows.map(r=>r.map(escape).join(','))].join('\r\n');
+  const date = new Date().toISOString().slice(0,10);
+  downloadFile('﻿'+csv, `cpfverde_${modo}_${date}.csv`, 'text/csv;charset=utf-8');
+}
+
+function exportJSON(){
+  const inds = window._inds||[];
+  if(!inds.length){showToast('⚠️ Nenhum indivíduo cadastrado');return;}
+  const data = {
+    exportado_em: new Date().toISOString(),
+    projeto: 'CPF Verde — Cadastro de Patrimônio Florestal Urbano',
+    municipio: 'Cáceres-MT',
+    total: inds.length,
+    individuos: inds.map(i=>{ const c={...i}; delete c.foto; delete c.termicoSombra; delete c.termicoSol; return c; })
+  };
+  downloadFile(JSON.stringify(data,null,2), `cpfverde_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+}
+
+function exportGeoJSON(){
+  const inds = window._inds||[];
+  if(!inds.length){showToast('⚠️ Nenhum indivíduo cadastrado');return;}
+  const geo = {
+    type:'FeatureCollection',
+    name:'CPF Verde — Cáceres MT',
+    crs:{type:'name',properties:{name:'urn:ogc:def:crs:OGC:1.3:CRS84'}},
+    features: inds.filter(i=>i.lat&&i.lng).map(i=>({
+      type:'Feature',
+      geometry:{type:'Point',coordinates:[parseFloat(i.lng),parseFloat(i.lat)]},
+      properties:{
+        codigo:i.id, nome:i.nome, cientifico:i.sci||'', familia:i.familia||'',
+        origem:i.orig||'', bairro:i.bairro||'', data:i.data||'',
+        dap_cm:i.dap||null, altura_m:i.ht||null, sombra_m2:i.sombra||null,
+        carbono_kg:i.carbKg||null, saude:i.saudeNota!=null?i.saudeNota:null,
+        manejo:i.manejo||'', risco:i.risco||0,
+        temp_reducao:i.tReducao||null, servicos:(i.servicos||[]).join(';')
+      }
+    }))
+  };
+  downloadFile(JSON.stringify(geo,null,2), `cpfverde_${new Date().toISOString().slice(0,10)}.geojson`, 'application/geo+json');
 }
 
 // ═══════ CFG ═══════
