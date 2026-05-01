@@ -1388,7 +1388,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   <button class="nav-btn on" id="nb-map" onclick="goScreen('map')"><span class="nav-ico">🗺️</span>Mapa</button>
   <button class="nav-btn" id="nb-list" onclick="goScreen('list')"><span class="nav-ico">📋</span>Lista</button>
   <button class="nav-add" onclick="goScreen('map');setTimeout(startPinMode,300)" id="nb-add" title="Cadastrar nova árvore">🌳</button>
-  <button class="nav-btn" id="nb-dash" onclick="goScreen('dash')"><span class="nav-ico">📊</span>Dashboard</button>
+  <button class="nav-btn" id="nb-dash" onclick="goScreen('dash')"><span class="nav-ico">📊</span>Análise</button>
   <button class="nav-btn" id="nb-export" onclick="goScreen('export')"><span class="nav-ico">⬇️</span>Dados</button>
 </div>
 
@@ -1442,7 +1442,15 @@ try {
   };
   document.getElementById('fbDot').classList.add('on');
   document.getElementById('fbTxt').textContent = 'Firebase conectado ✅ cpfverde-cac';
-  window._FB.listen(inds => { window._inds = inds; renderAll(); });
+  window._FB.listen(inds => {
+    window._inds = inds;
+    renderAll();
+    // Se dashboard ou export já abertos, atualizar
+    const dash = document.getElementById('screen-dash');
+    const exp = document.getElementById('screen-export');
+    if(dash && dash.classList.contains('on')) renderDashboard();
+    if(exp && exp.classList.contains('on')) atualizarResumo();
+  });
 } catch(e) {
   console.error('Firebase erro:', e);
   document.getElementById('fbDot').classList.add('err');
@@ -1480,8 +1488,29 @@ function goScreen(name) {
   if (name==='add') { initForm(); } // form
   if (name==='sobre') { buildOrientandos(); }
   if (name==='notas') { renderNotas(); }
-  if (name==='dash') { renderDashboard(); }
-  if (name==='export') { atualizarResumo(); }
+  if (name==='dash') {
+    // Se Firebase ainda não carregou, aguarda até 3s
+    if(window._FB && (!window._inds || window._inds.length===0)){
+      document.getElementById('dashContent').innerHTML = '<div style="text-align:center;padding:40px;color:#aaa;"><div style="font-size:32px;margin-bottom:10px;">⏳</div><div>Carregando dados do Firebase...</div></div>';
+      let tentativas = 0;
+      const aguarda = setInterval(()=>{
+        tentativas++;
+        if((window._inds && window._inds.length > 0) || tentativas > 15){
+          clearInterval(aguarda);
+          renderDashboard();
+        }
+      }, 200);
+    } else {
+      renderDashboard();
+    }
+  }
+  if (name==='export') {
+    if(window._FB && (!window._inds || window._inds.length===0)){
+      setTimeout(atualizarResumo, 500);
+    } else {
+      atualizarResumo();
+    }
+  }
 
 }
 
@@ -1686,7 +1715,16 @@ function updateStats(){
   document.getElementById('sN').textContent=inds.filter(i=>['nativa_pantanal','nativa_brasil'].includes(i.orig)).length;
   document.getElementById('sK').textContent=Math.round(inds.reduce((s,i)=>s+(i.carbKg||0),0));
 }
-function renderAll(){renderList();renderMarkers();updateStats();}
+function renderAll(){
+  renderList();
+  renderMarkers();
+  updateStats();
+  // Atualizar telas abertas
+  const dash = document.getElementById('screen-dash');
+  const exp = document.getElementById('screen-export');
+  if(dash && dash.classList.contains('on')) renderDashboard();
+  if(exp && exp.classList.contains('on')) atualizarResumo();
+}
 
 // ═══════ DETAIL SHEET ═══════
 function openSheet(id){
