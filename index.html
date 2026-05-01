@@ -569,6 +569,39 @@ document.addEventListener('DOMContentLoaded',()=>{
             <div id="codigoData" style="font-size:11px;color:rgba(255,255,255,.6);">—</div>
           </div>
         </div>
+        <!-- SELETOR DE ESPÉCIE PRÉ-CADASTRADA -->
+        <div style="margin-top:12px;background:#f0fdf4;border-radius:10px;padding:12px;border:2px solid var(--g5);">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g3);margin-bottom:8px;">
+            🌳 Selecionar espécie conhecida
+          </div>
+          <div style="font-size:12px;color:var(--t3);margin-bottom:10px;line-height:1.5;">
+            Escolha a espécie na lista para preencher todos os dados automaticamente — sem precisar da IA.
+          </div>
+          <!-- Busca rápida -->
+          <div style="position:relative;margin-bottom:8px;">
+            <input type="text" id="especieBusca" placeholder="🔍 Buscar espécie..." oninput="filtrarEspecies()"
+              style="width:100%;height:40px;padding:0 12px 0 14px;border:1.5px solid var(--br);border-radius:var(--r99);font-family:'Nunito',sans-serif;font-size:13px;background:var(--w);outline:none;"/>
+          </div>
+          <!-- Lista de espécies -->
+          <div id="especieListaWrap" style="max-height:220px;overflow-y:auto;border-radius:8px;border:1px solid var(--br);background:var(--w);">
+            <div id="especieLista"></div>
+          </div>
+          <!-- Espécie selecionada -->
+          <div id="especieSelecionadaBox" style="display:none;margin-top:10px;background:var(--g2);border-radius:9px;padding:11px 14px;display:none;align-items:center;gap:10px;">
+            <div style="flex:1;">
+              <div id="especieSelecionadaNome" style="font-weight:800;font-size:15px;color:#fff;"></div>
+              <div id="especieSelecionadaSci" style="font-style:italic;font-size:12px;color:var(--g6);margin-top:1px;"></div>
+            </div>
+            <button onclick="limparEspecieSelecionada()" style="background:rgba(255,255,255,.2);border:none;border-radius:50%;width:26px;height:26px;color:#fff;font-size:13px;cursor:pointer;">✕</button>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+          <div style="flex:1;height:1px;background:var(--br);"></div>
+          <div style="font-size:11px;color:var(--t4);font-weight:600;">ou identifique pela foto</div>
+          <div style="flex:1;height:1px;background:var(--br);"></div>
+        </div>
+
         <!-- Botões de foto -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
           <div class="photo-area" style="border-color:#7c3aed;border-width:2px;">
@@ -644,13 +677,9 @@ document.addEventListener('DOMContentLoaded',()=>{
           <div class="fld"><label>Família</label><input id="f_fam" placeholder="Bignoniaceae"/></div>
           <div class="fld"><label>Gênero</label><input id="f_gen" placeholder="Handroanthus"/></div>
         </div>
-        <div class="row2">
-          <div class="fld"><label>Origem <button class="help-btn" onclick="showTip('origem')">?</button></label>
-            <select id="f_orig"><option value="">Selecione...</option><option value="nativa_pantanal">🌿 Nativa Pantanal</option><option value="nativa_brasil">🌿 Nativa Brasil</option><option value="exotica">🌸 Exótica</option><option value="invasora">⚠️ Invasora</option></select>
-          </div>
-          <div class="fld"><label>Fenologia <button class="help-btn" onclick="showTip('fenologia')">?</button></label>
-            <select id="f_fen"><option value="">—</option><option value="vegetativa">Vegetativa</option><option value="floracao">Floração</option><option value="frutificacao">Frutificação</option><option value="senescencia">Senescência</option><option value="dormencia">Dormência</option></select>
-          </div>
+        <div class="fld">
+          <label>Origem <button class="help-btn" onclick="showTip('origem')">?</button></label>
+          <select id="f_orig"><option value="">Selecione...</option><option value="nativa_pantanal">🌿 Nativa Pantanal</option><option value="nativa_brasil">🌿 Nativa Brasil</option><option value="exotica">🌸 Exótica</option><option value="invasora">⚠️ Invasora</option></select>
         </div>
         <div class="fld"><label>Observações Taxonômicas</label><textarea id="f_tax" placeholder="Casca, folhas, flores, frutos, exsudatos..."></textarea></div>
       </div>
@@ -679,6 +708,48 @@ document.addEventListener('DOMContentLoaded',()=>{
             <select id="f_pai"><option value="">—</option><option value="calcada">Calçada</option><option value="canteiro">Canteiro</option><option value="praca">Praça/Parque</option><option value="escola">Escola</option><option value="hospital">Hospital/UBS</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="margem">Margem de rio</option></select>
           </div>
           <div class="fld"><label>Data</label><input type="date" id="f_data"/></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label>Estação do Ano</label>
+            <select id="f_estacao">
+              <option value="">— Auto pelo mês —</option>
+              <option value="chuvosa">🌧️ Estação Chuvosa (out–mar)</option>
+              <option value="seca">☀️ Estação Seca (abr–set)</option>
+              <option value="transicao_inicio">🌤️ Início das Chuvas (out–nov)</option>
+              <option value="transicao_fim">💧 Fim das Chuvas (mar–abr)</option>
+            </select>
+            <small>Pantanal/Cerrado: duas estações bem definidas</small>
+          </div>
+          <div class="fld"><label>Fenologia no Momento</label>
+            <select id="f_fen">
+              <option value="">Não observada</option>
+              <option value="vegetativa">🍃 Vegetativa — só folhas</option>
+              <option value="floracao">🌸 Floração — flores abertas</option>
+              <option value="frutificacao">🍎 Frutificação — frutos presentes</option>
+              <option value="senescencia">🍂 Senescência — folhas caindo</option>
+              <option value="dormencia">😴 Dormência — sem folhas</option>
+              <option value="brotacao">🌱 Brotação — folhas novas</option>
+            </select>
+          </div>
+        </div>
+        <div class="fld" style="margin-top:2px;">
+          <label>Fenologia ao Longo do Ano <button class="help-btn" onclick="showTip('fenologia_anual')">?</button></label>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;" id="fenAnualWrap">
+            <label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1.5px solid var(--br);border-radius:7px;cursor:pointer;font-size:12px;background:var(--f5);">
+              <input type="checkbox" id="fen_flores" value="flores" style="accent-color:var(--g4);"> 🌸 Floresce
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1.5px solid var(--br);border-radius:7px;cursor:pointer;font-size:12px;background:var(--f5);">
+              <input type="checkbox" id="fen_frutos" value="frutos" style="accent-color:var(--g4);"> 🍎 Frutifica
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1.5px solid var(--br);border-radius:7px;cursor:pointer;font-size:12px;background:var(--f5);">
+              <input type="checkbox" id="fen_caduca" value="caduca" style="accent-color:var(--g4);"> 🍂 Perde folhas
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1.5px solid var(--br);border-radius:7px;cursor:pointer;font-size:12px;background:var(--f5);">
+              <input type="checkbox" id="fen_perenifolia" value="perenifolia" style="accent-color:var(--g4);"> 🌳 Sempre verde
+            </label>
+          </div>
+          <input type="text" id="f_fen_periodo" placeholder="Ex: flores em ago–set, frutos em out–nov"
+            style="margin-top:8px;width:100%;height:38px;padding:0 12px;border:1.5px solid var(--br);border-radius:7px;font-family:'Nunito',sans-serif;font-size:12.5px;background:var(--f5);outline:none;"/>
         </div>
       </div>
     </div>
@@ -871,12 +942,12 @@ document.addEventListener('DOMContentLoaded',()=>{
           <div class="fld">
             <label>Temp. Sombra (°C)</label>
             <input type="number" id="f_t_sombra" step="0.1" placeholder="—" oninput="calcTermico()"/>
-            <small>Medida sob a copa da árvore</small>
+            <small>Sob a copa — a 1,5m do solo</small>
           </div>
           <div class="fld">
             <label>Temp. Sol (°C)</label>
             <input type="number" id="f_t_sol" step="0.1" placeholder="—" oninput="calcTermico()"/>
-            <small>Medida ao lado, exposta ao sol</small>
+            <small>Ao lado, fora da copa</small>
           </div>
           <div class="fld">
             <label>Redução (°C)</label>
@@ -888,36 +959,47 @@ document.addEventListener('DOMContentLoaded',()=>{
           <div class="fld">
             <label>Hora da Medição</label>
             <input type="time" id="f_t_hora"/>
+            <small>Ideal: 10h–14h (pico de calor)</small>
           </div>
           <div class="fld">
             <label>Condição do Céu</label>
             <select id="f_t_ceu">
               <option value="">—</option>
-              <option value="aberto">☀️ Céu aberto / sem nuvens</option>
+              <option value="aberto">☀️ Céu aberto</option>
               <option value="parcial">⛅ Parcialmente nublado</option>
               <option value="nublado">☁️ Nublado</option>
             </select>
           </div>
         </div>
-        <!-- Resultado térmico calculado -->
-        <div id="termicoResult" style="display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;padding:12px;margin-top:8px;border-left:4px solid #f59e0b;">
-          <div style="font-size:10px;color:#b45309;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">🌡️ Serviço de Regulação Térmica</div>
-          <div id="termicoTexto" style="font-size:14px;font-weight:700;color:#92400e;"></div>
-          <div id="termicoClass" style="font-size:12px;color:#b45309;margin-top:3px;"></div>
+        <!-- Resultado térmico com escala corrigida -->
+        <div id="termicoResult" style="display:none;border-radius:10px;padding:14px;margin-top:10px;border:2px solid #f59e0b;">
+          <div style="font-size:10px;color:#b45309;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">🌡️ Resultado da Medição</div>
+          <div id="termicoTexto" style="font-size:17px;font-weight:900;color:#92400e;margin-bottom:6px;"></div>
+          <div id="termicoClass" style="font-size:13px;font-weight:700;margin-bottom:8px;"></div>
+          <!-- Barra visual de escala -->
+          <div style="margin-bottom:10px;">
+            <div style="height:10px;border-radius:5px;overflow:hidden;background:linear-gradient(to right,#6b7280 0%,#6b7280 10%,#ca8a04 10%,#ca8a04 30%,#f59e0b 30%,#f59e0b 50%,#16a34a 50%,#16a34a 80%,#065f46 80%,#065f46 100%);">
+              <div id="termicoIndicador" style="height:100%;width:2px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.5);position:relative;transition:margin-left .4s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:9px;color:#92400e;margin-top:3px;">
+              <span>0°C</span><span>1°C</span><span>3°C</span><span>5°C</span><span>8°C</span><span>≥10°C</span>
+            </div>
+          </div>
+          <div id="termicoEscalaDesc" style="font-size:12px;color:#444;line-height:1.6;background:#fffbeb;border-radius:7px;padding:9px 11px;"></div>
         </div>
         <!-- Upload imagem térmica -->
         <div style="margin-top:14px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b45309;margin-bottom:8px;">📷 Imagem Térmica (câmera FLIR, termômetro c/ visor)</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b45309;margin-bottom:8px;">📷 Imagens Térmicas</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="photo-area" style="border-color:#f59e0b;border-width:2px;">
               <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'termico_sombra')"/>
               <div style="font-size:26px;">🌡️</div>
-              <p style="font-size:11px;color:#b45309;font-weight:600;margin-top:3px;">Imagem sob sombra</p>
+              <p style="font-size:11px;color:#b45309;font-weight:600;margin-top:3px;">Foto sob sombra</p>
             </div>
             <div class="photo-area" style="border-color:#ef4444;border-width:2px;">
               <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'termico_sol')"/>
               <div style="font-size:26px;">☀️</div>
-              <p style="font-size:11px;color:#ef4444;font-weight:600;margin-top:3px;">Imagem ao sol</p>
+              <p style="font-size:11px;color:#ef4444;font-weight:600;margin-top:3px;">Foto ao sol</p>
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-top:8px;" id="termoPreviewWrap">
@@ -932,7 +1014,110 @@ document.addEventListener('DOMContentLoaded',()=>{
           </div>
         </div>
         <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;font-size:12px;color:#166534;margin-top:10px;line-height:1.6;">
-          <b>Como medir:</b> Posicione o termômetro a 1,5m de altura. Meça primeiro sob a copa (sombra), depois no local ensolarado mais próximo sem interferência da copa. Registre no mesmo horário. Horário ideal: 10h–14h (pico de calor).
+          <b>Como medir:</b> Termômetro a 1,5m de altura. Meça primeiro na sombra da copa, depois ao lado sem sombra. Mesmo horário. Anote também a imagem térmica do visor se tiver câmera FLIR ou termômetro infravermelho.
+        </div>
+      </div>
+    </div>
+
+    <!-- 9c Resíduos Sólidos e Tratos -->
+    <div class="form-section" style="border-top:3px solid #ef4444;">
+      <div class="form-sec-hdr" style="background:linear-gradient(135deg,#fff1f2,#fee2e2);">
+        <div class="form-sec-ico" style="background:linear-gradient(135deg,#fee2e2,#fecaca);">🗑️</div>
+        <div>
+          <div class="form-sec-title" style="color:#991b1b;">11. Resíduos Sólidos e Tratos à Árvore</div>
+          <div style="font-size:11px;color:#b91c1c;margin-top:1px;">Presença de lixo, pinturas, pregos, fios e outras agressões</div>
+        </div>
+      </div>
+      <div class="form-sec-body">
+        <!-- Resíduos sólidos -->
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#b91c1c;margin-bottom:8px;">Resíduos identificados</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;" id="residuosWrap">
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_plastico" style="accent-color:#ef4444;"> 🛍️ Plástico/Sacolas
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_entulho" style="accent-color:#ef4444;"> 🧱 Entulho/Terra
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_tinta" style="accent-color:#ef4444;"> 🎨 Tinta/Pichação
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_fio" style="accent-color:#ef4444;"> 🔌 Fio/Arame no tronco
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_prego" style="accent-color:#ef4444;"> 🔩 Pregos/Parafusos
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_placas" style="accent-color:#ef4444;"> 📌 Placas/Cartazes
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_lixo_org" style="accent-color:#ef4444;"> 🍂 Lixo orgânico
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #fecaca;border-radius:8px;cursor:pointer;font-size:12.5px;background:#fff1f2;">
+            <input type="checkbox" id="res_outros" style="accent-color:#ef4444;"> ⚠️ Outros resíduos
+          </label>
+        </div>
+        <!-- Tratos / intervenções positivas ou negativas -->
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#b91c1c;margin-bottom:8px;">Intervenções humanas na árvore</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_poda_correta" style="accent-color:#16a34a;"> ✂️ Poda correta
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_poda_incorreta" style="accent-color:#ef4444;"> ✂️ Poda incorreta/drástica
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_grade" style="accent-color:#16a34a;"> 🔲 Grade protetora
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_cimento" style="accent-color:#ef4444;"> 🧱 Cimento no colo
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_irrigacao" style="accent-color:#16a34a;"> 💧 Irrigação/cuida
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:12.5px;background:var(--f5);">
+            <input type="checkbox" id="trat_vandalismo" style="accent-color:#ef4444;"> 🪓 Vandalismo/corte
+          </label>
+        </div>
+        <!-- Nível de impacto dos resíduos -->
+        <div class="fld">
+          <label>Nível de Impacto dos Resíduos</label>
+          <select id="f_res_impacto">
+            <option value="0">0 — Sem resíduos</option>
+            <option value="1">1 — Leve — resíduos sem contato direto</option>
+            <option value="2">2 — Moderado — resíduos em contato com a árvore</option>
+            <option value="3">3 — Grave — resíduos comprometendo saúde/estrutura</option>
+          </select>
+        </div>
+        <!-- Foto dos resíduos -->
+        <div style="margin-top:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b91c1c;margin-bottom:8px;">📷 Foto dos resíduos / intervenções</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="photo-area" style="border-color:#ef4444;border-width:2px;">
+              <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'residuos_1')"/>
+              <div style="font-size:26px;">🗑️</div>
+              <p style="font-size:11px;color:#b91c1c;font-weight:600;margin-top:3px;">Foto 1 — Resíduos</p>
+            </div>
+            <div class="photo-area" style="border-color:#6b7280;border-width:2px;">
+              <input type="file" accept="image/*" capture="environment" onchange="handleTermoPhoto(event,'residuos_2')"/>
+              <div style="font-size:26px;">📷</div>
+              <p style="font-size:11px;color:#6b7280;font-weight:600;margin-top:3px;">Foto 2 — Detalhe</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <div id="prev_residuos_1" style="display:none;flex:1;position:relative;">
+              <img style="width:100%;height:80px;object-fit:cover;border-radius:8px;border:2px solid #ef4444;"/>
+              <button onclick="clearTermoPhoto('residuos_1')" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;">✕</button>
+            </div>
+            <div id="prev_residuos_2" style="display:none;flex:1;position:relative;">
+              <img style="width:100%;height:80px;object-fit:cover;border-radius:8px;border:2px solid #6b7280;"/>
+              <button onclick="clearTermoPhoto('residuos_2')" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;">✕</button>
+            </div>
+          </div>
+        </div>
+        <div class="fld" style="margin-top:10px;">
+          <label>Observações sobre resíduos e tratos</label>
+          <textarea id="f_res_obs" placeholder="Descreva o tipo, quantidade e localização dos resíduos. Registre intervenções positivas ou negativas observadas..." style="min-height:70px;padding:10px 12px;border:1.5px solid var(--br);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;width:100%;outline:none;resize:none;"></textarea>
         </div>
       </div>
     </div>
@@ -1111,6 +1296,28 @@ document.addEventListener('DOMContentLoaded',()=>{
   </div>
 </div>
 
+<!-- DASHBOARD -->
+<div class="screen" id="screen-dash">
+  <div style="flex:1;overflow-y:auto;" id="dashScroll">
+
+    <!-- Header Dashboard -->
+    <div style="background:linear-gradient(135deg,#0d2818,#1b4332,#2d6a4f);padding:18px 16px 14px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <div style="font-size:28px;">📊</div>
+        <div>
+          <div style="font-family:'Lora',serif;font-size:20px;font-weight:700;color:#fff;">Dashboard CPF Verde</div>
+          <div style="font-size:11px;color:#95d5b2;">Cáceres-MT · Análise do Patrimônio Florestal Urbano</div>
+        </div>
+      </div>
+      <div id="dashAtualizado" style="font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;"></div>
+    </div>
+
+    <div style="padding:12px;display:flex;flex-direction:column;gap:12px;" id="dashContent">
+      <div style="text-align:center;padding:40px;color:#aaa;">📊 Carregando dashboard...</div>
+    </div>
+  </div>
+</div>
+
 <!-- SOBRE -->
 <div class="screen" id="screen-sobre">
   <div class="cfg-screen">
@@ -1181,8 +1388,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   <button class="nav-btn on" id="nb-map" onclick="goScreen('map')"><span class="nav-ico">🗺️</span>Mapa</button>
   <button class="nav-btn" id="nb-list" onclick="goScreen('list')"><span class="nav-ico">📋</span>Lista</button>
   <button class="nav-add" onclick="goScreen('map');setTimeout(startPinMode,300)" id="nb-add" title="Cadastrar nova árvore">🌳</button>
-  <button class="nav-btn" id="nb-notas" onclick="goScreen('notas')"><span class="nav-ico">📝</span>Notas</button>
-  <button class="nav-btn" id="nb-export" onclick="goScreen('export')"><span class="nav-ico">📊</span>Dados</button>
+  <button class="nav-btn" id="nb-dash" onclick="goScreen('dash')"><span class="nav-ico">📊</span>Dashboard</button>
+  <button class="nav-btn" id="nb-export" onclick="goScreen('export')"><span class="nav-ico">⬇️</span>Dados</button>
 </div>
 
 <!-- DETAIL SHEET -->
@@ -1273,6 +1480,7 @@ function goScreen(name) {
   if (name==='add') { initForm(); } // form
   if (name==='sobre') { buildOrientandos(); }
   if (name==='notas') { renderNotas(); }
+  if (name==='dash') { renderDashboard(); }
   if (name==='export') { atualizarResumo(); }
 
 }
@@ -1613,10 +1821,22 @@ function initForm(){
     document.getElementById('gpsInfo').textContent='Ou preencha as coordenadas manualmente';
   }
   _keepCoords = false;
-  document.getElementById('f_data').value = new Date().toISOString().split('T')[0];
+  const hoje = new Date();
+  document.getElementById('f_data').value = hoje.toISOString().split('T')[0];
+  // Estação automática pelo mês (Pantanal/Cerrado)
+  const mes = hoje.getMonth()+1; // 1-12
+  const estEl = document.getElementById('f_estacao');
+  if(estEl && !estEl.value){
+    if(mes>=10||mes<=3) estEl.value='chuvosa';
+    else estEl.value='seca';
+  }
   buildCritForm();
   buildSvcForm();
+  buildEspecieLista();
   svcVals={}; termoPhotos={};
+  _especieSelecionada=null;
+  const lw=document.getElementById('especieListaWrap'); if(lw) lw.style.display='block';
+  const sb2=document.getElementById('especieSelecionadaBox'); if(sb2) sb2.style.display='none';
 }
 // Descrições completas por critério e pontuação
 const CRIT_INFO = {
@@ -1930,6 +2150,22 @@ function clearTermoPhoto(tipo){
   if(wrap) wrap.style.display='none';
 }
 
+// Escala térmica completa com 6 níveis até 10°C
+const ESCALA_TERMICA = [
+  {min:0,   max:1,   nivel:0, cor:'#6b7280', icone:'⬜', label:'Sem efeito térmico',
+   desc:'Redução de 0 a 1°C. A sombra da árvore não gera diferença térmica mensurável. Pode indicar copa rarefeita, árvore pequena ou medição com céu nublado.'},
+  {min:1,   max:3,   nivel:1, cor:'#ca8a04', icone:'🟡', label:'Efeito baixo',
+   desc:'Redução de 1 a 3°C. A árvore ameniza levemente o calor. Contribuição real mas ainda modesta para o conforto térmico urbano.'},
+  {min:3,   max:5,   nivel:2, cor:'#f59e0b', icone:'🟠', label:'Efeito moderado',
+   desc:'Redução de 3 a 5°C. Conforto térmico claramente perceptível. A sombra desta árvore reduz significativamente a sensação de calor.'},
+  {min:5,   max:8,   nivel:3, cor:'#16a34a', icone:'🟢', label:'Efeito alto',
+   desc:'Redução de 5 a 8°C. A árvore cria uma ilha de frescor expressiva. Contribuição muito importante para o microclima urbano local.'},
+  {min:8,   max:10,  nivel:3, cor:'#065f46', icone:'💚', label:'Efeito muito alto',
+   desc:'Redução de 8 a 10°C. Resfriamento urbano excepcional. Esta árvore tem impacto climático equivalente a um pequeno parque.'},
+  {min:10,  max:999, nivel:3, cor:'#022c22', icone:'🌿', label:'Efeito excepcional ≥10°C',
+   desc:'Redução igual ou superior a 10°C. Fenômeno raro em árvores urbanas isoladas. Verificar a medição — possível influência de corrente de ar ou evapotranspiração intensa. Se confirmado, este indivíduo é de altíssimo valor ecológico.'},
+];
+
 function calcTermico(){
   const ts = parseFloat(document.getElementById('f_t_sombra').value);
   const te = parseFloat(document.getElementById('f_t_sol').value);
@@ -1937,21 +2173,45 @@ function calcTermico(){
   const resEl = document.getElementById('termicoResult');
   const txtEl = document.getElementById('termicoTexto');
   const clsEl = document.getElementById('termicoClass');
+  const descEl = document.getElementById('termicoEscalaDesc');
+
   if(!isNaN(ts) && !isNaN(te)){
     const red = te - ts;
     redEl.value = red.toFixed(1);
     resEl.style.display = 'block';
-    txtEl.textContent = `Redução de ${red.toFixed(1)}°C (${te.toFixed(1)}°C → ${ts.toFixed(1)}°C)`;
-    const nivel = red < 1 ? 'Nível 0 — Ausente' : red < 3 ? 'Nível 1 — Baixo' : red < 5 ? 'Nível 2 — Médio' : 'Nível 3 — Alto';
-    const cor = red < 1 ? '#6b7280' : red < 3 ? '#ca8a04' : red < 5 ? '#ea580c' : '#16a34a';
-    clsEl.style.color = cor;
-    clsEl.textContent = nivel + ' de regulação térmica';
-    // Preencher automaticamente o nível do serviço térmico
-    const btn = document.querySelector(`.score-btn[data-sk="termico"][data-sv="${red<1?0:red<3?1:red<5?2:3}"]`);
-    if(btn) setSvc('termico', red<1?0:red<3?1:red<5?2:3, btn);
+    resEl.style.background = 'linear-gradient(135deg,#fffbeb,#fef3c7)';
+
+    // Encontrar faixa da escala
+    const faixa = ESCALA_TERMICA.find(f => red >= f.min && red < f.max) || ESCALA_TERMICA[ESCALA_TERMICA.length-1];
+    const corBg = faixa.cor + '18';
+
+    txtEl.textContent = `Redução de ${red.toFixed(1)}°C`;
+    txtEl.style.color = faixa.cor;
+    clsEl.innerHTML = `<span style="font-size:18px;">${faixa.icone}</span> ${faixa.label}`;
+    clsEl.style.color = faixa.cor;
+    resEl.style.background = corBg;
+    resEl.style.borderColor = faixa.cor;
+
+    if(descEl){
+      descEl.innerHTML = `<b>${te.toFixed(1)}°C (sol)</b> → <b>${ts.toFixed(1)}°C (sombra)</b><br>${faixa.desc}`;
+      descEl.style.background = faixa.cor+'15';
+    }
+
+    // Indicador na barra de escala (0 a ≥10)
+    const indEl = document.getElementById('termicoIndicador');
+    if(indEl){
+      const pct = Math.min(98, Math.max(1, (red/10)*100));
+      indEl.style.marginLeft = pct+'%';
+    }
+
+    // Nível do serviço ecossistêmico
+    const svcNivel = faixa.nivel;
+    const btn = document.querySelector(`.score-btn[data-sk="termico"][data-sv="${svcNivel}"]`);
+    if(btn) setSvc('termico', svcNivel, btn);
+
   } else {
     redEl.value = '';
-    resEl.style.display = 'none';
+    if(resEl) resEl.style.display = 'none';
   }
 }
 
@@ -2111,22 +2371,356 @@ function autoCalc(){
     }
   }
 }
+// ═══════ BANCO DE ESPÉCIES PRÉ-CADASTRADAS ═══════════════════════════════
+// Cada espécie tem todos os dados necessários para preencher o formulário
+const ESPECIES_DB = [
+  {
+    nome:'Ipê Amarelo', sci:'Handroanthus albus', familia:'Bignoniaceae', gen:'Handroanthus',
+    orig:'nativa_pantanal', fen:'floracao', dens:0.70,
+    servicos:['sombra','paisagismo','polinizacao','termico','fruto_animal'],
+    svcNiveis:{sombra:3,paisagismo:3,polinizacao:3,termico:2,fruto_animal:2},
+    taxObs:'Casca cinza-acastanhada rugosa e sulcada longitudinalmente. Folhas compostas digitadas, 5 folíolos, caducas. Flores tubulosas amarelas em panículas terminais, surgem antes das folhas (jul–set). Fruto síliqua lenhosa linear.',
+    descricao:'Árvore decídua de 4–20m. Espécie símbolo do Pantanal mato-grossense, amplamente usada na arborização urbana de Cáceres-MT.',
+    status:'Vulnerável — Lista Vermelha MT',
+    obs:'Floração exuberante em agosto-setembro. Mel produzido por abelhas visitantes é apreciado regionalmente. Potencial candidata a Patrimônio Natural de Cáceres-MT.'
+  },
+  {
+    nome:'Ipê Roxo', sci:'Handroanthus impetiginosus', familia:'Bignoniaceae', gen:'Handroanthus',
+    orig:'nativa_brasil', fen:'floracao', dens:0.80,
+    servicos:['sombra','paisagismo','medicinal','polinizacao'],
+    svcNiveis:{sombra:3,paisagismo:3,medicinal:2,polinizacao:3},
+    taxObs:'Casca acinzentada com fissuras profundas. Folhas compostas, 5 folíolos ovados. Flores roxo-rosadas densas antes da folhação. Madeira pesada e durável.',
+    descricao:'Árvore de 8–30m, decídua. Casca medicinal reconhecida com propriedades anti-inflamatórias.',
+    status:'Quase Ameaçada',
+    obs:'Uso medicinal reconhecido. Espécie-chave para polinizadores nativos.'
+  },
+  {
+    nome:'Manduvi', sci:'Sterculia apetala', familia:'Malvaceae', gen:'Sterculia',
+    orig:'nativa_pantanal', fen:'frutificacao', dens:0.45,
+    servicos:['fruto_animal','moradia','sombra','carbono'],
+    svcNiveis:{fruto_animal:3,moradia:3,sombra:2,carbono:2},
+    taxObs:'Tronco cilíndrico, casca acinzentada levemente fissurada. Folhas palmatissectas grandes. Frutos folículos vermelhos com sementes negras ricas em lipídeos.',
+    descricao:'Árvore de 15–30m, semicaducifólia. Principal fonte alimentar da arara-azul-grande (Anodorhynchus hyacinthinus) no Pantanal.',
+    status:'Vulnerável — espécie-chave Pantanal',
+    obs:'Relação de dependência com a arara-azul-grande. Tombamento recomendado como estratégia de conservação.'
+  },
+  {
+    nome:'Acuri', sci:'Attalea phalerata', familia:'Arecaceae', gen:'Attalea',
+    orig:'nativa_pantanal', fen:'frutificacao', dens:0.50,
+    servicos:['fruto_animal','sombra','moradia','hidrologia'],
+    svcNiveis:{fruto_animal:3,sombra:2,moradia:2,hidrologia:2},
+    taxObs:'Palmeira robusta com estipe solitário coberto por bases foliares persistentes. Folhas pinadas de 5–8m. Frutos elipsoides com mesocarpo fibroso e endocarpo duro.',
+    descricao:'Palmeira de 8–15m. Espécie-chave para fauna do Pantanal.',
+    status:'Pouco Preocupante',
+    obs:'Frutos consumidos por araras, jacus, capivaras e antas. Indicadora de ambientes conservados do Pantanal.'
+  },
+  {
+    nome:'Buriti', sci:'Mauritia flexuosa', familia:'Arecaceae', gen:'Mauritia',
+    orig:'nativa_brasil', fen:'frutificacao', dens:0.40,
+    servicos:['fruto_humano','fruto_animal','sombra','hidrologia'],
+    svcNiveis:{fruto_humano:2,fruto_animal:3,sombra:2,hidrologia:3},
+    taxObs:'Palmeira dioica com folhas palmatissectas de até 2m de diâmetro. Frutos elipsoides com escamas vermelhas, ricos em carotenoides e vitamina A.',
+    descricao:'Palmeira de 20–35m associada a veredas e ambientes úmidos. Indicadora de lençol freático superficial.',
+    status:'Pouco Preocupante',
+    obs:'Indicadora de nascentes e cursos d’água. Espécie da vida no Cerrado.'
+  },
+  {
+    nome:'Pequi', sci:'Caryocar brasiliense', familia:'Caryocaraceae', gen:'Caryocar',
+    orig:'nativa_brasil', fen:'frutificacao', dens:0.65,
+    servicos:['fruto_humano','fruto_animal','sombra','medicinal'],
+    svcNiveis:{fruto_humano:3,fruto_animal:3,sombra:2,medicinal:2},
+    taxObs:'Tronco tortuoso, casca corticosa e grossa altamente resistente ao fogo. Folhas compostas trifolioladas. Flores brancas grandes. Fruto drupáceo com mesocarpo amarelo-gorduroso e endocarpo espinhoso.',
+    descricao:'Árvore de 3–10m, decídua, crescimento lento. Espécie símbolo do Cerrado. Pode viver mais de 800 anos.',
+    status:'Vulnerável — espécie símbolo do Cerrado',
+    obs:'Proibido cortar por lei estadual. Tombamento de exemplares centenários é legalmente viável.'
+  },
+  {
+    nome:'Jatobá', sci:'Hymenaea courbaril', familia:'Fabaceae', gen:'Hymenaea',
+    orig:'nativa_brasil', fen:'vegetativa', dens:0.85,
+    servicos:['fruto_humano','fruto_animal','sombra','carbono'],
+    svcNiveis:{fruto_humano:2,fruto_animal:3,sombra:3,carbono:3},
+    taxObs:'Tronco robusto, casca acinzentada rimosa. Folhas bifolioladas coriáceas persistentes. Frutos legumes lenhosos com polpa farinosa nutritiva.',
+    descricao:'Árvore de 20–40m. Uma das maiores do Cerrado e Pantanal. Pode viver mais de 500 anos.',
+    status:'Vulnerável',
+    obs:'Grande estoque de carbono — indivíduos maduros estocam mais de 2 toneladas de C. Fundamental em restauração florestal.'
+  },
+  {
+    nome:'Aroeira Verdadeira', sci:'Myracrodruon urundeuva', familia:'Anacardiaceae', gen:'Myracrodruon',
+    orig:'nativa_brasil', fen:'vegetativa', dens:0.90,
+    servicos:['sombra','medicinal','carbono'],
+    svcNiveis:{sombra:2,medicinal:3,carbono:2},
+    taxObs:'Casca parda profundamente sulcada. Folhas compostas imparipinadas. Flores brancas em panículas. Frutos drupas vermelhas. Exsudato resinoso com propriedades antimicrobianas.',
+    descricao:'Árvore de 7–14m, decídua, xerófita. Uma das madeiras mais densas do Brasil.',
+    status:'Ameaçada de Extinção — IBAMA',
+    obs:'Espécie protegida por lei federal. Madeira imputrescível. Candidata prioritária a tombamento municipal.'
+  },
+  {
+    nome:'Gameleira', sci:'Ficus obtusifolia', familia:'Moraceae', gen:'Ficus',
+    orig:'nativa_pantanal', fen:'frutificacao', dens:0.45,
+    servicos:['sombra','fruto_animal','moradia','termico'],
+    svcNiveis:{sombra:3,fruto_animal:3,moradia:3,termico:2},
+    taxObs:'Raízes adventícias fusionadas formando estruturas complexas. Folhas simples coriáceas obovadas. Figos pequenos roxos consumidos por aves e mamíferos.',
+    descricao:'Figueira de 15–25m. Uma das árvores com maior interação ecológica do Pantanal.',
+    status:'Pouco Preocupante',
+    obs:'Mais de 80 espécies de vertebrados consomem seus figos. Candidata natural a patrimônio por raízes monumentais.'
+  },
+  {
+    nome:'Angico-vermelho', sci:'Anadenanthera colubrina', familia:'Fabaceae', gen:'Anadenanthera',
+    orig:'nativa_brasil', fen:'vegetativa', dens:0.80,
+    servicos:['sombra','medicinal','carbono'],
+    svcNiveis:{sombra:2,medicinal:3,carbono:2},
+    taxObs:'Tronco com tubérculos na casca jovem. Folhas bipinadas. Flores brancas em capítulos globosos. Fruto legume falcado deiscente. Casca com alto teor de taninos.',
+    descricao:'Árvore de 10–25m. Excelente para recuperação de áreas degradadas — fixação de nitrogênio.',
+    status:'Pouco Preocupante',
+    obs:'Casca cicatrizante e anti-inflamatória de uso popular.'
+  },
+  {
+    nome:'Paineira', sci:'Ceiba speciosa', familia:'Malvaceae', gen:'Ceiba',
+    orig:'nativa_brasil', fen:'floracao', dens:0.35,
+    servicos:['paisagismo','moradia','polinizacao','sombra'],
+    svcNiveis:{paisagismo:3,moradia:2,polinizacao:3,sombra:2},
+    taxObs:'Tronco barrigudo coberto de espinhos cônicos. Flores rosa-lilás com centro branco-amarelado. Fruto cápsula com fibras algodonosas (paina). Tronco verde realiza fotossíntese.',
+    descricao:'Árvore de 15–30m, decídua. Alto impacto visual para arborização urbana.',
+    status:'Pouco Preocupante',
+    obs:'Flores com néctar abundante atraem beija-flores e morcegos. Paina usada por aves para ninhos.'
+  },
+  {
+    nome:'Cerejeira-do-Cerrado', sci:'Amburana cearensis', familia:'Fabaceae', gen:'Amburana',
+    orig:'nativa_pantanal', fen:'floracao', dens:0.60,
+    servicos:['sombra','paisagismo','medicinal'],
+    svcNiveis:{sombra:2,paisagismo:2,medicinal:3},
+    taxObs:'Casca papiráceo-esfoliante bege-acastanhada e aromática (cumarina). Folhas compostas imparipinadas. Flores brancas perfumadas em racemos axilares.',
+    descricao:'Árvore de 8–20m, decídua. Semente com odor de baunilha (cumarina).',
+    status:'Vulnerável — IUCN',
+    obs:'Ameaçada pelo extrativismo ilegal da madeira. Tombamento urgente recomendado.'
+  },
+  {
+    nome:'Castanheira-do-Pará', sci:'Bertholletia excelsa', familia:'Lecythidaceae', gen:'Bertholletia',
+    orig:'nativa_brasil', fen:'frutificacao', dens:0.75,
+    servicos:['fruto_humano','fruto_animal','carbono','hidrologia'],
+    svcNiveis:{fruto_humano:3,fruto_animal:3,carbono:3,hidrologia:2},
+    taxObs:'Árvore emergente com copa umbeliforme característica. Fruto pixídio lenhoso (ouriço) de 1–2kg contendo 8–24 sementes.',
+    descricao:'Árvore de 30–50m. Uma das maiores e mais longevas da Amazônia (até 1000 anos). Exclusiva de florestas primárias.',
+    status:'Vulnerável — IUCN Red List',
+    obs:'Indicadora de integridade florestal. Tombamento de exemplares centenários tem respaldo jurídico.'
+  },
+  {
+    nome:'Mogno Brasileiro', sci:'Swietenia macrophylla', familia:'Meliaceae', gen:'Swietenia',
+    orig:'nativa_brasil', fen:'vegetativa', dens:0.72,
+    servicos:['sombra','carbono','moradia'],
+    svcNiveis:{sombra:3,carbono:3,moradia:2},
+    taxObs:'Tronco reto cilíndrico. Folhas compostas paripinadas semicaducas. Fruto cápsula lenhosa pentavalve com sementes aladas. Madeira cerne avermelhado brilhante.',
+    descricao:'Árvore emergente de 30–50m. Rei das madeiras tropicais.',
+    status:'Vulnerável — CITES Apêndice II',
+    obs:'Listado CITES e IBAMA. Presença indica floresta primária conservada. Tombamento com precedente legal nacional.'
+  },
+  {
+    nome:'Sibipiruna', sci:'Caesalpinia pluviosa', familia:'Fabaceae', gen:'Caesalpinia',
+    orig:'nativa_brasil', fen:'floracao', dens:0.75,
+    servicos:['sombra','paisagismo','polinizacao','termico'],
+    svcNiveis:{sombra:3,paisagismo:3,polinizacao:2,termico:2},
+    taxObs:'Tronco com placas de casca acinzentada. Folhas bipinadas. Flores amarelas em racemos. Fruto legume lenhoso achatado.',
+    descricao:'Árvore de 8–15m. Muito usada na arborização urbana. Copa ampla e densa.',
+    status:'Pouco Preocupante',
+    obs:'Excelente para arborização de calçadas largas. Copa proporciona sombra generosa.'
+  },
+  {
+    nome:'Mangueira', sci:'Mangifera indica', familia:'Anacardiaceae', gen:'Mangifera',
+    orig:'exotica', fen:'frutificacao', dens:0.60,
+    servicos:['sombra','fruto_humano','fruto_animal','paisagismo','moradia','termico'],
+    svcNiveis:{sombra:3,fruto_humano:3,fruto_animal:2,paisagismo:2,moradia:2,termico:3},
+    taxObs:'Tronco com casca parda fissurada. Folhas simples lanceoladas coriáceas. Flores em panículas terminais. Fruto drupa carnosa grande.',
+    descricao:'Árvore de 10–20m, muito comum na arborização urbana de Cáceres. Originária da Índia.',
+    status:'Espécie exótica cultivada',
+    obs:'Muito valorizada pelos frutos. Atenção para conflitos com calçadas e fiação elétrica em indivíduos antigos.'
+  },
+];
+
+let _especieFiltradas = [...ESPECIES_DB];
+let _especieSelecionada = null;
+
+function buildEspecieLista(){
+  _especieFiltradas = [...ESPECIES_DB];
+  renderEspecieLista();
+}
+
+function filtrarEspecies(){
+  const q = (document.getElementById('especieBusca').value||'').toLowerCase().trim();
+  _especieFiltradas = q ?
+    ESPECIES_DB.filter(e=>[e.nome,e.sci,e.familia,e.gen].join(' ').toLowerCase().includes(q)) :
+    [...ESPECIES_DB];
+  renderEspecieLista();
+}
+
+function renderEspecieLista(){
+  const el = document.getElementById('especieLista');
+  if(!el) return;
+  if(!_especieFiltradas.length){
+    el.innerHTML='<div style="padding:12px;text-align:center;color:var(--t4);font-size:12.5px;">Nenhuma espécie encontrada</div>';
+    return;
+  }
+  const biomaOrig={nativa_pantanal:'🌊 Pantanal',nativa_brasil:'🌿 Brasil',exotica:'🌸 Exótica',invasora:'⚠️ Invasora'};
+  el.innerHTML = _especieFiltradas.map((e,i)=>`
+    <div onclick="selecionarEspecie(${ESPECIES_DB.indexOf(e)})"
+      style="padding:11px 13px;border-bottom:1px solid var(--f0);cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:10px;"
+      onmousedown="this.style.background='var(--vp)'" onmouseup="this.style.background=''">
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13.5px;color:var(--g2);">${e.nome}</div>
+        <div style="font-style:italic;font-size:11px;color:var(--t3);">${e.sci}</div>
+      </div>
+      <span style="font-size:10px;color:var(--t4);white-space:nowrap;">${biomaOrig[e.orig]||''}</span>
+    </div>`).join('');
+}
+
+function selecionarEspecie(idx){
+  const e = ESPECIES_DB[idx];
+  if(!e) return;
+  _especieSelecionada = e;
+
+  // Mostrar box da espécie selecionada
+  const box = document.getElementById('especieSelecionadaBox');
+  box.style.display='flex';
+  document.getElementById('especieSelecionadaNome').textContent = e.nome;
+  document.getElementById('especieSelecionadaSci').textContent = e.sci + ' · ' + e.familia;
+
+  // Preencher formulário como se fosse a IA
+  aplicarIA(e);
+
+  // Fechar lista
+  document.getElementById('especieListaWrap').style.display='none';
+  document.getElementById('especieBusca').value = e.nome;
+
+  showToast('✅ '+e.nome+' — dados preenchidos!');
+}
+
+function limparEspecieSelecionada(){
+  _especieSelecionada = null;
+  document.getElementById('especieSelecionadaBox').style.display='none';
+  document.getElementById('especieListaWrap').style.display='block';
+  document.getElementById('especieBusca').value='';
+  _especieFiltradas = [...ESPECIES_DB];
+  renderEspecieLista();
+}
+
+// Mostrar/esconder lista ao focar no campo de busca
+document.addEventListener('DOMContentLoaded', ()=>{
+  const busca = document.getElementById('especieBusca');
+  if(busca){
+    busca.addEventListener('focus', ()=>{
+      document.getElementById('especieListaWrap').style.display='block';
+      filtrarEspecies();
+    });
+  }
+});
+
+// ── GPS DE ALTA PRECISÃO ──────────────────────────────────────────────────
+// Coleta múltiplas leituras, descarta as ruins, calcula média ponderada
+let _gpsWatcher = null;
+let _gpsLeituras = [];
+const _gpsAlvo = 10;   // número de leituras para coletar
+const _gpsMaxAcc = 20; // precisão máxima desejada (metros)
+
 function captGPS(){
-  if(!navigator.geolocation){showToast('⚠️ GPS não disponível neste browser');return;}
-  document.getElementById('gpsInfo').textContent='📡 Aguardando sinal GPS...';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    document.getElementById('f_lat').value=pos.coords.latitude.toFixed(6);
-    document.getElementById('f_lng').value=pos.coords.longitude.toFixed(6);
-    if(pos.coords.accuracy)document.getElementById('f_acc').value=pos.coords.accuracy.toFixed(1);
-    if(pos.coords.altitude)document.getElementById('f_alt').value=pos.coords.altitude.toFixed(1);
-    const acc=pos.coords.accuracy?pos.coords.accuracy.toFixed(0):'?';
-    document.getElementById('gpsInfo').textContent=`✅ Localização obtida · precisão ±${acc}m`;
-    autoCalc(); showToast(`📡 GPS: ±${acc}m`);
-  },err=>{
-    const m={1:'Permissão negada',2:'Posição indisponível',3:'Tempo esgotado'};
-    document.getElementById('gpsInfo').textContent='⚠️ '+(m[err.code]||'Erro GPS');
-    showToast('⚠️ '+(m[err.code]||'Erro GPS'));
-  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+  if(!navigator.geolocation){ showToast('⚠️ GPS não disponível'); return; }
+  if(_gpsWatcher !== null){ navigator.geolocation.clearWatch(_gpsWatcher); _gpsWatcher=null; }
+  _gpsLeituras = [];
+  _setGPSUI('start', 0, null);
+
+  _gpsWatcher = navigator.geolocation.watchPosition(
+    pos => {
+      const {latitude:lat, longitude:lng, accuracy:acc, altitude:alt} = pos.coords;
+      if(acc <= 50) _gpsLeituras.push({lat, lng, acc, alt});
+      const n = _gpsLeituras.length;
+      const melhor = n ? Math.min(..._gpsLeituras.map(l=>l.acc)) : acc;
+      _setGPSUI('collecting', n, melhor);
+      if(n >= _gpsAlvo && melhor <= _gpsMaxAcc) _finalizaGPS();
+      if(n >= 20) _finalizaGPS();
+    },
+    err => {
+      const m={1:'Permissão negada — ative GPS no navegador',2:'Sinal fraco — vá a área aberta',3:'Tempo esgotado'};
+      _setGPSUI('error',0,null);
+      document.getElementById('gpsInfo').textContent='⚠️'+(m[err.code]||'Erro GPS');
+      if(_gpsWatcher!==null){navigator.geolocation.clearWatch(_gpsWatcher);_gpsWatcher=null;}
+    },
+    {enableHighAccuracy:true, timeout:60000, maximumAge:0}
+  );
+
+  // Limite de 45s
+  setTimeout(()=>{
+    if(_gpsWatcher!==null && _gpsLeituras.length>0) _finalizaGPS();
+    else if(_gpsWatcher!==null){
+      navigator.geolocation.clearWatch(_gpsWatcher); _gpsWatcher=null;
+      _setGPSUI('error',0,null);
+      document.getElementById('gpsInfo').textContent='⚠️ Sinal GPS fraco. Vá para área aberta.';
+    }
+  }, 45000);
+}
+
+function _finalizaGPS(){
+  if(_gpsWatcher!==null){navigator.geolocation.clearWatch(_gpsWatcher);_gpsWatcher=null;}
+  if(!_gpsLeituras.length){showToast('⚠️ Nenhuma leitura GPS válida');return;}
+
+  // Remove outliers: descarta leituras > 2× a mediana de precisão
+  const sorted = [..._gpsLeituras].sort((a,b)=>a.acc-b.acc);
+  const mediana = sorted[Math.floor(sorted.length/2)].acc;
+  const ok = _gpsLeituras.filter(l=>l.acc <= mediana*2);
+
+  // Média ponderada: peso = 1/acc² (leituras mais precisas têm mais peso)
+  let sw=0, slat=0, slng=0;
+  ok.forEach(l=>{ const w=1/(l.acc*l.acc); sw+=w; slat+=l.lat*w; slng+=l.lng*w; });
+  const lat = slat/sw;
+  const lng = slng/sw;
+  const accFinal = Math.sqrt(1/sw);
+  const accMelhor = ok[0]?.acc ?? sorted[0].acc; // já sorted por acc
+  const altMedia = ok.filter(l=>l.alt).reduce((s,l,_,a)=>s+l.alt/a.length,0)||null;
+
+  document.getElementById('f_lat').value = lat.toFixed(7);
+  document.getElementById('f_lng').value = lng.toFixed(7);
+  document.getElementById('f_acc').value = accFinal.toFixed(1);
+  if(altMedia) document.getElementById('f_alt').value = altMedia.toFixed(1);
+
+  _setGPSUI('done', ok.length, accMelhor);
+  const qualLabel = accFinal<=5?'🏆 Excelente':accFinal<=15?'✅ Ótima':accFinal<=30?'👍 Boa':'⚠️ Razoável';
+  document.getElementById('gpsInfo').innerHTML =
+    `<b style="color:${accFinal<=15?'#16a34a':accFinal<=30?'#ca8a04':'#ea580c'};">
+      ${qualLabel} · ±${accFinal.toFixed(0)}m</b>
+     &nbsp;(${ok.length} leituras · melhor ±${accMelhor.toFixed(0)}m)`;
+  autoCalc();
+  showToast(`✅ GPS: ±${accFinal.toFixed(0)}m com ${ok.length} leituras`);
+}
+
+function _setGPSUI(estado, n, melhorAcc){
+  const btn = document.querySelector('.gps-btn');
+  const info = document.getElementById('gpsInfo');
+  if(!btn) return;
+  if(estado==='start'){
+    btn.innerHTML='⏳ Iniciando GPS...';
+    btn.style.cssText='height:50px;padding:0 16px;border-radius:var(--r12);background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;color:#92400e;font-family:Nunito,sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%;';
+    btn.onclick=()=>{ if(_gpsLeituras.length>0)_finalizaGPS(); else{navigator.geolocation.clearWatch(_gpsWatcher);_gpsWatcher=null;_setGPSUI('error',0,null);} };
+    if(info) info.innerHTML='<span style="color:#92400e;">📡 Aguardando sinal... fique parado ao ar livre</span>';
+  } else if(estado==='collecting'){
+    const pct=Math.min(100,Math.round(n/_gpsAlvo*100));
+    const cor=melhorAcc<=5?'#16a34a':melhorAcc<=15?'#65a30d':melhorAcc<=30?'#ca8a04':'#ea580c';
+    const q=melhorAcc<=5?'Excelente 🏆':melhorAcc<=15?'Ótima ✅':melhorAcc<=30?'Boa 👍':'Aguardando...';
+    btn.innerHTML=`⏹ Usar agora (${n} leituras)`;
+    btn.onclick=_finalizaGPS;
+    if(info) info.innerHTML=`
+      <div style="font-size:12px;color:#344e41;margin-bottom:4px;">
+        Melhor leitura: <b style="color:${cor};">±${melhorAcc?melhorAcc.toFixed(0):'?'}m</b> — ${q}
+      </div>
+      <div style="height:7px;background:#e5e7eb;border-radius:4px;overflow:hidden;">
+        <div style="height:100%;background:${cor};border-radius:4px;width:${pct}%;transition:width .3s;"></div>
+      </div>
+      <div style="font-size:10.5px;color:#6b7280;margin-top:3px;">Fique parado · ${_gpsAlvo-n} leituras restantes ou toque "Usar agora"</div>`;
+  } else if(estado==='done'){
+    btn.innerHTML='📡 Capturar GPS Novamente';
+    btn.style.cssText='height:50px;padding:0 16px;border-radius:var(--r12);background:linear-gradient(135deg,#d8f3dc,#b7e4c7);border:2px solid var(--g5);color:var(--g2);font-family:Nunito,sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%;';
+    btn.onclick=captGPS;
+  } else if(estado==='error'){
+    btn.innerHTML='📡 Tentar Novamente';
+    btn.style.cssText='height:50px;padding:0 16px;border-radius:var(--r12);background:linear-gradient(135deg,#fee2e2,#fecaca);border:2px solid #ef4444;color:#991b1b;font-family:Nunito,sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%;';
+    btn.onclick=captGPS;
+  }
 }
 // ── FOTOS COM COMPRESSÃO ──────────────────────────────
 let extraPhotosB64 = [];
@@ -2311,8 +2905,8 @@ function aplicarIA(d){
   set('f_sci',  d.nome_cientifico);
   set('f_fam',  d.familia);
   set('f_gen',  d.genero);
-  set('f_orig', d.origem);
-  set('f_fen',  d.fenologia);
+  set('f_orig', d.origem || d.orig);
+  set('f_fen',  d.fenologia || d.fen);
   // Aplicar densidade do banco primeiro, fallback para IA
   const densAplicada = aplicarDensidade(d.nome_popular, d.nome_cientifico);
   if(!densAplicada && d.densidade_madeira) set('f_dens', d.densidade_madeira);
@@ -2381,6 +2975,17 @@ async function saveInd(){
     servicos: Object.keys(svcVals).filter(k=>svcVals[k]>0),
     svcNiveis: {...svcVals},
     tSombra: parseFloat(document.getElementById('f_t_sombra').value)||null,
+    // Resíduos
+    residuos: ['plastico','entulho','tinta','fio','prego','placas','lixo_org','outros'].filter(r=>{const el=document.getElementById('res_'+r);return el&&el.checked;}),
+    tratos: ['poda_correta','poda_incorreta','grade','cimento','irrigacao','vandalismo'].filter(t=>{const el=document.getElementById('trat_'+t);return el&&el.checked;}),
+    resImpacto: parseInt(document.getElementById('f_res_impacto').value)||0,
+    resObs: document.getElementById('f_res_obs').value.trim()||null,
+    residuosFoto1: termoPhotos['residuos_1']||null,
+    residuosFoto2: termoPhotos['residuos_2']||null,
+    // Fenologia anual e estação
+    estacao: document.getElementById('f_estacao').value||null,
+    fenAnual: ['flores','frutos','caduca','perenifolia'].filter(f=>{const el=document.getElementById('fen_'+f);return el&&el.checked;}),
+    fenPeriodo: document.getElementById('f_fen_periodo').value.trim()||null,
     tSol: parseFloat(document.getElementById('f_t_sol').value)||null,
     tReducao: parseFloat(document.getElementById('f_t_reducao').value)||null,
     tHora: document.getElementById('f_t_hora').value||null,
@@ -2620,6 +3225,258 @@ function exportGeoJSON(){
   downloadFile(JSON.stringify(geo,null,2), `cpfverde_${new Date().toISOString().slice(0,10)}.geojson`, 'application/geo+json');
 }
 
+// ═══════ DASHBOARD ═══════
+function renderDashboard(){
+  const inds = window._inds || [];
+  const el = document.getElementById('dashContent');
+  const atuel = document.getElementById('dashAtualizado');
+  if(atuel) atuel.textContent = 'Atualizado em ' + new Date().toLocaleString('pt-BR');
+  if(!el) return;
+
+  if(!inds.length){
+    el.innerHTML = '<div style="text-align:center;padding:40px 16px;color:#aaa;"><div style="font-size:44px;margin-bottom:10px;">🌱</div><div style="font-size:15px;">Nenhum indivíduo cadastrado ainda.<br>Cadastre árvores para ver as análises.</div></div>';
+    return;
+  }
+
+  // ── CÁLCULOS ────────────────────────────────────────────
+  const total = inds.length;
+  const especies = [...new Set(inds.map(i=>i.sci||i.nome).filter(Boolean))];
+  const nEsp = especies.length;
+  // Índice de riqueza de Margalef: (S-1)/ln(N)
+  const margalef = total > 1 ? ((nEsp-1)/Math.log(total)).toFixed(2) : '—';
+  // Diversidade de Shannon: H = -Σ(pi * ln(pi))
+  const contEsp = {};
+  inds.forEach(i=>{ const k=i.sci||i.nome; contEsp[k]=(contEsp[k]||0)+1; });
+  const shannon = Object.values(contEsp).reduce((h,n)=>{ const p=n/total; return h-(p*Math.log(p)); },0).toFixed(2);
+  // Equabilidade de Pielou: J = H / ln(S)
+  const pielou = nEsp>1 ? (parseFloat(shannon)/Math.log(nEsp)).toFixed(2) : '—';
+
+  const comSaude = inds.filter(i=>i.saudeNota!=null);
+  const mediaSaude = comSaude.length ? (comSaude.reduce((s,i)=>s+i.saudeNota,0)/comSaude.length).toFixed(1) : '—';
+  const totalCarb = Math.round(inds.reduce((s,i)=>s+(i.carbKg||0),0));
+  const totalCO2 = Math.round(totalCarb*3.67);
+  const nativas = inds.filter(i=>['nativa_pantanal','nativa_brasil'].includes(i.orig)).length;
+  const pctNativas = Math.round(nativas/total*100);
+  const comTermico = inds.filter(i=>i.tReducao!=null&&i.tReducao>0);
+  const mediaTermico = comTermico.length ? (comTermico.reduce((s,i)=>s+i.tReducao,0)/comTermico.length).toFixed(1) : null;
+
+  // Top espécies por carbono
+  const carbPorEsp = {};
+  inds.forEach(i=>{ const k=i.nome; if(i.carbKg){ carbPorEsp[k]=(carbPorEsp[k]||0)+i.carbKg; } });
+  const topCarb = Object.entries(carbPorEsp).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxCarb = topCarb[0]?.[1]||1;
+
+  // Top espécies por redução térmica
+  const termPorEsp = {};
+  inds.forEach(i=>{ if(i.tReducao>0){ if(!termPorEsp[i.nome]) termPorEsp[i.nome]={soma:0,n:0}; termPorEsp[i.nome].soma+=i.tReducao; termPorEsp[i.nome].n++; } });
+  const topTerm = Object.entries(termPorEsp).map(([k,v])=>([k,v.soma/v.n])).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxTerm = topTerm[0]?.[1]||1;
+
+  // Saúde por critério (média)
+  const criterioMedias = {};
+  const CRIT_LABELS = {vitalidade:'Vitalidade',tronco:'Tronco',copa:'Copa',raiz:'Raiz',pragas:'Pragas',crescimento:'Crescimento',fixacao:'Fixação',casca:'Casca'};
+  Object.keys(CRIT_LABELS).forEach(k=>{
+    const vals = inds.filter(i=>i.saudeDetalhes&&i.saudeDetalhes[k]!=null).map(i=>i.saudeDetalhes[k]);
+    if(vals.length) criterioMedias[k] = vals.reduce((s,v)=>s+v,0)/vals.length;
+  });
+
+  // Distribuição por bairro
+  const porBairro = {};
+  inds.forEach(i=>{ const b=i.bairro||'Não informado'; porBairro[b]=(porBairro[b]||0)+1; });
+  const topBairros = Object.entries(porBairro).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  // Distribuição de saúde
+  const distSaude = {bom:inds.filter(i=>(i.saudeNota||0)>=7).length, reg:inds.filter(i=>i.saudeNota!=null&&i.saudeNota>=4&&i.saudeNota<7).length, cri:inds.filter(i=>i.saudeNota!=null&&i.saudeNota<4).length, na:inds.filter(i=>i.saudeNota==null).length};
+
+  // Serviços mais frequentes
+  const svcCount = {};
+  inds.forEach(i=>(i.servicos||[]).forEach(s=>{ svcCount[s]=(svcCount[s]||0)+1; }));
+  const topSvc = Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const svcLbl = {sombra:'🌤️ Sombra',fruto_humano:'🍎 Fruto humano',fruto_animal:'🦜 Fauna',paisagismo:'🌸 Paisagismo',termico:'🌡️ Térmica',moradia:'🐦 Moradia',carbono:'🌍 Carbono',polinizacao:'🐝 Polinizadores',hidrologia:'💧 Hídrico',medicinal:'💊 Medicinal'};
+
+  // ── RENDER ──────────────────────────────────────────────
+  const card = (titulo,ico,cor,conteudo) => `
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+      <div style="background:${cor};padding:10px 14px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">${ico}</span>
+        <div style="font-family:'Lora',serif;font-size:14px;font-weight:700;color:#fff;">${titulo}</div>
+      </div>
+      <div style="padding:14px;">${conteudo}</div>
+    </div>`;
+
+  const bigNum = (val,lbl,sub,cor='var(--g2)') => `
+    <div style="text-align:center;padding:8px;">
+      <div style="font-family:'Lora',serif;font-size:32px;font-weight:700;color:${cor};">${val}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2);">${lbl}</div>
+      ${sub?`<div style="font-size:10.5px;color:var(--t4);margin-top:2px;">${sub}</div>`:''}
+    </div>`;
+
+  const barra = (nome,val,max,cor,sufixo='') => `
+    <div style="margin-bottom:9px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
+        <span style="font-weight:600;color:var(--t1);">${nome}</span>
+        <span style="color:${cor};font-weight:700;">${typeof val==='number'?val.toFixed(1):val}${sufixo}</span>
+      </div>
+      <div style="height:9px;background:#e5e7eb;border-radius:5px;overflow:hidden;">
+        <div style="height:100%;background:${cor};border-radius:5px;width:${Math.min(100,val/max*100).toFixed(0)}%;transition:width .5s;"></div>
+      </div>
+    </div>`;
+
+  const pizza = (itens) => {
+    // SVG pizza simples
+    const cores=['#2d6a4f','#e9a833','#e05252','#9ca3af','#3b82f6','#8b5cf6'];
+    const total2=itens.reduce((s,i)=>s+i[1],0);
+    let angulo=0; let fatias=''; let legenda='';
+    itens.forEach(([lbl,val],i)=>{
+      const frac=val/total2; const ang=frac*360;
+      const rad=a=>a*Math.PI/180;
+      const x1=50+45*Math.sin(rad(angulo)), y1=50-45*Math.cos(rad(angulo));
+      const x2=50+45*Math.sin(rad(angulo+ang)), y2=50-45*Math.cos(rad(angulo+ang));
+      const large=ang>180?1:0;
+      if(frac>0.005) fatias+=`<path d="M50,50 L${x1.toFixed(1)},${y1.toFixed(1)} A45,45 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${cores[i%cores.length]}"/>`;
+      legenda+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:${cores[i%cores.length]};flex-shrink:0;"></div><span>${lbl}</span><span style="margin-left:auto;font-weight:700;">${val}</span></div>`;
+      angulo+=ang;
+    });
+    return `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <svg viewBox="0 0 100 100" style="width:100px;height:100px;flex-shrink:0;">${fatias}</svg>
+      <div style="flex:1;min-width:120px;">${legenda}</div>
+    </div>`;
+  };
+
+  el.innerHTML = `
+
+  <!-- 1. Números principais -->
+  ${card('Resumo Geral','🌳','linear-gradient(135deg,#1b4332,#2d6a4f)',`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      ${bigNum(total,'Indivíduos','total cadastrados')}
+      ${bigNum(nEsp,'Espécies','riqueza observada','#2d6a4f')}
+      ${bigNum(pctNativas+'%','Nativas','do total amostrado','#16a34a')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;border-top:1px solid #f0f4f1;padding-top:8px;">
+      ${bigNum(totalCarb+' kg','Carbono total','≈ '+totalCO2+' kg CO₂','#065f46')}
+      ${bigNum(mediaSaude+'/10','Saúde média','dos indivíduos','#ca8a04')}
+    </div>
+  `)}
+
+  <!-- 2. Índices de diversidade -->
+  ${card('Índices de Diversidade','🔬','linear-gradient(135deg,#1e3a5f,#2563eb)',`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+      <div style="background:#eff6ff;border-radius:9px;padding:10px;text-align:center;">
+        <div style="font-family:'Lora',serif;font-size:24px;font-weight:700;color:#1d4ed8;">${margalef}</div>
+        <div style="font-size:10px;font-weight:700;color:#1e40af;">Margalef</div>
+        <div style="font-size:9px;color:#6b7280;margin-top:2px;">Riqueza</div>
+      </div>
+      <div style="background:#eff6ff;border-radius:9px;padding:10px;text-align:center;">
+        <div style="font-family:'Lora',serif;font-size:24px;font-weight:700;color:#1d4ed8;">${shannon}</div>
+        <div style="font-size:10px;font-weight:700;color:#1e40af;">Shannon (H')</div>
+        <div style="font-size:9px;color:#6b7280;margin-top:2px;">Diversidade</div>
+      </div>
+      <div style="background:#eff6ff;border-radius:9px;padding:10px;text-align:center;">
+        <div style="font-family:'Lora',serif;font-size:24px;font-weight:700;color:#1d4ed8;">${pielou}</div>
+        <div style="font-size:10px;font-weight:700;color:#1e40af;">Pielou (J)</div>
+        <div style="font-size:9px;color:#6b7280;margin-top:2px;">Equabilidade</div>
+      </div>
+    </div>
+    <div style="background:#dbeafe;border-radius:8px;padding:9px 11px;font-size:11.5px;color:#1e40af;line-height:1.6;">
+      <b>O que significa?</b><br>
+      <b>Margalef:</b> quanto maior, mais espécies diferentes em relação ao total. Valores >2 indicam boa riqueza.<br>
+      <b>Shannon (H'):</b> mede diversidade considerando abundância. Valores >1,5 indicam diversidade moderada.<br>
+      <b>Pielou (J):</b> equabilidade de 0 a 1. Próximo de 1 = distribuição equilibrada entre espécies.
+    </div>
+  `)}
+
+  <!-- 3. Distribuição de saúde -->
+  ${card('Estado de Saúde dos Indivíduos','🩺','linear-gradient(135deg,#065f46,#16a34a)',`
+    ${pizza([['✅ Bom (≥7)',distSaude.bom],['⚠️ Regular (4–7)',distSaude.reg],['🔴 Crítico (<4)',distSaude.cri],['❓ Não avaliado',distSaude.na]].filter(i=>i[1]>0))}
+    <div style="margin-top:10px;border-top:1px solid #f0f4f1;padding-top:8px;">
+      <div style="font-size:11.5px;color:var(--t3);margin-bottom:6px;font-weight:600;">Média por critério de saúde:</div>
+      ${Object.entries(criterioMedias).map(([k,v])=>barra(CRIT_LABELS[k]||k, v, 4, v>=3?'#16a34a':v>=2?'#ca8a04':'#e05252','/4')).join('')}
+    </div>
+  `)}
+
+  <!-- 4. Análise térmica -->
+  ${comTermico.length ? card('Análise de Temperatura 🌡️','🌡️','linear-gradient(135deg,#92400e,#d97706)',`
+    <div style="background:#fffbeb;border-radius:9px;padding:12px;margin-bottom:10px;text-align:center;">
+      <div style="font-size:11px;color:#b45309;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;">Redução média geral</div>
+      <div style="font-family:'Lora',serif;font-size:36px;font-weight:700;color:#92400e;">${mediaTermico}°C</div>
+      <div style="font-size:12px;color:#b45309;">${comTermico.length} medições realizadas</div>
+    </div>
+    ${topTerm.length ? `<div style="font-size:11.5px;color:var(--t3);font-weight:700;margin-bottom:8px;">Espécies com maior redução térmica:</div>
+    ${topTerm.map(([nome,val])=>barra(nome, val, maxTerm, val>=5?'#16a34a':val>=3?'#ca8a04':'#e9a833','°C')).join('')}` : ''}
+  `) : card('Análise Térmica','🌡️','linear-gradient(135deg,#92400e,#d97706)',`
+    <div style="text-align:center;padding:20px;color:#b45309;">
+      <div style="font-size:32px;margin-bottom:8px;">🌡️</div>
+      <div style="font-size:13px;">Nenhuma medição de temperatura registrada ainda.<br>Use a seção 10 para medir e comparar espécies.</div>
+    </div>
+  `)}
+
+  <!-- 5. Estoque de carbono por espécie -->
+  ${topCarb.length ? card('Estoque de Carbono por Espécie','🌍','linear-gradient(135deg,#0d2818,#1b4332)',`
+    ${topCarb.map(([nome,val])=>barra(nome, val, maxCarb, val>200?'#4ade80':val>100?'#86efac':'#95d5b2',' kg C')).join('')}
+    <div style="background:rgba(149,213,178,.15);border-radius:8px;padding:9px;font-size:11.5px;color:#95d5b2;margin-top:6px;line-height:1.6;border:1px solid rgba(149,213,178,.3);">
+      Total: <b>${totalCarb} kg C</b> · CO₂ neutralizado: <b>${totalCO2} kg</b>
+    </div>
+  `) : ''}
+
+  <!-- 6. Serviços ecossistêmicos -->
+  ${topSvc.length ? card('Serviços Ecossistêmicos Identificados','🌿','linear-gradient(135deg,#14532d,#22c55e)',`
+    ${topSvc.map(([k,v])=>barra(svcLbl[k]||k, v, total, '#22c55e',` (${Math.round(v/total*100)}%)`)).join('')}
+    <div style="font-size:11px;color:#6b7280;margin-top:6px;">Percentual de indivíduos que prestam cada serviço</div>
+  `) : ''}
+
+  <!-- 7. Composição por origem -->
+  ${card('Composição por Origem','🌿','linear-gradient(135deg,#1e3a5f,#0ea5e9)',`
+    ${pizza([
+      ['🌊 Nativa Pantanal',inds.filter(i=>i.orig==='nativa_pantanal').length],
+      ['🌿 Nativa Brasil',inds.filter(i=>i.orig==='nativa_brasil').length],
+      ['🌸 Exótica',inds.filter(i=>i.orig==='exotica').length],
+      ['⚠️ Invasora',inds.filter(i=>i.orig==='invasora').length],
+      ['❓ Não informado',inds.filter(i=>!i.orig).length],
+    ].filter(i=>i[1]>0))}
+  `)}
+
+  <!-- 8. Distribuição por bairro -->
+  ${topBairros.length ? card('Distribuição Espacial por Bairro','📍','linear-gradient(135deg,#4c1d95,#7c3aed)',`
+    ${topBairros.map(([b,n])=>barra(b, n, topBairros[0][1], '#a78bfa',' indivíduo(s)')).join('')}
+  `) : ''}
+
+  <!-- 9. Resíduos sólidos -->
+  ${(()=>{
+    const comRes = inds.filter(i=>i.residuos&&i.residuos.length>0);
+    const semRes = inds.filter(i=>!i.residuos||i.residuos.length===0);
+    if(!inds.some(i=>i.residuos!==undefined)) return '';
+    const resCount = {};
+    const resLabel = {plastico:'🛍️ Plástico',entulho:'🧱 Entulho',tinta:'🎨 Pichação',fio:'🔌 Fio/Arame',prego:'🔩 Pregos',placas:'📌 Placas',lixo_org:'🍂 Lixo orgânico',outros:'⚠️ Outros'};
+    inds.forEach(i=>(i.residuos||[]).forEach(r=>{ resCount[r]=(resCount[r]||0)+1; }));
+    const topRes = Object.entries(resCount).sort((a,b)=>b[1]-a[1]);
+    return card('Resíduos Sólidos e Impactos','🗑️','linear-gradient(135deg,#7f1d1d,#dc2626)',`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+        <div style="background:#fee2e2;border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-family:'Lora',serif;font-size:26px;font-weight:700;color:#dc2626;">${comRes.length}</div>
+          <div style="font-size:11px;color:#991b1b;font-weight:700;">Com resíduos</div>
+        </div>
+        <div style="background:#dcfce7;border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-family:'Lora',serif;font-size:26px;font-weight:700;color:#16a34a;">${semRes.length}</div>
+          <div style="font-size:11px;color:#166534;font-weight:700;">Sem resíduos</div>
+        </div>
+      </div>
+      ${topRes.length ? topRes.map(([k,v])=>barra(resLabel[k]||k, v, total, '#ef4444',` ocorrência(s)`)).join('') : '<div style="text-align:center;color:#16a34a;font-size:13px;padding:8px;">Nenhum resíduo registrado ✅</div>'}
+    `);
+  })()}
+
+  <!-- 10. Mensagem motivacional -->
+  <div style="background:linear-gradient(135deg,#0d2818,#1b4332);border-radius:14px;padding:18px;text-align:center;">
+    <div style="font-size:28px;margin-bottom:8px;">🏛️</div>
+    <div style="font-family:'Lora',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;">Patrimônio Natural de Cáceres-MT</div>
+    <div style="font-size:12.5px;color:#95d5b2;line-height:1.7;">
+      Com estes dados, você está construindo a base científica<br>para proteger as árvores de Cáceres por lei.<br><br>
+      <b style="color:#fff;">${total} indivíduo${total!==1?'s':''} · ${nEsp} espécie${nEsp!==1?'s':''} · ${totalCarb} kg C estocados</b>
+    </div>
+  </div>
+
+  `;
+}
+
 // ═══════ CFG ═══════
 function saveCfg(){
   const cfg={apiKey:document.getElementById('c_key').value.trim(),projectId:document.getElementById('c_pid').value.trim(),authDomain:document.getElementById('c_dom').value.trim(),appId:document.getElementById('c_app').value.trim()};
@@ -2806,6 +3663,22 @@ const TIPS = {
 🌿 Ipê, manduvi, acuri → Nativos<br>
 🌸 Mangueira, ficus ornamental → Exóticos<br>
 ⚠️ Leucena → Invasora`
+  },
+  fenologia_anual:{
+    emoji:'📅',
+    title:'Fenologia ao Longo do Ano',
+    body:`<b>Por que registrar a fenologia anual?</b><br>
+Quando você faz a vistoria, a árvore pode estar só com folhas (vegetativa), mas isso não significa que ela não floresce ou frutifica em outros meses.<br><br>
+<b>Marque o que acontece durante o ano:</b><br><br>
+🌸 <b>Floresce</b> — a árvore produz flores em alguma época do ano<br>
+🍎 <b>Frutifica</b> — produz frutos consumíveis por humanos ou fauna<br>
+🍂 <b>Perde folhas</b> — espécie decídua ou semicaducifólia<br>
+🌳 <b>Sempre verde</b> — espécie perenifólia, não perde folhas<br><br>
+<b>No campo "Período"</b>, anote o mês aproximado de floração e frutificação se souber. Exemplo: "flores ago–set, frutos out–nov".<br><br>
+<b>Referências para o Pantanal/Cerrado:</b><br>
+• Ipê Amarelo floresce jul–set antes das folhas<br>
+• Manduvi frutifica fev–abr<br>
+• Pequi floresce set–nov, frutifica dez–mar`
   },
   fenologia:{
     emoji:'🌸',
